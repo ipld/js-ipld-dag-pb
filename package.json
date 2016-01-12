@@ -1,0 +1,22 @@
+{
+  "name": "ipfs-merkle-dag",
+  "version": "0.0.1",
+  "description": "a javascript implementation of the go-ipfs merkle dag",
+  "main": "node.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Vijayee Kulkaa <vijayee.kulkaa@hushmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "buffer": "^4.2.0",
+    "datastore.abstract": "0.0.1",
+    "datastore.memory": "0.0.0",
+    "multihashing": "^0.2.0",
+    "protocol-buffers": "^3.1.4"
+  },
+  "devDependencies": {
+    "buffer-equal": "^1.0.0",
+    "tape": "^4.4.0"
+  }
+}
