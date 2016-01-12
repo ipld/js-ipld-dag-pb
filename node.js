@@ -4,11 +4,15 @@
 
 var Buffer= require('buffer/').Buffer;
 var util= require('./util');
+var protobuf = require('protocol-buffers');
+var merkledagproto = "message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}";
+var merklepb=  protobuf(merkledagproto);
 var Node=function() {
-    var Links;
+    var Links = [];
     var Data;
     var Cached;
     var Encoded;
+    var linkSort= function(a,b){return a.Name().toString('hex').localeCompare( b.Name().toString('hex'));};
     this.AddNodeLink = function (name, node) {
 
     };
@@ -40,9 +44,32 @@ var Node=function() {
 
         }
     };
-
+    //Encode into Protobuf
     this.Marshal = function(){
-
+      var pbn = getPBNode();
+      var data = merklepb.PBNode.encode(pbn);
+      return data;
+    };
+    //Helper method to get a protobuf object equivalent
+    var getPBNode = function(){
+        var pbn = new Object();
+        pbn.Links= [];
+        if(Links.length > 0){
+            Links.sort(linkSort);
+            for(link in Links){
+                pbn.Links.push({
+                    Name: link.Name(),
+                    Tsize: link.Size(),
+                    Hash: link.Hash()
+                });
+            }
+        }
+        if(Data && Data.length > 0){
+            pbn.Data =Data;
+        }else{
+            pbn.Data = new Buffer();
+        }
+       return pbn;
     };
 }
 
