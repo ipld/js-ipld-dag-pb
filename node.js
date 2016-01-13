@@ -2,11 +2,13 @@
  This is an attempt at an ipfs style merkle dag node
 */
 
-var Buffer= require('buffer/').Buffer;
 var util= require('./util');
 var protobuf = require('protocol-buffers');
 var merkledagproto = "message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}";
 var merklepb=  protobuf(merkledagproto);
+if (util.isBrowser()){
+    window.Buffer = require('buffer/').Buffer;
+}
 var Node=function() {
     var Links = [];
     var Data;
@@ -15,6 +17,7 @@ var Node=function() {
     //sort links by their name field
     var linkSort= function(a,b){return a.Name().toString('hex').localeCompare( b.Name().toString('hex'));};
 
+    // Getter/Setter chain for Data
     this.Data= function(){
         if(arguments.length == 0){
             return Data;
@@ -25,6 +28,61 @@ var Node=function() {
             return this;
         }
     }
+
+    // Getter/Setter chain for Links
+    this.Links= function(){
+        if(arguments.length == 0){
+            return Links;
+        }else{
+            if (Array.isArray(arguments[0])){
+                for(var i; i < arguments[0].length; i++){
+                    if (!(arguments[0][i] instanceof Link)){
+                       return this;
+                    }
+                }
+                Links = arguments[0];
+            }
+
+            return this;
+        }
+    }
+    // UpdateNodeLink return a copy of the node with the link name set to point to
+    // that. If a link of the same name existed, it is removed.
+    this.UpdateNodeLink= function(name, node){
+        var newnode= this.Copy();
+        newnode.RemoveNodeLink(name);
+        newnode.AddNodeLink(name,node);
+        return newnode;
+    };
+
+    // Copy returns a copy of the node.
+    // NOTE: does not make copies of Node objects in the links.
+    this.Copy= function(){
+        if(Data && Data.length > 0){
+            buf= new Buffer(Data.length);
+            Data.copy(buf)
+            node= new Node();
+            node.Data(buf);
+            node.Links(Links.slice());
+            return node;
+        }
+        return null;
+    }
+    // Remove a link on this node by the given name
+    this.RemoveNodeLink= function(name){
+        Encoded = null;
+        var good = [];
+        var found;
+        for(var i=0; i < Links.length; i++){
+            var link= Links[i];
+            if (link.Name() != name) {
+                good.push(link);
+            } else{
+                found= true;
+            }
+        }
+        Links= good;
+    };
 
     //link to another node
     var MakeLink = function (node){
@@ -116,27 +174,27 @@ var Node=function() {
 
     //Decode from a Protobuf
     this.UnMarshal = function(data){
-        var pbn = merklepb.PBNode.encode(data);
+        var pbn = merklepb.PBNode.decode(data);
         for(link in pbn.Links){
-           var lnk = new Link(link.Name, link.Tsize, link.Hash);
+           var lnk = new Link(link.Name(), link.Tsize(), link.Hash());
            Links.push(lnk);
         }
         Links.sort(linkSort);
         Data = pbn.Data;
-
+        return this;
     };
 
     //Helper method to get a protobuf object equivalent
     var getPBNode = function(){
-        var pbn = new Object();
+        var pbn = {};
         pbn.Links= [];
         if(Links.length > 0){
             Links.sort(linkSort);
             for(link in Links){
                 pbn.Links.push({
+                    Hash: link.Hash(),
                     Name: link.Name(),
-                    Tsize: link.Size(),
-                    Hash: link.Hash()
+                    Tsize: link.Size()
                 });
             }
         }
@@ -148,7 +206,7 @@ var Node=function() {
        return pbn;
     };
 }
-
+var Ntype= Node;
 // Link represents an IPFS Merkle DAG Link between Nodes.
 var Link = function(name, size, hash, node){
     var Name;
@@ -190,17 +248,17 @@ var Link = function(name, size, hash, node){
         if(arguments.length == 0){
             return Node;
         }else{
-            if (arguments[0] instanceof Node){
+            if (arguments[0] instanceof Ntype){
                 Node= arguments[0];
             }
             return this;
         }
     }
-    this.Name(unname);
+    this.Name(name);
     this.Size(size);
     this.Hash(hash);
     this.Node(node);
- }
-
-
+}
+module.exports.Link = Link;
+module.exports.Node= Node;
 

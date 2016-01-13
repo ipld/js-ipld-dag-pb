@@ -1,6 +1,5 @@
 var test = require('tape');
 var Block = require('../block');
-var Buffer= require('buffer/').Buffer;
 var bufeq = require('buffer-equal');
 
 test('Test block mutabiltiy', function(t){

@@ -9,6 +9,7 @@
   "author": "Vijayee Kulkaa <vijayee.kulkaa@hushmail.com>",
   "license": "ISC",
   "dependencies": {
+    "abstract-blob-store": "^3.2.0",
     "buffer": "^4.2.0",
     "datastore.abstract": "0.0.1",
     "datastore.memory": "0.0.0",

@@ -6,5 +6,12 @@ util.hash= function(data){
    return multihashing(data, 'sha2-256');
 
 }
-
+util.isBrowser=function(){
+    try {
+        return !!window;
+    }
+    catch(e){
+        return false;
+    }
+};
 module.exports =util;

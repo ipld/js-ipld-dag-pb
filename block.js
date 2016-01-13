@@ -1,5 +1,8 @@
-var Buffer= require('buffer/').Buffer;
+
 var util= require('./util');
+if (util.isBrowser()){
+    window.Buffer = require('buffer/').Buffer;
+}
 
 //Immutable block of data
 var Block = function (data){
