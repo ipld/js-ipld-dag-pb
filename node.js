@@ -75,7 +75,7 @@ var Node=function() {
         var found;
         for(var i=0; i < Links.length; i++){
             var link= Links[i];
-            if (link.Name() != name) {
+            if (!link.Name() === name) {
                 good.push(link);
             } else{
                 found= true;
@@ -146,8 +146,8 @@ var Node=function() {
             return 0;
         }
         size =buf.length;
-        for(link in Links){
-            size += link.Size();
+        for(var i=0; i < Links.length; i++){
+            size += Links[i].Size();
         }
         return size;
     };
@@ -188,16 +188,16 @@ var Node=function() {
     var getPBNode = function(){
         var pbn = {};
         pbn.Links= [];
-        if(Links.length > 0){
-            Links.sort(linkSort);
-            for(link in Links){
-                pbn.Links.push({
-                    Hash: link.Hash(),
-                    Name: link.Name(),
-                    Tsize: link.Size()
-                });
-            }
+
+        for(var i=0; i < Links.length; i++){
+            var link= Links[i];
+            pbn.Links.push({
+                Hash: link.Hash(),
+                Name: link.Name(),
+                Tsize: link.Size()
+            });
         }
+
         if(Data && Data.length > 0){
             pbn.Data =Data;
         }else{
