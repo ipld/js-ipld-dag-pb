@@ -14,4 +14,18 @@ util.isBrowser=function(){
         return false;
     }
 };
+
+util.isAbstractBlobStore= function(obj){
+    if(!obj){
+        return false;
+    }
+    var interface =["createWriteStream" , "createReadStream", "exists", "remove"];
+    for(var i= 0; i < interface.length; i++){
+        var method=interface[i];
+        if(!(obj[method]) || (typeof obj[method] != 'function')){
+            return false;
+        }
+    }
+    return true;
+}
 module.exports =util;
