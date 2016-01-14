@@ -12,11 +12,11 @@ var Block = function (data){
     var data= new Buffer(data);
     var multihash= util.hash(data);
 
-    this.Key= function(){
+    this.key= function(){
         return multihash
     }
 
-    this.Data = function(){
+    this.data = function(){
         return data
     }
     return this;

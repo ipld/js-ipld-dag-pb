@@ -10,29 +10,29 @@ if (util.isBrowser()){
     window.Buffer = require('buffer/').Buffer;
 }
 var Node=function() {
-    var Links = [];
-    var Data;
-    var Cached;
-    var Encoded;
+    var links = [];
+    var data;
+    var cached;
+    var encoded;
     //sort links by their name field
-    var linkSort= function(a,b){return a.Name().toString('hex').localeCompare( b.Name().toString('hex'));};
+    var linkSort= function(a,b){return a.name().localeCompare( b.name());};
 
     // Getter/Setter chain for Data
-    this.Data= function(){
+    this.data= function(){
         if(arguments.length == 0){
-            return Data;
+            return data;
         }else{
             if (arguments[0] instanceof Buffer){
-                Data= arguments[0];
+                data= arguments[0];
             }
             return this;
         }
     }
 
     // Getter/Setter chain for Links
-    this.Links= function(){
+    this.links= function(){
         if(arguments.length == 0){
-            return Links;
+            return links;
         }else{
             if (Array.isArray(arguments[0])){
                 for(var i; i < arguments[0].length; i++){
@@ -40,7 +40,7 @@ var Node=function() {
                        return this;
                     }
                 }
-                Links = arguments[0];
+                links = arguments[0];
             }
 
             return this;
@@ -49,45 +49,45 @@ var Node=function() {
     // UpdateNodeLink return a copy of the node with the link name set to point to
     // that. If a link of the same name existed, it is removed.
     this.UpdateNodeLink= function(name, node){
-        var newnode= this.Copy();
-        newnode.RemoveNodeLink(name);
-        newnode.AddNodeLink(name,node);
+        var newnode= this.copy();
+        newnode.removeNodeLink(name);
+        newnode.addNodeLink(name,node);
         return newnode;
     };
 
     // Copy returns a copy of the node.
     // NOTE: does not make copies of Node objects in the links.
-    this.Copy= function(){
-        if(Data && Data.length > 0){
-            buf= new Buffer(Data.length);
-            Data.copy(buf)
+    this.copy= function(){
+        if(data && data.length > 0){
+            buf= new Buffer(data.length);
+            data.copy(buf)
             node= new Node();
-            node.Data(buf);
-            node.Links(Links.slice());
+            node.data(buf);
+            node.links(links.slice());
             return node;
         }
         return null;
     }
     // Remove a link on this node by the given name
-    this.RemoveNodeLink= function(name){
-        Encoded = null;
+    this.removeNodeLink= function(name){
+        encoded = null;
         var good = [];
         var found;
-        for(var i=0; i < Links.length; i++){
-            var link= Links[i];
-            if (!link.Name() === name) {
+        for(var i=0; i < links.length; i++){
+            var link= links[i];
+            if (!link.name() === name) {
                 good.push(link);
             } else{
                 found= true;
             }
         }
-        Links= good;
+        links= good;
     };
 
     //link to another node
-    var MakeLink = function (node){
-        var size = node.Size();
-        var mh = node.MultiHash();
+    var makeLink = function (node){
+        var size = node.size();
+        var mh = node.multiHash();
         if(!(size && mh)){
            return null;
         }
@@ -95,31 +95,31 @@ var Node=function() {
     };
 
     // AddNodeLink adds a link to another node.
-    this.AddNodeLink = function (name, node) {
+    this.addNodeLink = function (name, node) {
         if( typeof name != "string" || !(node instanceof Node)){
             return
         }
-        var link= MakeLink(node);
+        var link= makeLink(node);
         if(!link){
             return
         }
-        link.Name(name);
-        link.Node(node);
-        this.AddRawLink(name, link);
+        link.name(name);
+        link.node(node);
+        this.addRawLink(name, link);
     };
 
     // AddRawLink adds a copy of a link to this node
-    this.AddRawLink= function(name, link){
+    this.addRawLink= function(name, link){
         if( typeof name != "string" || !(link instanceof Link)){
             return
         }
-        Encoded= null;
-        Links.push(new Link(link.Name(), link.Size(), link.Hash(), link.Node()));
+        encoded= null;
+        links.push(new Link(link.name(), link.size(), link.hash(), link.node()));
     };
 
     // AddNodeLinkClean adds a link to another node. without keeping a reference to
     // the child node
-    this.AddNodeLinkClean= function(name, node){
+    this.addNodeLinkClean= function(name, node){
         if( typeof name != "string" || !(link instanceof Link)){
             return
         }
@@ -128,59 +128,59 @@ var Node=function() {
             return
         }
 
-        Encoded= null;
-        link.Name(name);
-        this.AddRawLink(name, link);
+        encoded= null;
+        link.name(name);
+        this.addRawLink(name, link);
     };
 
-    this.MultiHash=function(){
-        this.Encoded();
-        return Cached;
+    this.multiHash=function(){
+        this.encoded();
+        return cached;
     };
 
     // Size returns the total size of the data addressed by node,
     // including the total sizes of references.
-    this.Size = function () {
-        var buf= this.Encoded();
+    this.size = function () {
+        var buf= this.encoded();
         if(!buf){
             return 0;
         }
-        size =buf.length;
-        for(var i=0; i < Links.length; i++){
-            size += Links[i].Size();
+        var size =buf.length;
+        for(var i=0; i < links.length; i++){
+            size += links[i].size();
         }
         return size;
     };
 
     // Encoded returns the encoded raw data version of a Node instance.
     // It may use a cached encoded version, unless the force flag is given.
-    this.Encoded = function (force) {
-        if (force || !Encoded) {
-            Encoded = this.Marshal();
+    this.encoded = function (force) {
+        if (force || !encoded) {
+            encoded = this.marshal();
 
-            if (Encoded) {
-                Cached = util.hash(Encoded);
+            if (encoded) {
+                cached = util.hash(encoded);
             }
         }
-        return Encoded;
+        return encoded;
     };
 
     //Encode into a Protobuf
-    this.Marshal = function(){
+    this.marshal = function(){
       var pbn = getPBNode();
       var data = merklepb.PBNode.encode(pbn);
       return data;
     };
 
     //Decode from a Protobuf
-    this.UnMarshal = function(data){
+    this.unMarshal = function(data){
         var pbn = merklepb.PBNode.decode(data);
         for(link in pbn.Links){
-           var lnk = new Link(link.Name(), link.Tsize(), link.Hash());
-           Links.push(lnk);
+           var lnk = new Link(link.Name, link.Tsize, link.Hash);
+          links.push(lnk);
         }
-        Links.sort(linkSort);
-        Data = pbn.Data;
+        links.sort(linkSort);
+        data = pbn.Data;
         return this;
     };
 
@@ -189,75 +189,74 @@ var Node=function() {
         var pbn = {};
         pbn.Links= [];
 
-        for(var i=0; i < Links.length; i++){
-            var link= Links[i];
+        for(var i=0; i < links.length; i++){
+            var link= links[i];
             pbn.Links.push({
-                Hash: link.Hash(),
-                Name: link.Name(),
-                Tsize: link.Size()
+                Hash: link.hash(),
+                Name: link.name(),
+                Tsize: link.size()
             });
         }
 
-        if(Data && Data.length > 0){
-            pbn.Data =Data;
+        if(data && data.length > 0){
+            pbn.Data =data;
         }else{
             pbn.Data = new Buffer();
         }
        return pbn;
     };
 }
-var Ntype= Node;
 // Link represents an IPFS Merkle DAG Link between Nodes.
-var Link = function(name, size, hash, node){
-    var Name;
-    var Size;
-    var Hash;
-    var Node;
-    this.Name= function(){
+var Link = function(linkName, linkSize, linkHash, linkNode){
+    var name;
+    var size;
+    var hash;
+    var node;
+    this.name= function(){
         if(arguments.length == 0){
-            return Name;
+            return name;
         }else{
             if (typeof arguments[0] == 'string'){
-                Name= arguments[0];
+                name= arguments[0];
             }
             return this;
         }
     }
-    this.Size= function(){
+    this.size= function(){
         if(arguments.length == 0){
-            return Size;
+            return size;
         }else{
             if (typeof arguments[0] == 'number'){
-                Size= arguments[0];
+                size= arguments[0];
             }
             return this;
         }
     }
-    this.Hash= function(){
+    this.hash= function(){
         if(arguments.length == 0){
-            return Hash;
+            return hash;
         }else{
             if (arguments[0] instanceof Buffer){
-                Hash= arguments[0];
+                hash= arguments[0];
             }
             return this;
         }
     }
 
-    this.Node= function(){
+    this.node= function(){
         if(arguments.length == 0){
-            return Node;
+            return node;
         }else{
-            if (arguments[0] instanceof Ntype){
-                Node= arguments[0];
+            if (arguments[0] instanceof Node){
+                node= arguments[0];
             }
             return this;
         }
     }
-    this.Name(name);
-    this.Size(size);
-    this.Hash(hash);
-    this.Node(node);
+    this.name(linkName);
+    this.size(linkSize);
+    this.hash(linkHash);
+    this.node(linkNode);
 }
 module.exports.Link = Link;
 module.exports.Node= Node;

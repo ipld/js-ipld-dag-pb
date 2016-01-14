@@ -3,22 +3,22 @@ var Node = require('./node');
 var Block = require('./block');
 
 var DAGService= function(bs){
-    var Blocks;
-    this.Blocks = function(){
+    var blocks;
+    this.blocks = function(){
         if(arguments.length == 0){
-            return Blocks;
+            return blocks;
         }else{
             if (arguments[0] instanceof BlockService){
-                Blocks= arguments[0];
+                blocks= arguments[0];
             }
             return this;
         }
     };
-    this.Add= function(node){
+    this.add= function(node){
         if(!node || !(node instanceof Node)){
             return null
         }
-        if(!Blocks){
+        if(!blocks){
             return null;
         }
         data = node.Encoded();
@@ -26,11 +26,11 @@ var DAGService= function(bs){
             return null;
         }
         block= new Block(data);
-        return Blocks.AddBlock(block);
+        return blocks.addBlock(block);
 
     };
 
-    this.AddRecursive= function(node){
+    this.addRecursive= function(node){
         if(!node || !(node instanceof Node)){
             return null
         }
@@ -42,7 +42,7 @@ var DAGService= function(bs){
             return null;
         }
         var links = node.Links();
-        for(var i= 0; i < node.Links().length; i++){
+        for(var i= 0; i < links.length; i++){
             var link= links[i];
             if(link.Node()){
                 return this.AddRecursive(link);
@@ -50,14 +50,14 @@ var DAGService= function(bs){
         }
     };
 
-    this.Get= function(mh){
+    this.get= function(mh){
         if(!mh){
             return null;
         }
         if(!Blocks){
             return null;
         }
-        block= n.Blocks.Block(mh);
+        block= n.blocks.Block(mh);
         if(!block){
             return null;
         }
