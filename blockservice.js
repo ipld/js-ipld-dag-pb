@@ -1,3 +1,4 @@
+var util= require('./util');
 var Block= require('./block');
 if (util.isBrowser()){
     window.Buffer = require('buffer/').Buffer;
@@ -6,7 +7,6 @@ if (util.isBrowser()){
 // BlockService is a hybrid block datastore. It stores data in a local
 // datastore and may retrieve data from a remote Exchange.
 // It uses an internal `datastore.Datastore` instance to store values.
-var blockPrefix="blocks";
 var BlockService= function(bs, ex){
     var blockstore;
     var exchange; //to be implemented
@@ -15,8 +15,8 @@ var BlockService= function(bs, ex){
         if(arguments.length == 0){
             return blockstore;
         }else{
-            if(util.isAbstractBlobStore(bs)){
-                blockstore= arguments[0](blockPrefix);
+            if(util.isAbstractBlobStore(arguments[0])){
+                blockstore= arguments[0];
             }
             return this;
         }
@@ -44,7 +44,7 @@ var BlockService= function(bs, ex){
             if(exists){
                 return cb();
             } else{
-                var ws= blockstore.createReadStream({ key: block.key().toString('hex')});
+                var ws= blockstore.createWriteStream({ key: block.key().toString('hex')});
                 ws.write(block.data(),cb);
                 ws.end();
             }
@@ -59,6 +59,7 @@ var BlockService= function(bs, ex){
         if( i < blocks.length){
             block= blocks[i];
         }
+        var self=this;
         var next= function(err){
             if(err){
                 return cb(err);
@@ -66,7 +67,7 @@ var BlockService= function(bs, ex){
                 i++;
                 if( i < blocks.length){
                     block= blocks[i];
-                    this.addBlock(block,next);
+                    self.addBlock(block,next);
                 }
                 else{
                     return cb();
@@ -85,7 +86,7 @@ var BlockService= function(bs, ex){
                 return cb(err);
             }
             if(exists){
-                var data= new Buffer();
+                var data= new Buffer(0);
                 var rs= blockstore.createReadStream({key: key});
                 rs.on('readable', function(){
                     var chunk;
@@ -111,6 +112,7 @@ var BlockService= function(bs, ex){
         if( i < keys.length){
             key= keys[i];
         }
+        var self = this;
         var next= function(err, block){
             if(err){
                 return cb(err, blocks);
@@ -119,7 +121,7 @@ var BlockService= function(bs, ex){
                 i++;
                 if( i < keys.length){
                     key= keys[i];
-                    this.getBlock(block,next);
+                    self.getBlock(key,next);
                 }
                 else{
                     return cb(null, blocks);
@@ -143,6 +145,36 @@ var BlockService= function(bs, ex){
 
     }
 
+    this.deleteBlocks=function(keys, cb){
+        if(!Array.isArray(keys)){
+            return cb("Invalid batch of keys");
+        }
+        var i = 0;
+        var key;
+        var blocks=[];
+        if( i < keys.length){
+            key= keys[i];
+        }
+        var self = this;
+        var next= function(err, block){
+            if(err){
+                return cb(err, blocks);
+            } else{
+                blocks.push(block);
+                i++;
+                if( i < keys.length){
+                    key= keys[i];
+                    self.deleteBlock(key,next);
+                }
+                else{
+                    return cb(null, blocks);
+                }
+            }
+        }
+        this.deleteBlock(key,next);
+    }
+
     this.blockstore(bs);
     this.exchange(ex);
 }
+module.exports= BlockService;
