@@ -14,56 +14,122 @@ var DAGService= function(bs){
             return this;
         }
     };
-    this.add= function(node){
+    this.add= function(node, cb){
         if(!node || !(node instanceof Node)){
-            return null
+            return cb("Node is invalid");
         }
         if(!blocks){
-            return null;
+            return cb("Blockservice is invalid");
         }
         data = node.Encoded();
         if(!data){
-            return null;
+            return "Node is unencoded";
         }
         block= new Block(data);
-        return blocks.addBlock(block);
+        return blocks.addBlock(block, cb);
 
     };
 
-    this.addRecursive= function(node){
-        if(!node || !(node instanceof Node)){
-            return null
+    this.addRecursive= function(node, cb){
+
+        this.add(node,function(err){
+            if(err){
+                return cb(err)
+            }
+            var links = node.Links();
+            var i= 0;
+            var link;
+            var self=this;
+            var next= function(err){
+                if (err){
+                    return cb(err);
+                }
+                i++;
+                if(i < links.length){
+                    link=links[i];
+                    if(link.Node()){
+                        return self.addRecursive(link.Node(),next);
+                    }
+
+                }else{
+                    return cb();
+                }
+            };
+            if(i < links.length){
+                link=links[i];
+                if(link.Node()){
+                    return self.addRecursive(link.Node(),next);
+                }
+
+            }else{
+                return cb();
+            }
+
+        });
+    };
+
+    this.get= function(key, cb){
+        if(!key){
+            return cb("Invalid Key");
         }
         if(!Blocks){
-            return null;
+            return cb("Blockservice is invalid");
+        }
+        blocks.getBlock(key,function(err, block){
+            if(err){
+                return cb(err);
+            }
+            var node= new Node();
+            node.data(block.data());
+            return cb(null,node);
+        })
+    };
+
+    // this diverges from go-ipfs this is a non recursive remove function
+    this.remove= function(node, cb){
+        if(!node || !(node instanceof Node)){
+            return cb("Node is invalid");
+        }
+        if(!blocks){
+            return cb("Blockservice is invalid");
         }
         data = node.Encoded();
         if(!data){
-            return null;
+            return "Node is unencoded";
         }
-        var links = node.Links();
-        for(var i= 0; i < links.length; i++){
-            var link= links[i];
-            if(link.Node()){
-                return this.AddRecursive(link);
-            }
-        }
+        block= new Block(data);
+        return blocks.remove(block, cb);
     };
+    //this also diverges from go-ipfs but distinctly identifies the recursive version
+    this.removeRecursive= function(node, cb){
+        var links = node.Links();
+        var i= 0;
+        var link;
+        var self=this;
+        var next= function(err){
+            if (err){
+                return cb(err);
+            }
+            i++;
+            if(i < links.length){
+                link=links[i];
+                if(link.Node()){
+                    return self.removeRecursive(link.Node(),next);
+                }
 
-    this.get= function(mh){
-        if(!mh){
-            return null;
+            }else{
+                return self.remove(node, cb);
+            }
+        };
+        if(i < links.length){
+            link=links[i];
+            if(link.Node()){
+                return self.removeRecursive(link.Node(),next);
+            }
+
+        }else{
+            return self.remove(node, cb);
         }
-        if(!Blocks){
-            return null;
-        }
-        block= n.blocks.Block(mh);
-        if(!block){
-            return null;
-        }
-        var node= new Node();
-        node.UnMarshal(block.Data());
-        return node;
     };
 
     this.Blocks(bs);

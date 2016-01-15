@@ -138,6 +138,8 @@ var Node=function() {
         return cached;
     };
 
+    this.key= this.multiHash;
+
     // Size returns the total size of the data addressed by node,
     // including the total sizes of references.
     this.size = function () {
