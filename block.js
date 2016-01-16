@@ -1,24 +1,22 @@
-
-var util= require('./util');
-if (util.isBrowser()){
-    window.Buffer = require('buffer/').Buffer;
+var util = require('./util')
+if (util.isBrowser()) {
+  window.Buffer = require('buffer/').Buffer
 }
 
-//Immutable block of data
-var Block = function (data){
-    if(!data){
-        return null;
-    }
-    var data= new Buffer(data);
-    var multihash= util.hash(data);
+// Immutable block of data
+var Block = function (data) {
+  if (!data) { return null }
 
-    this.key= function(){
-        return multihash
-    }
+  var buf = new Buffer(data)
+  var multihash = util.hash(buf)
 
-    this.data = function(){
-        return data
-    }
-    return this;
+  this.key = function () {
+    return multihash
+  }
+
+  this.data = function () {
+    return buf
+  }
+  return this
 }
-module.exports= Block;
+module.exports = Block
