@@ -1,13 +1,13 @@
 var BlockService = require('../blockservice')
 var test = require('tape')
 var Block = require('../block')
-var fs = require('fs-blob-store')
-var util = require('../util')
+var IPFSRepo = require('ipfs-repo')
 
 test('Test blockservice', function (t) {
-  var datastore = fs('blocks')
-  t.is(util.isAbstractBlobStore(datastore), true, 'datastore is an abstact-blob-store')
-  var blockService = new BlockService(datastore)
+  var repo = new IPFSRepo(require('./index.js').repoPath)
+
+  var blockService = new BlockService(repo)
+
   var block1 = new Block("You can't change me,  Baby I was born this way!")
   var block2 = new Block('Another useless test block')
   var block3 = new Block('A different useless test block')
@@ -45,7 +45,7 @@ test('Test blockservice', function (t) {
   }
   var deleteOneCb = function (err, exist) {
     t.is(!!err, false, 'Failed to delete block?')
-    datastore.exists(block1.key().toString('hex'), function (err, exists) {
+    repo.datastore.exists(block1.key().toString('hex'), function (err, exists) {
       t.ifErr(err, 'Failed to check if block exists')
       t.is(exists, false, 'Block was deleted')
       blockService.deleteBlocks(keys, deleteManyCb)

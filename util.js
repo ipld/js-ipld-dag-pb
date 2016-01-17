@@ -14,19 +14,4 @@ util.isBrowser = function () {
   }
 }
 
-util.isAbstractBlobStore = function (obj) {
-  if (!obj) {
-    return false
-  }
-
-  var iface = ['createWriteStream', 'createReadStream', 'exists', 'remove']
-
-  for (var i = 0; i < iface.length; i++) {
-    var method = iface[i]
-    if (!(obj[method]) || (typeof obj[method] !== 'function')) {
-      return false
-    }
-  }
-  return true
-}
 module.exports = util

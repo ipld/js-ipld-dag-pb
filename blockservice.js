@@ -7,42 +7,19 @@ if (util.isBrowser()) {
 // BlockService is a hybrid block datastore. It stores data in a local
 // datastore and may retrieve data from a remote Exchange.
 // It uses an internal `datastore.Datastore` instance to store values.
-var BlockService = function (bs, ex) {
-  var blockstore
-  var exchange // to be implemented
-
-  this.blockstore = function () {
-    if (arguments.length === 0) {
-      return blockstore
-    } else {
-      if (util.isAbstractBlobStore(arguments[0])) {
-        blockstore = arguments[0]
-      }
-      return this
-    }
-  }
-  this.exchange = function () {
-    if (arguments.length === 0) {
-      return exchange
-    } else {
-      if (false) { // when its implemented we will have fucks to give
-        exchange = arguments[0]
-      }
-      return this
-    }
-  }
+var BlockService = function (ipfsRepo, exchange) {
   this.addBlock = function (block, cb) {
     if (!(block instanceof Block)) {
       if (cb && typeof cb === 'function') {
         return cb('Invalid block')
       }
     }
-    blockstore.exists({ key: block.key().toString('hex') }, function (err, exists) {
+    ipfsRepo.datastore.exists({ key: block.key().toString('hex') }, function (err, exists) {
       if (err) { return cb(err) }
       if (exists) {
         return cb()
       } else {
-        var ws = blockstore.createWriteStream({ key: block.key().toString('hex') })
+        var ws = ipfsRepo.datastore.createWriteStream({ key: block.key().toString('hex') })
         ws.write(block.data(), cb)
         ws.end()
       }
@@ -78,13 +55,13 @@ var BlockService = function (bs, ex) {
     if (!key || (typeof key !== 'string')) {
       return cb('Invalid key')
     }
-    blockstore.exists({ key: key }, function (err, exists) {
+    ipfsRepo.datastore.exists({ key: key }, function (err, exists) {
       if (err) {
         return cb(err)
       }
       if (exists) {
         var data = new Buffer(0)
-        var rs = blockstore.createReadStream({key: key})
+        var rs = ipfsRepo.datastore.createReadStream({key: key})
         rs.on('readable', function () {
           var chunk
           while ((chunk = rs.read()) != null) {
@@ -129,12 +106,12 @@ var BlockService = function (bs, ex) {
     if (!key || (typeof key !== 'string')) {
       return cb('Invalid key')
     }
-    blockstore.exists({ key: key }, function (err, exists) {
+    ipfsRepo.datastore.exists({ key: key }, function (err, exists) {
       if (err) {
         return cb(err)
       }
       if (exists) {
-        blockstore.remove({key: key}, cb)
+        ipfsRepo.datastore.remove({key: key}, cb)
       }
     })
   }
@@ -166,8 +143,5 @@ var BlockService = function (bs, ex) {
     }
     this.deleteBlock(key, next)
   }
-
-  this.blockstore(bs)
-  this.exchange(ex)
 }
 module.exports = BlockService
