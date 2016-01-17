@@ -3,7 +3,7 @@ var test = require('tape')
 var Block = require('../src/block')
 var IPFSRepo = require('ipfs-repo')
 
-test('Test blockservice', function (t) {
+test('block-service: \t test blockservice', function (t) {
   var repo = new IPFSRepo(require('./index.js').repoPath)
 
   var blockService = new BlockService(repo)

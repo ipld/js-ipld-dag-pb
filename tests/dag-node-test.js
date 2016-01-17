@@ -2,7 +2,7 @@ var test = require('tape')
 var Link = require('../src/dag-node').Link
 var Node = require('../src/dag-node').Node
 
-test('Link Creation and Assignment', function (t) {
+test('dag-node: \t\t Link Creation and Assignment', function (t) {
   var buf = new Buffer('OMGWTFTHISISWRONG')
   var link = new Link('Joss Whedon', 20, buf)
   t.is(link.name(), 'Joss Whedon', 'Check name assignment')
@@ -11,7 +11,7 @@ test('Link Creation and Assignment', function (t) {
   t.end()
 })
 
-test('Node Creation and Assignment', function (t) {
+test('dag-node: \t\t Node Creation and Assignment', function (t) {
   var buf = new Buffer('Buffy the Vampire Slayer')
   var node = new Node()
   node.data(buf)
@@ -24,7 +24,7 @@ test('Node Creation and Assignment', function (t) {
   t.end()
 })
 
-test('Node Linking', function (t) {
+test('dag-node: \t\t Node Linking', function (t) {
   var buf1 = new Buffer('Buffy the Vampire Slayer')
   var buf2 = new Buffer('Serenity')
   var node1 = new Node()
