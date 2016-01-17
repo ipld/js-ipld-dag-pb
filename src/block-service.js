@@ -14,13 +14,14 @@ var BlockService = function (ipfsRepo, exchange) {
         return cb('Invalid block')
       }
     }
-    ipfsRepo.datastore.exists({ key: block.key().toString('hex') }, function (err, exists) {
+
+    ipfsRepo.datastore.exists({ key: block.key.toString('hex') }, function (err, exists) {
       if (err) { return cb(err) }
       if (exists) {
         return cb()
       } else {
-        var ws = ipfsRepo.datastore.createWriteStream({ key: block.key().toString('hex') })
-        ws.write(block.data(), cb)
+        var ws = ipfsRepo.datastore.createWriteStream({ key: block.key.toString('hex') })
+        ws.write(block.data, cb)
         ws.end()
       }
     })

@@ -85,7 +85,7 @@ function DAGService (bs) {
         return cb(err)
       }
       var node = new Node()
-      node.data(block.data())
+      node.data(block.data)
       return cb(null, node)
     })
   }

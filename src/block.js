@@ -1,22 +1,17 @@
 var util = require('./util')
-if (util.isBrowser()) {
-  window.Buffer = require('buffer/').Buffer
-}
 
 // Immutable block of data
-var Block = function (data) {
-  if (!data) { return null }
 
-  var buf = new Buffer(data)
-  var multihash = util.hash(buf)
-
-  this.key = function () {
-    return multihash
+function Block (data) {
+  if (!data) {
+    throw new Error('Block must be constructed with data')
   }
 
-  this.data = function () {
-    return buf
+  if (!(this instanceof Block)) {
+    return new Block(data)
   }
-  return this
+
+  this.data = new Buffer(data)
+  this.key = util.hash(this.data)
 }
 module.exports = Block

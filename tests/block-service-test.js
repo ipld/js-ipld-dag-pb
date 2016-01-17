@@ -13,16 +13,16 @@ test('block-service: \t test blockservice', function (t) {
   var block3 = new Block('A different useless test block')
   var block4 = new Block('An enterprising test block with dreams')
   var blocks = [block2, block3, block4]
-  var keys = [block2.key().toString('hex'), block3.key().toString('hex'), block4.key().toString('hex')]
+  var keys = [block2.key.toString('hex'), block3.key.toString('hex'), block4.key.toString('hex')]
 
   var addOneCb = function (err) {
     t.is(!err, true, 'Add a block wihout error')
-    blockService.getBlock(block1.key().toString('hex'), getOneCb)
+    blockService.getBlock(block1.key.toString('hex'), getOneCb)
   }
   var getOneCb = function (err, obj) {
     t.is(!err, true, 'Get a block without error')
     t.is(obj instanceof Block, true, 'Is it really a block?')
-    t.is(obj.key().equals(block1.key()), true, 'Is it really the same block?')
+    t.is(obj.key.equals(block1.key), true, 'Is it really the same block?')
     blockService.addBlocks(blocks, addManyCb)
   }
   var addManyCb = function (err) {
@@ -37,15 +37,15 @@ test('block-service: \t test blockservice', function (t) {
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i]
       found = obj.find(function (block) {
-        return key === block.key().toString('hex')
+        return key === block.key.toString('hex')
       })
       t.is(!!found, true, 'Found correct key in the response')
     }
-    blockService.deleteBlock(block1.key().toString('hex'), deleteOneCb)
+    blockService.deleteBlock(block1.key.toString('hex'), deleteOneCb)
   }
   var deleteOneCb = function (err, exist) {
     t.is(!!err, false, 'Failed to delete block?')
-    repo.datastore.exists(block1.key().toString('hex'), function (err, exists) {
+    repo.datastore.exists(block1.key.toString('hex'), function (err, exists) {
       t.ifErr(err, 'Failed to check if block exists')
       t.is(exists, false, 'Block was deleted')
       blockService.deleteBlocks(keys, deleteManyCb)
