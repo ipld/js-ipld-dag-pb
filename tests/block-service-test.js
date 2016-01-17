@@ -1,6 +1,6 @@
-var BlockService = require('../blockservice')
+var BlockService = require('../src/block-service')
 var test = require('tape')
-var Block = require('../block')
+var Block = require('../src/block')
 var IPFSRepo = require('ipfs-repo')
 
 test('Test blockservice', function (t) {

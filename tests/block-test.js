@@ -1,5 +1,5 @@
 var test = require('tape')
-var Block = require('../block')
+var Block = require('../src/block')
 var bufeq = require('buffer-equal')
 
 test('Test block mutabiltiy', function (t) {

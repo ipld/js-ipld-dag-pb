@@ -18,9 +18,9 @@ function setUp (next) {
 }
 
 function tests () {
-  require('./node-test.js')
+  require('./dag-node-test.js')
   require('./block-test.js')
-  require('./blockservice-test.js')
+  require('./block-service-test.js')
   test.onFinish(tearDown)
 }
 

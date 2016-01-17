@@ -1,5 +1,5 @@
-var BlockService = require('./blockservice')
-var Node = require('./node')
+var BlockService = require('./block-service')
+var Node = require('./dag-node')
 var Block = require('./block')
 
 exports = module.exports = DAGService

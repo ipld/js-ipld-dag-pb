@@ -6,9 +6,11 @@ var util = require('./util')
 var protobuf = require('protocol-buffers')
 var merkledagproto = 'message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}'
 var merklepb = protobuf(merkledagproto)
+
 if (util.isBrowser()) {
   window.Buffer = require('buffer/').Buffer
 }
+
 var Node = function () {
   var links = []
   var data

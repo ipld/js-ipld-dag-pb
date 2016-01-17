@@ -1,6 +1,6 @@
 var test = require('tape')
-var Link = require('../node').Link
-var Node = require('../node').Node
+var Link = require('../src/dag-node').Link
+var Node = require('../src/dag-node').Node
 
 test('Link Creation and Assignment', function (t) {
   var buf = new Buffer('OMGWTFTHISISWRONG')
