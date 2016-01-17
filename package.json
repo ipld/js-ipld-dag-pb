@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "async": "^1.5.2",
-    "buffer-equal": "^1.0.0",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
     "rimraf": "^2.5.0",

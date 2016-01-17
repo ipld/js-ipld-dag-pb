@@ -27,6 +27,7 @@ IPFS Merkle DAG JavaScript Implementation
 **BlockService** - The BlockService uses IPFS Repo as the local datastore for blocks and an IPFS Exchange compliant implementation to fetch blocks from the network.
 
 A DAGNode and a Block are data structures made available by this module.
+
 ## Usage
 
 ```bash
