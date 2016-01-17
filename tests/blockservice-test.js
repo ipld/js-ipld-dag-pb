@@ -45,10 +45,9 @@ test('Test blockservice', function (t) {
   }
   var deleteOneCb = function (err, exist) {
     t.is(!!err, false, 'Failed to delete block?')
-    datastore.exists(block1.key().toString('hex'), function (err, obj) {
-      t.is(!!err, true, 'Failed to check if block exists')
-      console.log(exist)
-      t.is(exist, false, 'Block was deleted')
+    datastore.exists(block1.key().toString('hex'), function (err, exists) {
+      t.ifErr(err, 'Failed to check if block exists')
+      t.is(exists, false, 'Block was deleted')
       blockService.deleteBlocks(keys, deleteManyCb)
     })
   }

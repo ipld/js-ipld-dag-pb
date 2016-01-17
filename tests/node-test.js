@@ -10,6 +10,7 @@ test('Link Creation and Assignment', function (t) {
   t.is(link.hash().equals(buf), true, 'Check hash assignment')
   t.end()
 })
+
 test('Node Creation and Assignment', function (t) {
   var buf = new Buffer('Buffy the Vampire Slayer')
   var node = new Node()
@@ -22,6 +23,7 @@ test('Node Creation and Assignment', function (t) {
   t.is(premarshal.equals(postunmarshal), true, 'Check both marshalled and unmarshalled protobuf return the same data')
   t.end()
 })
+
 test('Node Linking', function (t) {
   var buf1 = new Buffer('Buffy the Vampire Slayer')
   var buf2 = new Buffer('Serenity')
