@@ -4,7 +4,8 @@
   "description": "A JavaScript implementations of the IPFS MerkleDAG implementations (protobufs)",
   "main": "./node.js",
   "scripts": {
-    "test": "node tests/index.js"
+    "test": "node tests/index.js",
+    "lint": "standard"
   },
   "pre-commit": [
     "lint",

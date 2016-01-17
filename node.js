@@ -72,13 +72,13 @@ var Node = function () {
   this.removeNodeLink = function (name) {
     encoded = null
     var good = []
-    var found
+    // var found
     for (var i = 0; i < links.length; i++) {
       var link = links[i]
       if (!link.name() === name) {
         good.push(link)
       } else {
-        found = true
+        // found = true
       }
     }
     links = good
@@ -177,7 +177,7 @@ var Node = function () {
   // Decode from a Protobuf
   this.unMarshal = function (data) {
     var pbn = merklepb.PBNode.decode(data)
-    for (link in pbn.Links) {
+    for (var link in pbn.Links) {
       var lnk = new Link(link.Name, link.Tsize, link.Hash)
       links.push(lnk)
     }
