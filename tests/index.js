@@ -7,7 +7,7 @@ exports = module.exports
 function setUp (next) {
   const testRepoPath = __dirname + '/example-repo'
   const date = Date.now().toString()
-  const repoPath = testRepoPath + date
+  const repoPath = __dirname + 'repo-just-for-test' + date
   exports.repoPath = repoPath
 
   ncp(testRepoPath, repoPath, err => {
