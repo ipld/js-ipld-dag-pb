@@ -35,42 +35,6 @@ function DAGService (bs) {
     return blocks.addBlock(block, cb)
   }
 
-  // Deprecation Notice: This method is a leftovers from the early versions of IPFS and is not used anymore
-  //
-  // this.addRecursive = function (node, cb) {
-  //  this.add(node, function (err) {
-  //    if (err) {
-  //      return cb(err)
-  //    }
-  //    var links = node.Links()
-  //    var i = 0
-  //    var link
-  //    var self = this
-  //    var next = function (err) {
-  //      if (err) {
-  //        return cb(err)
-  //      }
-  //      i++
-  //      if (i < links.length) {
-  //        link = links[i]
-  //        if (link.Node()) {
-  //          return self.addRecursive(link.Node(), next)
-  //        }
-  //      } else {
-  //        return cb()
-  //      }
-  //    }
-  //    if (i < links.length) {
-  //      link = links[i]
-  //      if (link.Node()) {
-  //        return self.addRecursive(link.Node(), next)
-  //      }
-  //    } else {
-  //      return cb()
-  //    }
-  //  })
-  // }
-
   this.get = function (key, cb) {
     if (!key) {
       return cb('Invalid Key')
@@ -85,10 +49,53 @@ function DAGService (bs) {
         return cb(err)
       }
       var node = new Node()
-      node.data(block.data)
+      node.unMarshal(block.data)
       return cb(null, node)
     })
   }
+
+  this.getRecursive = function (key, cb, linkStack, nodeStack) {
+     this.get(key, function(err, node){
+       if(err){
+         cb(err)
+       }
+       if(!linkStack){
+         linkStack=[]
+       }
+       if(!nodeStack){
+         linkStack=[]
+       }
+       nodeStack.push(node)
+       var keys= []
+       for(link in node.links){
+         keys.push(link.hash.toString('hex'))
+       }
+       linkStack= linkStack.concat(keys)
+
+       var next= linkStack.pop()
+       if (next){
+         this.getRecursive(next, cb, linkStack, nodeStack)
+       } else {
+         for(var i; i < nodeStack.length; i++){
+           var current= nodesStack[i]
+           for(var j; j < current.links.length; j++){
+             var link= current.links[j]
+             var index = nodeStack.findIndex(function(node){
+                 return node.key()== link.hash
+             })
+             if(index != -1){
+               link.node=nodeStack[index];
+             }
+           }
+         }
+         return cb(null, nodeStack[0])
+
+       }
+
+     })
+  }
+
+
 
   // this diverges from go-ipfs this is a non recursive remove function
   this.remove = function (node, cb) {
@@ -108,37 +115,6 @@ function DAGService (bs) {
     var block = new Block(data)
     return blocks.remove(block, cb)
   }
-
-  // Deprecation Notice: This method is a leftovers from the early versions of IPFS and is not used anymore
-  //
-  // this.removeRecursive = function (node, cb) {
-  //   var links = node.Links()
-  //   var i = 0
-  //   var link
-  //   var self = this
-  //   var next = function (err) {
-  //     if (err) {
-  //       return cb(err)
-  //     }
-  //     i++
-  //     if (i < links.length) {
-  //       link = links[i]
-  //       if (link.Node()) {
-  //         return self.removeRecursive(link.Node(), next)
-  //       }
-  //     } else {
-  //       return self.remove(node, cb)
-  //     }
-  //   }
-  //   if (i < links.length) {
-  //     link = links[i]
-  //     if (link.Node()) {
-  //       return self.removeRecursive(link.Node(), next)
-  //     }
-  //   } else {
-  //     return self.remove(node, cb)
-  //   }
-  // }
 
   this.Blocks(bs)
 }

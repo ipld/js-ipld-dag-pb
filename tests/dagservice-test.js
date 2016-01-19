@@ -1,10 +1,8 @@
-var BlockService = require('../blockservice')
+var BlockService = require('../src').BlockService
+var DAGService= require('../src').DAGService
+var Node = require('../src').Node
 var test = require('tape')
-var Block = require('../block')
 var fs = require('fs-blob-store')
-var util = require('../util')
-var DAGService= require('../merkledag')
-var Node = require('../node').Node
 
 
 test('Test blockservice', function (t) {
@@ -33,7 +31,7 @@ test('Test blockservice', function (t) {
   var node8= new Node()
   var node9= new Node()
   var node10= new Node()
-
+  var nodes =[node2, node3, node4, node5, node6, node7, node8, node9, node10]
   node1.data(buf1)
   node2.data(buf2)
   node3.data(buf3)
@@ -54,14 +52,33 @@ test('Test blockservice', function (t) {
   node6.addNodeLink("8", node9)
   node9.addNodeLink("9", node10)
 
-  console.log("node 1" + node1.key().toString('hex'))
   var addOne= function(err){
     t.is(!err, true, 'Add one node without error')
-    dagService.addRecursive(node1,addTenRecursive)
+    var i =0
+    var current
+    var next= function(err){
+      t.is(!err, true, 'Add ' + (i+1) + ' nodes without error')
+      i++
+      if(i < nodes.length){
+        current= nodes[i]
+        dagService.add(current, next)
+      }else{
+        //dagService.addRecursive(node1,addNineRecursive)
+      }
+
+    }
+    if(i < nodes.length){
+      current= nodes[i]
+      dagService.add(current, next)
+    }else{
+      //dagService.addRecursive(node1,addNineRecursive)
+    }
+
   }
-  var addTenRecursive= function(err){
+  var addNineRecursive= function(err){
     t.is(!err, true, 'Add ten nodes without error')
+
   }
-  dagService.add(node10, addOne)
+  dagService.add(node1, addOne)
   t.end()
 });
