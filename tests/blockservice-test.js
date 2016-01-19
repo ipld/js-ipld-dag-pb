@@ -16,7 +16,7 @@ test('Test blockservice', function (t) {
   var keys = [block2.key().toString('hex'), block3.key().toString('hex'), block4.key().toString('hex')]
 
   var addOneCb = function (err) {
-    t.is(!err, true, 'Add a block wihout error')
+    t.is(!err, true, 'Add a block without error')
     blockService.getBlock(block1.key().toString('hex'), getOneCb)
   }
   var getOneCb = function (err, obj) {
@@ -45,17 +45,17 @@ test('Test blockservice', function (t) {
   }
   var deleteOneCb = function (err, exist) {
     t.is(!!err, false, 'Failed to delete block?')
-    datastore.exists(block1.key().toString('hex'), function (err, obj) {
-      t.is(!!err, true, 'Failed to check if block exists')
-      console.log(exist)
-      t.is(exist, false, 'Block was deleted')
+    datastore.exists(block1.key().toString('hex'), function (err,exists) {
+      t.is(!!err, false, 'Failed to check if block exists')
+      t.is(exists, false, 'Block was deleted')
       blockService.deleteBlocks(keys, deleteManyCb)
     })
   }
   var deleteManyCb = function (err, obj) {
     t.is(!!err, false, 'Failed to delete blocks?')
+    t.end()
   }
 
   blockService.addBlock(block1, addOneCb)
-  t.end()
+
 })

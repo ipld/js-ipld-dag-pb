@@ -25,7 +25,7 @@ var BlockService = function (bs, ex) {
     if (arguments.length === 0) {
       return exchange
     } else {
-      if (false) { // when its implemented we will have fucks to give
+      if (false) {
         exchange = arguments[0]
       }
       return this
