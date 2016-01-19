@@ -3,61 +3,86 @@ var Block = require('../src').Block
 var BlockService = require('../src').BlockService
 
 var IPFSRepo = require('ipfs-repo')
+var bs
 
-test('block-service: \t test blockservice', function (t) {
+test('block-service: \t create a block-service', function (t) {
   var repo = new IPFSRepo(require('./index.js').repoPath)
-
-  var blockService = new BlockService(repo)
-
-  var block1 = new Block('You can\'t change me,  Baby I was born this way!')
-  var block2 = new Block('Another useless test block')
-  var block3 = new Block('A different useless test block')
-  var block4 = new Block('An enterprising test block with dreams')
-  var blocks = [block2, block3, block4]
-  var keys = [block2.key.toString('hex'), block3.key.toString('hex'), block4.key.toString('hex')]
-
-  function addOneCb (err) {
-    t.ifError(err, 'Add a block wihout error')
-    blockService.getBlock(block1.key.toString('hex'), getOneCb)
-  }
-
-  function getOneCb (err, obj) {
-    t.ifError(err, 'Get a block without error')
-    t.is(obj instanceof Block, true, 'Is it really a block?')
-    t.is(obj.key.equals(block1.key), true, 'Is it really the same block?')
-    blockService.addBlocks(blocks, addManyCb)
-  }
-  var addManyCb = function (err) {
-    t.ifError(err, 'Added many blocks without error')
-    blockService.getBlocks(keys, getManyCb)
-  }
-  var getManyCb = function (err, obj) {
-    t.ifError(err, 'Got many blocks without error')
-    t.is(Array.isArray(obj), true, 'Is it really an array?')
-    t.equal(keys.length, obj.length, 'Is it the amount we expect?')
-    var found
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i]
-      found = obj.find(function (block) {
-        return key === block.key.toString('hex')
-      })
-      t.ok(found, 'Found correct key in the response')
-    }
-    blockService.deleteBlock(block1.key.toString('hex'), deleteOneCb)
-  }
-  var deleteOneCb = function (err, exist) {
-    t.ifError(err, 'Failed to delete block?')
-    repo.datastore.exists(block1.key.toString('hex'), function (err, exists) {
-      t.ifErr(err, 'Failed to check if block exists')
-      t.is(exists, false, 'Block was deleted')
-      blockService.deleteBlocks(keys, deleteManyCb)
-    })
-  }
-  var deleteManyCb = function (err, obj) {
-    t.ifError(err, 'Failed to delete blocks?')
-  }
-
-  blockService.addBlock(block1, addOneCb)
-
+  bs = new BlockService(repo)
+  t.ok(bs, 'block service successfully created')
   t.end()
+})
+
+test('block-service: \t store a block', function (t) {
+  var b = new Block('A random data block')
+  bs.addBlock(b, function (err) {
+    t.ifError(err)
+    bs.getBlock(b.key, function (err, block) {
+      t.ifError(err)
+      t.ok(b.data.equals(block.data), 'Stored block data correctly')
+      t.ok(b.key.equals(block.key), 'Stored block key correctly')
+      t.end()
+    })
+  })
+})
+
+test('block-service: \t get a non existent block', function (t) {
+  var b = new Block('Not stored')
+  bs.getBlock(b.key, function (err, block) {
+    t.ifError(!err)
+    t.end()
+  })
+})
+
+test('block-service: \t store many blocks', function (t) {
+  var b1 = new Block('1')
+  var b2 = new Block('2')
+  var b3 = new Block('3')
+
+  var blocks = []
+  blocks.push(b1)
+  blocks.push(b2)
+  blocks.push(b3)
+
+  bs.addBlocks(blocks, function (err) {
+    t.ifError(err, 'stored successfully')
+    t.end()
+  })
+})
+
+test('block-service: \t delete a block', function (t) {
+  var b = new Block('Will not live that much')
+  bs.addBlock(b, function (err) {
+    t.ifError(err)
+    bs.deleteBlock(b.key, function (err) {
+      t.ifError(err)
+      bs.getBlock(b.key, function (err, block) {
+        t.ifError(!err)
+        t.end()
+      })
+    })
+  })
+})
+
+test('block-service: \t delete a non existent block', function (t) {
+  var b = new Block('I do not exist')
+  bs.deleteBlock(b.key, function (err) {
+    t.ifError(err)
+    t.end()
+  })
+})
+
+test('block-service: \t delete many blocks', function (t) {
+  var b1 = new Block('1')
+  var b2 = new Block('2')
+  var b3 = new Block('3')
+
+  var blocks = []
+  blocks.push(b1.key)
+  blocks.push(b2.key)
+  blocks.push(b3.key)
+
+  bs.deleteBlocks(blocks, function (err) {
+    t.ifError(err, 'stored successfully')
+    t.end()
+  })
 })
