@@ -1,5 +1,5 @@
 {
-  "name": "ipfs-merkle-dag",
+  "name": "js-ipfs-merkle-dag",
   "version": "0.0.1",
   "description": "A JavaScript implementations of the IPFS MerkleDAG implementations (protobufs)",
   "main": "./src/index.js",

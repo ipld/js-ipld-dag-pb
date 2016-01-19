@@ -50,3 +50,6 @@ ipfsMDAG.Block
 #### DAGService
 
 #### BlockService
+
+##License
+[License](LICENSE.md)
