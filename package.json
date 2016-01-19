@@ -2,28 +2,36 @@
   "name": "ipfs-merkle-dag",
   "version": "0.0.1",
   "description": "A JavaScript implementations of the IPFS MerkleDAG implementations (protobufs)",
-  "main": "./node.js",
+  "main": "./src/index.js",
   "scripts": {
-    "test": "node tests/*-test.js"
+    "test": "node tests/index.js",
+    "lint": "standard"
   },
   "pre-commit": [
     "lint",
     "test"
   ],
   "author": "Vijayee Kulkaa <vijayee.kulkaa@hushmail.com>",
+  "contributors": [
+    "David Dias <daviddias@ipfs.io>"
+  ],
   "license": "ISC",
   "dependencies": {
+    "bl": "^1.0.0",
     "buffer": "^4.2.0",
     "datastore.abstract": "0.0.1",
     "datastore.memory": "0.0.0",
     "extend": "^3.0.0",
     "fs-blob-store": "^5.2.1",
+    "ipfs-repo": "^0.3.0",
     "multihashing": "^0.2.0",
     "protocol-buffers": "^3.1.4"
   },
   "devDependencies": {
-    "buffer-equal": "^1.0.0",
+    "async": "^1.5.2",
+    "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
+    "rimraf": "^2.5.0",
     "standard": "^5.4.1",
     "tape": "^4.4.0"
   }
