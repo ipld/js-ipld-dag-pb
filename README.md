@@ -35,7 +35,7 @@ $ npm i ipfs-merkle-dag
 ```
 
 ```javascript
-const ipfsMDAG = require('ipfs-merkle-dag)
+const ipfsMDAG = require('ipfs-merkle-dag')
 
 // then, to access each of the components
 ipfsMDAG.DAGService
