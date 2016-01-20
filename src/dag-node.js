@@ -11,7 +11,7 @@ var Node = function (data, links) {
 
   // sort links by their name field
   function linkSort (a, b) {
-    return a.name().localeCompare(b.name())
+    return a.name.localeCompare(b.name)
   }
 
   // Getter/Setter chain for Data
@@ -155,9 +155,11 @@ var Node = function (data, links) {
   // Decode from a Protobuf
   this.unMarshal = (data) => {
     var pbn = mdagpb.PBNode.decode(data)
-    for (var link in pbn.Links) {
+    this.links=[]
+    for (var i = 0; i < pbn.Links.length; i++) {
+      var link= pbn.Links[i]
       var lnk = new Link(link.Name, link.Tsize, link.Hash)
-      links.push(lnk)
+      this.links.push(lnk)
     }
     this.links.sort(linkSort)
     data = pbn.Data
@@ -167,6 +169,13 @@ var Node = function (data, links) {
   // Helper method to get a protobuf object equivalent
   this.getPBNode = () => {
     var pbn = {}
+
+    if (this.data && this.data.length > 0) {
+      pbn.Data = this.data
+    } else {
+      pbn.Data = new Buffer()
+    }
+
     pbn.Links = []
 
     for (var i = 0; i < this.links.length; i++) {
@@ -178,11 +187,7 @@ var Node = function (data, links) {
       })
     }
 
-    if (this.data && this.data.length > 0) {
-      pbn.Data = this.data
-    } else {
-      pbn.Data = new Buffer()
-    }
+
     return pbn
   }
 }
