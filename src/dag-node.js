@@ -162,7 +162,7 @@ var Node = function (data, links) {
       this.links.push(lnk)
     }
     this.links.sort(linkSort)
-    data = pbn.Data
+    this.data = pbn.Data
     return this
   }
 
@@ -173,7 +173,7 @@ var Node = function (data, links) {
     if (this.data && this.data.length > 0) {
       pbn.Data = this.data
     } else {
-      pbn.Data = new Buffer()
+      pbn.Data = new Buffer(0)
     }
 
     pbn.Links = []

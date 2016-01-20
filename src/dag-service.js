@@ -1,5 +1,5 @@
 var BlockService = require('./block-service')
-var Node = require('./dag-node')
+var Node = require('./dag-node').Node
 var Block = require('./block')
 
 exports = module.exports = DAGService
@@ -24,7 +24,7 @@ function DAGService (bs) {
     if (!blocks) {
       return cb('Blockservice is invalid')
     }
-    var data = node.Encoded()
+    var data = node.encoded()
 
     if (!data) {
       return 'Node is unencoded'
@@ -53,8 +53,9 @@ function DAGService (bs) {
       return cb(null, node)
     })
   }
-
+  //Fetches all nodes in a graph then sets the node property of each link to its correct node
   this.getRecursive = function (key, cb, linkStack, nodeStack) {
+    var self= this
      this.get(key, function(err, node){
        if(err){
          cb(err)
@@ -63,18 +64,21 @@ function DAGService (bs) {
          linkStack=[]
        }
        if(!nodeStack){
-         linkStack=[]
+         nodeStack=[]
        }
        nodeStack.push(node)
        var keys= []
-       for(link in node.links){
+       for(var i= 0; i< node.links.length; i++){
+         var link= node.links[i]
          keys.push(link.hash.toString('hex'))
        }
        linkStack= linkStack.concat(keys)
 
        var next= linkStack.pop()
+
        if (next){
-         this.getRecursive(next, cb, linkStack, nodeStack)
+         console.log("next:" + next)
+         self.getRecursive(next, cb, linkStack, nodeStack)
        } else {
          for(var i; i < nodeStack.length; i++){
            var current= nodesStack[i]
@@ -116,5 +120,5 @@ function DAGService (bs) {
     return blocks.remove(block, cb)
   }
 
-  this.Blocks(bs)
+  this.blocks(bs)
 }
