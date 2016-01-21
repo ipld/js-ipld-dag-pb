@@ -1,15 +1,17 @@
 var Block = require('./block')
 
-var Batch= function(ds,max){
-  if(!ds){
+exports = module.exports = Batch
+
+function Batch (ds, max) {
+  if (!ds) {
     throw Error('Invalid DAG Service')
   }
-  this.dagService= ds
-  this.blocks=[]
+  this.dagService = ds
+  this.blocks = []
   this.size = 0
   this.maxSize = max || 0
 
-  this.add= (node, cb)=>{
+  this.add = (node, cb) => {
     if (!node) {
       return cb('Node is invalid')
     }
@@ -24,20 +26,20 @@ var Batch= function(ds,max){
     this.size += data.length
     var block = new Block(data)
     this.blocks.push(block)
-    if(this.size > this.maxSize){
+    if (this.size > this.maxSize) {
       this.commit(cb, block.key)
     } else {
       cb(null, block.key)
     }
   }
-  this.commit=(cb,key)=>{
-    self= this
-    this.dagService.blocks.addBlocks(this.blocks, function(err){
-      if(err){
+  this.commit = (cb, key) => {
+    var self = this
+    this.dagService.blocks.addBlocks(this.blocks, function (err) {
+      if (err) {
         return cb(err)
       }
-      self.blocks=[]
-      self.size=0
+      self.blocks = []
+      self.size = 0
       cb(null, key)
     })
   }

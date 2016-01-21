@@ -5,20 +5,21 @@ var schema = 'message PBLink {optional bytes Hash = 1; optional string Name = 2;
 
 var mdagpb = protobuf(schema)
 
-var Node = function (data, links) {
+exports = module.exports = {
+  DAGLink: DAGLink,
+  DAGNode: DAGNode
+}
+
+function DAGNode (data, links) {
   var cached
   var encoded
 
-  // sort links by their name field
+  this.data = data
+  this.links = links || []
+
   function linkSort (a, b) {
     return a.name.localeCompare(b.name)
   }
-
-  // Getter/Setter chain for Data
-  this.data = data
-
-  // Getter/Setter chain for Links
-  this.links = links || []
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
   // that. If a link of the same name existed, it is removed.
@@ -35,7 +36,7 @@ var Node = function (data, links) {
     if (this.data && this.data.length > 0) {
       var buf = new Buffer(this.data.length)
       this.data.copy(buf)
-      var node = new Node()
+      var node = new DAGNode()
       node.data(buf)
       node.links(links.slice())
       return node
@@ -65,7 +66,7 @@ var Node = function (data, links) {
     if (!(size && mh)) {
       return null
     }
-    return new Link(null, size, mh)
+    return new DAGLink(null, size, mh)
   }
 
   // AddNodeLink adds a link to another node.
@@ -90,7 +91,7 @@ var Node = function (data, links) {
       return
     }
     encoded = null
-    this.links.push(new Link(link.name, link.size, link.hash, link.node))
+    this.links.push(new DAGLink(link.name, link.size, link.hash, link.node))
   }
 
   // AddNodeLinkClean adds a link to another node. without keeping a reference to
@@ -155,10 +156,10 @@ var Node = function (data, links) {
   // Decode from a Protobuf
   this.unMarshal = (data) => {
     var pbn = mdagpb.PBNode.decode(data)
-    this.links=[]
+    this.links = []
     for (var i = 0; i < pbn.Links.length; i++) {
-      var link= pbn.Links[i]
-      var lnk = new Link(link.Name, link.Tsize, link.Hash)
+      var link = pbn.Links[i]
+      var lnk = new DAGLink(link.Name, link.Tsize, link.Hash)
       this.links.push(lnk)
     }
     this.links.sort(linkSort)
@@ -187,20 +188,14 @@ var Node = function (data, links) {
       })
     }
 
-
     return pbn
   }
 }
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
-var Link = function (linkName, linkSize, linkHash, linkNode) {
+function DAGLink (linkName, linkSize, linkHash, linkNode) {
   this.name = linkName
   this.size = linkSize
   this.hash = linkHash
   this.node = linkNode
-}
-
-exports = module.exports = {
-  Link: Link,
-  Node: Node
 }

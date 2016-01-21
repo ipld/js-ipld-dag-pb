@@ -53,53 +53,49 @@ function DAGService (bs) {
       return cb(null, node)
     })
   }
-  //Fetches all nodes in a graph then sets the node property of each link to its correct node
+  // Fetches all nodes in a graph then sets the node property of each link to its correct node
   this.getRecursive = function (key, cb, linkStack, nodeStack) {
-    var self= this
-     this.get(key, function(err, node){
-       if(err){
-         cb(err)
-       }
-       if(!linkStack){
-         linkStack=[]
-       }
-       if(!nodeStack){
-         nodeStack=[]
-       }
-       nodeStack.push(node)
-       var keys= []
-       for(var i= 0; i< node.links.length; i++){
-         var link= node.links[i]
-         keys.push(link.hash.toString('hex'))
-       }
-       linkStack= linkStack.concat(keys)
+    var self = this
+    this.get(key, function (err, node) {
+      if (err) {
+        cb(err)
+      }
+      if (!linkStack) {
+        linkStack = []
+      }
+      if (!nodeStack) {
+        nodeStack = []
+      }
+      nodeStack.push(node)
+      var keys = []
+      for (var i = 0; i < node.links.length; i++) {
+        var link = node.links[i]
+        keys.push(link.hash.toString('hex'))
+      }
+      linkStack = linkStack.concat(keys)
 
-       var next= linkStack.pop()
+      var next = linkStack.pop()
 
-       if (next){
-         console.log("next:" + next)
-         self.getRecursive(next, cb, linkStack, nodeStack)
-       } else {
-         for(var i; i < nodeStack.length; i++){
-           var current= nodesStack[i]
-           for(var j; j < current.links.length; j++){
-             var link= current.links[j]
-             var index = nodeStack.findIndex(function(node){
-                 return node.key()== link.hash
-             })
-             if(index != -1){
-               link.node=nodeStack[index];
-             }
-           }
-         }
-         return cb(null, nodeStack[0])
-
-       }
-
-     })
+      if (next) {
+        console.log('next:' + next)
+        self.getRecursive(next, cb, linkStack, nodeStack)
+      } else {
+        for (var k; k < nodeStack.length; k++) {
+          var current = nodeStack[k]
+          for (var j; j < current.links.length; j++) {
+            link = current.links[j]
+            var index = nodeStack.findIndex(function (node) {
+              return node.key() === link.hash
+            })
+            if (index !== -1) {
+              link.node = nodeStack[index]
+            }
+          }
+        }
+        return cb(null, nodeStack[0])
+      }
+    })
   }
-
-
 
   // this diverges from go-ipfs this is a non recursive remove function
   this.remove = function (node, cb) {
