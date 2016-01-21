@@ -1,5 +1,5 @@
 var BlockService = require('./block-service')
-var Node = require('./dag-node')
+var Node = require('./dag-node').Node
 var Block = require('./block')
 
 exports = module.exports = DAGService
@@ -24,7 +24,7 @@ function DAGService (bs) {
     if (!blocks) {
       return cb('Blockservice is invalid')
     }
-    var data = node.Encoded()
+    var data = node.encoded()
 
     if (!data) {
       return 'Node is unencoded'
@@ -34,42 +34,6 @@ function DAGService (bs) {
 
     return blocks.addBlock(block, cb)
   }
-
-  // Deprecation Notice: This method is a leftovers from the early versions of IPFS and is not used anymore
-  //
-  // this.addRecursive = function (node, cb) {
-  //  this.add(node, function (err) {
-  //    if (err) {
-  //      return cb(err)
-  //    }
-  //    var links = node.Links()
-  //    var i = 0
-  //    var link
-  //    var self = this
-  //    var next = function (err) {
-  //      if (err) {
-  //        return cb(err)
-  //      }
-  //      i++
-  //      if (i < links.length) {
-  //        link = links[i]
-  //        if (link.Node()) {
-  //          return self.addRecursive(link.Node(), next)
-  //        }
-  //      } else {
-  //        return cb()
-  //      }
-  //    }
-  //    if (i < links.length) {
-  //      link = links[i]
-  //      if (link.Node()) {
-  //        return self.addRecursive(link.Node(), next)
-  //      }
-  //    } else {
-  //      return cb()
-  //    }
-  //  })
-  // }
 
   this.get = function (key, cb) {
     if (!key) {
@@ -85,8 +49,51 @@ function DAGService (bs) {
         return cb(err)
       }
       var node = new Node()
-      node.data(block.data)
+      node.unMarshal(block.data)
       return cb(null, node)
+    })
+  }
+  // Fetches all nodes in a graph then sets the node property of each link to its correct node
+  this.getRecursive = function (key, cb, linkStack, nodeStack) {
+    var self = this
+    this.get(key, function (err, node) {
+      if (err) {
+        cb(err)
+      }
+      if (!linkStack) {
+        linkStack = []
+      }
+      if (!nodeStack) {
+        nodeStack = []
+      }
+      nodeStack.push(node)
+      var keys = []
+      for (var i = 0; i < node.links.length; i++) {
+        var link = node.links[i]
+        keys.push(link.hash.toString('hex'))
+      }
+      linkStack = linkStack.concat(keys)
+
+      var next = linkStack.pop()
+
+      if (next) {
+        console.log('next:' + next)
+        self.getRecursive(next, cb, linkStack, nodeStack)
+      } else {
+        for (var k; k < nodeStack.length; k++) {
+          var current = nodeStack[k]
+          for (var j; j < current.links.length; j++) {
+            link = current.links[j]
+            var index = nodeStack.findIndex(function (node) {
+              return node.key() === link.hash
+            })
+            if (index !== -1) {
+              link.node = nodeStack[index]
+            }
+          }
+        }
+        return cb(null, nodeStack[0])
+      }
     })
   }
 
@@ -109,36 +116,5 @@ function DAGService (bs) {
     return blocks.remove(block, cb)
   }
 
-  // Deprecation Notice: This method is a leftovers from the early versions of IPFS and is not used anymore
-  //
-  // this.removeRecursive = function (node, cb) {
-  //   var links = node.Links()
-  //   var i = 0
-  //   var link
-  //   var self = this
-  //   var next = function (err) {
-  //     if (err) {
-  //       return cb(err)
-  //     }
-  //     i++
-  //     if (i < links.length) {
-  //       link = links[i]
-  //       if (link.Node()) {
-  //         return self.removeRecursive(link.Node(), next)
-  //       }
-  //     } else {
-  //       return self.remove(node, cb)
-  //     }
-  //   }
-  //   if (i < links.length) {
-  //     link = links[i]
-  //     if (link.Node()) {
-  //       return self.removeRecursive(link.Node(), next)
-  //     }
-  //   } else {
-  //     return self.remove(node, cb)
-  //   }
-  // }
-
-  this.Blocks(bs)
+  this.blocks(bs)
 }

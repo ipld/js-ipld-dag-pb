@@ -7,12 +7,11 @@ test('dag-node: \t\t create a node', function (t) {
   t.ok(dagN.data.length > 0, 'node has data')
   t.ok(Buffer.isBuffer(dagN.data), 'data type of node is zero')
   t.ok(dagN.size() > 0, 'node size is bigger than zero')
-  t.equal(dagN.data, dagN.unMarshal(dagN.marshal()).data, 'marshal and unmarshal is ok')
+  t.ok(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data), 'marshal and unmarshal is ok')
   t.end()
 })
 
 test('dag-node: \t\t create a link', function (t) {
-
   t.end()
 })
 

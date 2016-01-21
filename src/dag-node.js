@@ -18,7 +18,7 @@ function DAGNode (data, links) {
   this.links = links || []
 
   function linkSort (a, b) {
-    return a.name().localeCompare(b.name())
+    return a.name.localeCompare(b.name)
   }
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
@@ -156,18 +156,27 @@ function DAGNode (data, links) {
   // Decode from a Protobuf
   this.unMarshal = (data) => {
     var pbn = mdagpb.PBNode.decode(data)
-    for (var link in pbn.Links) {
+    this.links = []
+    for (var i = 0; i < pbn.Links.length; i++) {
+      var link = pbn.Links[i]
       var lnk = new DAGLink(link.Name, link.Tsize, link.Hash)
-      links.push(lnk)
+      this.links.push(lnk)
     }
     this.links.sort(linkSort)
-    data = pbn.Data
+    this.data = pbn.Data
     return this
   }
 
   // Helper method to get a protobuf object equivalent
   this.getPBNode = () => {
     var pbn = {}
+
+    if (this.data && this.data.length > 0) {
+      pbn.Data = this.data
+    } else {
+      pbn.Data = new Buffer(0)
+    }
+
     pbn.Links = []
 
     for (var i = 0; i < this.links.length; i++) {
@@ -179,11 +188,6 @@ function DAGNode (data, links) {
       })
     }
 
-    if (this.data && this.data.length > 0) {
-      pbn.Data = this.data
-    } else {
-      pbn.Data = new Buffer()
-    }
     return pbn
   }
 }

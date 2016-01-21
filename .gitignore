@@ -32,3 +32,4 @@ com_crashlytics_export_strings.xml
 /node_modules
 **/*.log
 tests/repo-just-for-test*
+/tests/blocks

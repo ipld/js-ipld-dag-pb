@@ -28,7 +28,7 @@ test('block: \t\t 2 different blocks have different hashes', function (t) {
 test.skip('block: \t\t block stays immutable', function (t) {
   // Test from the original implementation
   // It doesn't stricly verify the immutability of the Block object
-  var block = new Block('Can\'t change this!')
+  var block = new Block("Can't change this!")
   var key = block.key
   key = new Buffer('new key')
 
