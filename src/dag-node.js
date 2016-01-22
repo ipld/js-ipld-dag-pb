@@ -23,7 +23,7 @@ function DAGNode (data, links) {
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
   // that. If a link of the same name existed, it is removed.
-  this.UpdateNodeLink = (name, node) => {
+  this.updateNodeLink = (name, node) => {
     var newnode = this.copy()
     newnode.removeNodeLink(name)
     newnode.addNodeLink(name, node)
@@ -92,6 +92,7 @@ function DAGNode (data, links) {
     }
     encoded = null
     this.links.push(new DAGLink(link.name, link.size, link.hash, link.node))
+    this.links.sort(linkSort)
   }
 
   // AddNodeLinkClean adds a link to another node. without keeping a reference to

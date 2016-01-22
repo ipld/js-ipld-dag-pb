@@ -1,5 +1,5 @@
 var BlockService = require('./block-service')
-var Node = require('./dag-node').Node
+var DAGNode = require('./dag-node').DAGNode
 var Block = require('./block')
 
 exports = module.exports = DAGService
@@ -18,7 +18,7 @@ function DAGService (bs) {
     }
   }
   this.add = function (node, cb) {
-    if (!node || !(node instanceof Node)) {
+    if (!node || !(node instanceof DAGNode)) {
       return cb('Node is invalid')
     }
     if (!blocks) {
@@ -48,7 +48,7 @@ function DAGService (bs) {
       if (err) {
         return cb(err)
       }
-      var node = new Node()
+      var node = new DAGNode()
       node.unMarshal(block.data)
       return cb(null, node)
     })
@@ -67,6 +67,7 @@ function DAGService (bs) {
         nodeStack = []
       }
       nodeStack.push(node)
+
       var keys = []
       for (var i = 0; i < node.links.length; i++) {
         var link = node.links[i]
@@ -76,16 +77,16 @@ function DAGService (bs) {
 
       var next = linkStack.pop()
 
+
       if (next) {
-        console.log('next:' + next)
         self.getRecursive(next, cb, linkStack, nodeStack)
       } else {
-        for (var k; k < nodeStack.length; k++) {
+        for (var k=0; k < nodeStack.length; k++) {
           var current = nodeStack[k]
-          for (var j; j < current.links.length; j++) {
+          for (var j= 0; j < current.links.length; j++) {
             link = current.links[j]
             var index = nodeStack.findIndex(function (node) {
-              return node.key() === link.hash
+              return node.key().equals(link.hash)
             })
             if (index !== -1) {
               link.node = nodeStack[index]
@@ -98,22 +99,16 @@ function DAGService (bs) {
   }
 
   // this diverges from go-ipfs this is a non recursive remove function
-  this.remove = function (node, cb) {
-    if (!node || !(node instanceof Node)) {
-      return cb('Node is invalid')
+  this.remove = function (key, cb) {
+    if (!key) {
+      return cb('Invalid Key')
     }
 
     if (!blocks) {
       return cb('Blockservice is invalid')
     }
 
-    var data = node.Encoded()
-    if (!data) {
-      return 'Node is unencoded'
-    }
-
-    var block = new Block(data)
-    return blocks.remove(block, cb)
+    return blocks.deleteBlock(key, cb)
   }
 
   this.blocks(bs)
