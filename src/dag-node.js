@@ -90,8 +90,8 @@ function DAGNode (data, links) {
     this.links.push(new DAGLink(link.name, link.size, link.hash, link.node))
   }
 
-  // AddNodeLinkClean adds a link to another node. without keeping a reference to
-  // the child node
+  // AddNodeLinkClean adds a link to another node. without keeping a
+  // reference to the child node
   this.addNodeLinkClean = (name, node) => {
     if (typeof name !== 'string') {
       return

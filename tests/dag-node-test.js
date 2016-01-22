@@ -2,6 +2,11 @@ var test = require('tape')
 var DAGLink = require('../src/dag-node').DAGLink
 var DAGNode = require('../src/dag-node').DAGNode
 
+var BlockService = require('../src').BlockService
+var Block = require('../src').Block
+
+var IPFSRepo = require('ipfs-repo')
+
 test('dag-node: \t\t create a node', function (t) {
   var dagN = new DAGNode(new Buffer('some data'))
   t.ok(dagN.data.length > 0, 'node has data')
@@ -65,7 +70,29 @@ test('dag-node: \t\t add several links to a node', function (t) {
 })
 
 test('dag-node: \t\t marshal a node and store it with block-service', function (t) {
-  t.end()
+  var repo = new IPFSRepo(require('./index.js').repoPath)
+  var bs = new BlockService(repo)
+
+  var dagN = new DAGNode(new Buffer('some data'))
+  t.ok(dagN.data.length > 0, 'node has data')
+  t.ok(Buffer.isBuffer(dagN.data), 'data type of node is zero')
+  t.ok(dagN.size() > 0, 'node size is bigger than zero')
+  t.ok(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data), 'marshal and unmarshal is ok')
+
+  var b = new Block(dagN.marshal())
+
+  bs.addBlock(b, function (err) {
+    t.ifError(err)
+    bs.getBlock(b.key, function (err, block) {
+      t.ifError(err)
+      t.ok(b.data.equals(block.data), 'Stored block data correctly')
+      t.ok(b.key.equals(block.key), 'Stored block key correctly')
+      var fetchedDagNode = new DAGNode()
+      fetchedDagNode.unMarshal(b.data)
+      t.ok(dagN.data.equals(fetchedDagNode.data), 'marsheled, stored, retried and unmarsheld correctly')
+      t.end()
+    })
+  })
 })
 
 test('dag-node: \t\t read a go-ipfs marshalled node and assert it gets read correctly', function (t) {
