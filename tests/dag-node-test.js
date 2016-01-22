@@ -4,6 +4,7 @@ var DAGNode = require('../src/dag-node').DAGNode
 
 var BlockService = require('../src').BlockService
 var Block = require('../src').Block
+var bs58 = require('bs58')
 
 var IPFSRepo = require('ipfs-repo')
 
@@ -88,7 +89,7 @@ test('dag-node: \t\t marshal a node and store it with block-service', function (
       t.ok(b.data.equals(block.data), 'Stored block data correctly')
       t.ok(b.key.equals(block.key), 'Stored block key correctly')
       var fetchedDagNode = new DAGNode()
-      fetchedDagNode.unMarshal(b.data)
+      fetchedDagNode.unMarshal(block.data)
       t.ok(dagN.data.equals(fetchedDagNode.data), 'marsheled, stored, retried and unmarsheld correctly')
       t.end()
     })
@@ -96,5 +97,17 @@ test('dag-node: \t\t marshal a node and store it with block-service', function (
 })
 
 test('dag-node: \t\t read a go-ipfs marshalled node and assert it gets read correctly', function (t) {
-  t.end()
+  var repo = new IPFSRepo(require('./index.js').repoPath)
+  var bs = new BlockService(repo)
+
+  var mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
+
+  bs.getBlock(mh.toString('hex'), function (err, block) {
+    t.ifError(err)
+    var retrievedDagNode = new DAGNode()
+    retrievedDagNode.unMarshal(block.data)
+    t.ok(retrievedDagNode.data, 'read a go-ipfs marsheled MerkleDAG node correctly')
+    t.equal(retrievedDagNode.links.length, 6, 'right number of links')
+    t.end()
+  })
 })
