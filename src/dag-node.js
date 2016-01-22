@@ -45,18 +45,14 @@ function DAGNode (data, links) {
   }
   // Remove a link on this node by the given name
   this.removeNodeLink = (name) => {
-    encoded = null
-    var good = []
-    // var found
-    for (var i = 0; i < this.links.length; i++) {
-      var link = this.links[i]
-      if (!link.name === this.name) {
-        good.push(link)
+    encoded = null // uncache
+    this.links = this.links.filter(link => {
+      if (link.name === name) {
+        return false
       } else {
-        // found = true
+        return true
       }
-    }
-    this.links = good
+    })
   }
 
   // link to another node
@@ -94,8 +90,8 @@ function DAGNode (data, links) {
     this.links.push(new DAGLink(link.name, link.size, link.hash, link.node))
   }
 
-  // AddNodeLinkClean adds a link to another node. without keeping a reference to
-  // the child node
+  // AddNodeLinkClean adds a link to another node. without keeping a
+  // reference to the child node
   this.addNodeLinkClean = (name, node) => {
     if (typeof name !== 'string') {
       return

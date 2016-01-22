@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "async": "^1.5.2",
+    "bs58": "^3.0.0",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
     "rimraf": "^2.5.0",

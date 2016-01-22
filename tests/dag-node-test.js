@@ -2,6 +2,12 @@ var test = require('tape')
 var DAGLink = require('../src/dag-node').DAGLink
 var DAGNode = require('../src/dag-node').DAGNode
 
+var BlockService = require('../src').BlockService
+var Block = require('../src').Block
+var bs58 = require('bs58')
+
+var IPFSRepo = require('ipfs-repo')
+
 test('dag-node: \t\t create a node', function (t) {
   var dagN = new DAGNode(new Buffer('some data'))
   t.ok(dagN.data.length > 0, 'node has data')
@@ -12,67 +18,96 @@ test('dag-node: \t\t create a node', function (t) {
 })
 
 test('dag-node: \t\t create a link', function (t) {
+  var buf = new Buffer('multihash of file.txt')
+  var link = new DAGLink('file.txt', 10, buf)
+  t.equal(link.name, 'file.txt', 'has name')
+  t.equal(link.size, 10, 'has size')
+  t.is(link.hash.equals(buf), true, 'has buf')
   t.end()
 })
 
 test('dag-node: \t\t add a link to a node', function (t) {
+  var dagNode1 = new DAGNode(new Buffer('4444'))
+  var dagNode2 = new DAGNode(new Buffer('22'))
+
+  var dagNode1Size = dagNode1.size()
+  var dagNode1Multihash = dagNode1.multiHash()
+
+  dagNode1.addNodeLink('next', dagNode2)
+  t.is(dagNode1.links.length > 0, true, 'link added successfuly')
+  t.is(dagNode1.size() > dagNode1Size, true, 'dagNode size increased')
+
+  t.is(dagNode1.multiHash().equals(dagNode1Multihash), false, 'hash must have changed')
+
+  dagNode1.removeNodeLink('next')
+  t.equal(dagNode1.links.length, 0, 'links should be 0')
+
+  t.is(dagNode1.multiHash().equals(dagNode1Multihash), true, 'hash must have returned to the original')
   t.end()
 })
 
 test('dag-node: \t\t add several links to a node', function (t) {
+  var dagNode1 = new DAGNode(new Buffer('4444'))
+  var dagNode2 = new DAGNode(new Buffer('22'))
+  var dagNode3 = new DAGNode(new Buffer('333'))
+
+  var dagNode1Size = dagNode1.size()
+  var dagNode1Multihash = dagNode1.multiHash()
+
+  dagNode1.addNodeLink('next', dagNode2)
+  t.is(dagNode1.links.length > 0, true, 'link added successfuly')
+  t.is(dagNode1.size() > dagNode1Size, true, 'dagNode size increased')
+
+  dagNode1.addNodeLink('next', dagNode3)
+  t.is(dagNode1.links.length > 1, true, 'link added successfuly')
+  t.is(dagNode1.size() > dagNode1Size, true, 'dagNode size increased')
+
+  t.is(dagNode1.multiHash().equals(dagNode1Multihash), false, 'hash must have changed')
+
+  dagNode1.removeNodeLink('next')
+
+  t.is(dagNode1.multiHash().equals(dagNode1Multihash), true, 'hash must have returned to the original')
   t.end()
 })
 
 test('dag-node: \t\t marshal a node and store it with block-service', function (t) {
-  t.end()
+  var repo = new IPFSRepo(require('./index.js').repoPath)
+  var bs = new BlockService(repo)
+
+  var dagN = new DAGNode(new Buffer('some data'))
+  t.ok(dagN.data.length > 0, 'node has data')
+  t.ok(Buffer.isBuffer(dagN.data), 'data type of node is zero')
+  t.ok(dagN.size() > 0, 'node size is bigger than zero')
+  t.ok(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data), 'marshal and unmarshal is ok')
+
+  var b = new Block(dagN.marshal())
+
+  bs.addBlock(b, function (err) {
+    t.ifError(err)
+    bs.getBlock(b.key, function (err, block) {
+      t.ifError(err)
+      t.ok(b.data.equals(block.data), 'Stored block data correctly')
+      t.ok(b.key.equals(block.key), 'Stored block key correctly')
+      var fetchedDagNode = new DAGNode()
+      fetchedDagNode.unMarshal(block.data)
+      t.ok(dagN.data.equals(fetchedDagNode.data), 'marsheled, stored, retried and unmarsheld correctly')
+      t.end()
+    })
+  })
 })
 
 test('dag-node: \t\t read a go-ipfs marshalled node and assert it gets read correctly', function (t) {
-  t.end()
-})
+  var repo = new IPFSRepo(require('./index.js').repoPath)
+  var bs = new BlockService(repo)
 
-// -------
+  var mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
 
-test('dag-node: \t\t Link Creation and Assignment', function (t) {
-  var buf = new Buffer('OMGWTFTHISISWRONG')
-  var link = new DAGLink('Joss Whedon', 20, buf)
-  t.is(link.name, 'Joss Whedon', 'Check name assignment')
-  t.is(link.size, 20, 'Check size assignment')
-  t.is(link.hash.equals(buf), true, 'Check hash assignment')
-  t.end()
-})
-
-test('dag-node: \t\t Node Creation and Assignment', function (t) {
-  var buf = new Buffer('Buffy the Vampire Slayer')
-  var node = new DAGNode()
-  node.data = buf
-  t.is(node.data.length > 0, true, 'Check buffer to data assignment')
-  t.is(Buffer.isBuffer(node.data), true, 'Check get method of data buffer')
-  t.is(node.size() > 0, true, 'Check size of link')
-  var premarshal = node.data
-  var postunmarshal = node.unMarshal(node.encoded()).data
-  t.is(premarshal.equals(postunmarshal), true, 'Check both marshalled and unmarshalled protobuf return the same data')
-  t.end()
-})
-
-test('dag-node: \t\t Node Linking', function (t) {
-  var buf1 = new Buffer('Buffy the Vampire Slayer')
-  var buf2 = new Buffer('Serenity')
-  var node1 = new DAGNode()
-  var node2 = new DAGNode()
-
-  node1.data = buf1
-  node2.data = buf2
-
-  var sizen1 = node1.size()
-  var mh1 = node1.multiHash()
-
-  node1.addNodeLink('next', node2)
-  t.is(node1.links.length > 0, true, 'Check node links successfully added')
-  t.is(node1.size() > sizen1, true, "Check node's size increased with new link addition")
-  t.is(node1.multiHash().equals(mh1), false, 'Check hash differs after addition of new link')
-
-  node1.removeNodeLink('names')
-  t.is(node1.multiHash().equals(mh1), true, 'Check hash is the same after removal of its child')
-  t.end()
+  bs.getBlock(mh.toString('hex'), function (err, block) {
+    t.ifError(err)
+    var retrievedDagNode = new DAGNode()
+    retrievedDagNode.unMarshal(block.data)
+    t.ok(retrievedDagNode.data, 'read a go-ipfs marsheled MerkleDAG node correctly')
+    t.equal(retrievedDagNode.links.length, 6, 'right number of links')
+    t.end()
+  })
 })
