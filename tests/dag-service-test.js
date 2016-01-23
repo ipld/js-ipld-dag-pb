@@ -1,9 +1,9 @@
 var BlockService = require('../src/block-service')
-var DAGService = require('../src/dag-service')
+var DAGService = require('../src/dag-service').DAGService
 var DAGNode = require('../src/dag-node').DAGNode
 var test = require('tape')
 var IPFSRepo = require('ipfs-repo')
-//set up
+
 var repo = new IPFSRepo(require('./index.js').repoPath)
 var blockService = new BlockService(repo)
 var dagService = new DAGService(blockService)
@@ -51,6 +51,8 @@ node3.addNodeLink('5', node5)
 node3.addNodeLink('6', node6)
 node1.addNodeLink('2', node2)
 node1.addNodeLink('3', node3)
+
+var batch= dagService.batch()
 
 test('dag-service: \t\t Add one node to the Service', function(t){
   var addOne = function (err) {
@@ -146,59 +148,27 @@ test('dag-service: \t\t Remove nine nodes to the Service', function(t){
 })
 
 
-
-
-/*
-test('Test DAGService', function (t) {
-
-
-
-
-  var addNine = function (err) {
-    t.is(!err, true, 'Added all nine nodes without error')
-
-    dagService.get(node1.key().toString('hex'), getNine)
-  }
-  var getOne = function (err, node) {
-    t.is(!err, true, 'Got one node without error')
-    t.is(node.data.equals(node1.data), true, 'Got exactly the expected node')
-    dagService.getRecursive(node1.key().toString('hex'), getRecursive)
-  }
-  var getNine= function(err, node){
-    t.is(!err, true, 'Added one node without error')
-    var i = 0
-    var current
-    var next = function (err, node) {
-      t.is(!err, true, 'Got ' + (i + 1) + ' nodes without error')
-      console.log(node.key().toString('hex'))
-      i++
-      if (i < nodes.length) {
-        current = nodes[i]
-        dagService.get(current.key().toString('hex'), next)
-      } else {
-        //t.end()
-        dagService.getRecursive(node1.key().toString('hex'), getRecursive)
-      }
-    }
-
-    if (i < nodes.length) {
-      current = nodes[i]
-      dagService.get(current.key().toString('hex'), next)
-    } else {
-      // t.end()
-      // dagService.addRecursive(node1,addNineRecursive)
-    }
-  }
-  var getRecursive = function (err, node) {
-    t.is(!err, true, 'Got a node and its children without error')
-    console.log(node)
-    t.is(node.data.equals(node1.data), true, 'Got exactly the expected node')
-    for (var i = 0; i < node.links.length; i++) {
-      var link = node.links[i]
-      t.is(!!link.node, true, 'Got its children without error')
-    }
+test('dag-service: \t\t Add nodes by batch', function(t){
+  var addRemove = function (err) {
+    t.is(!err, true, 'Remove one node without error')
     t.end()
   }
-  dagService.add(node1, addOne)
+
+  dagService.remove(node1.key().toString('hex'), addRemove)
+
 })
-*/
+
+
+test('dag-service: \t\t Add nodes by batch', function(t){
+  for(var i = 0; i < nodes.length; i++){
+    var node= nodes[i]
+    batch.add(node, function(err){
+      t.is(!err, true, 'Added' + (i+1) + ' node to batch without error')
+    })
+  }
+  batch.commit(function(err){
+    t.is(!err, true, 'batch committed successfully')
+
+    t.end()
+  })
+})
