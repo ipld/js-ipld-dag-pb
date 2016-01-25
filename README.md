@@ -29,7 +29,7 @@ IPFS Merkle DAG JavaScript Implementation
 
 **BlockService** - The BlockService uses IPFS Repo as the local datastore for blocks and an IPFS Exchange compliant implementation to fetch blocks from the network.
 
-A DAGNode and a Block are data structures made available by this module.
+A DAGNode and a Block are data structures made available on this module.
 
 ## Usage
 
@@ -43,17 +43,134 @@ const ipfsMDAG = require('ipfs-merkle-dag')
 // then, to access each of the components
 ipfsMDAG.DAGService
 ipfsMDAG.DAGNode
+ipfsMDAG.DAGLink
 ipfsMDAG.BlockService
 ipfsMDAG.Block
 ```
-#### DAGNode
 
 #### Block
 
-#### DAGService
+Create a new block
+
+```JavaScript
+var block = new ipfsMDAG.Block('some data')
+console.log(block.data) 
+// It will print 'some data'
+console.log(block.key)
+// It will print the sha256 multihash of 'some data'
+```
 
 #### BlockService
 
+Create a new block service
+
+```JavaScript
+var bs = new ipfsMDAG.BlockService(<IPFS REPO instance> [, <IPFS Exchange>])
+```
+
+##### addBlock
+
+```JavaScript
+bs.addBlock(block, function (err) {
+  if (!err) {
+    // block successfuly added
+  }
+})
+```
+
+##### addBlocks
+
+```JavaScript
+bs.addBlocks(blockArray, function (err) {
+  if (!err) {
+    // blocks successfuly added
+  }
+})
+```
+
+##### getBlock
+
+```JavaScript
+bs.getBlock(multihash, function (err, block) {
+  if (!err) {
+    // block successfuly retrieved
+  }
+})
+```
+
+
+##### getBlocks
+
+```JavaScript
+bs.getBlocks(multihashArray, function (err, block) {
+  if (!err) {
+    // block successfuly retrieved
+  }
+})
+```
+
+##### deleteBlock
+
+```JavaScript
+bs.deleteBlock(multihash, function (err) {
+  if (!err) {
+    // block successfuly deleted
+  }
+})
+```
+
+##### deleteBlocks
+
+```JavaScript
+bs.deleteBlocks(multihashArray, function (err) {
+  if (!err) {
+    // blocks successfuly deleted
+  }
+})
+```
+
+
+
+#### DAGNode
+
+Create a new DAGLink
+
+```JavaScript
+var link = new ipfsMDAG.DAGLink(<name>, <size>, <hash>)
+```
+
+Create a new DAGNode
+
+```JavaScript
+var node = new ipfsMDAG.DAGNode([<data>, <[links]>])
+```
+
+##### updateNodeLink
+
+##### removeNodeLink
+
+##### copy
+
+##### makeLink
+
+##### addRawLink
+
+##### addNodeLinkClean
+
+##### size
+
+##### encoded
+
+##### multihash
+
+##### marshal
+
+##### unMarshal
+
+##### getPBNode
+
+#### DAGService
+
 ## License
 
-[License](LICENSE.md)
+[LICENSE](LICENSE.md)

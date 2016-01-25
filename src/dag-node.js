@@ -23,7 +23,7 @@ function DAGNode (data, links) {
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
   // that. If a link of the same name existed, it is removed.
-  this.UpdateNodeLink = (name, node) => {
+  this.updateNodeLink = (name, node) => {
     var newnode = this.copy()
     newnode.removeNodeLink(name)
     newnode.addNodeLink(name, node)
@@ -189,9 +189,8 @@ function DAGNode (data, links) {
 }
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
-function DAGLink (linkName, linkSize, linkHash, linkNode) {
+function DAGLink (linkName, linkSize, linkHash) {
   this.name = linkName
   this.size = linkSize
   this.hash = linkHash
-  this.node = linkNode
 }
