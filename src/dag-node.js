@@ -190,9 +190,8 @@ function DAGNode (data, links) {
 }
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
-function DAGLink (linkName, linkSize, linkHash, linkNode) {
+function DAGLink (linkName, linkSize, linkHash) {
   this.name = linkName
   this.size = linkSize
   this.hash = linkHash
-  this.node = linkNode
 }
