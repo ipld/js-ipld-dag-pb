@@ -2,8 +2,8 @@ var BlockService = require('./block-service')
 var DAGNode = require('./dag-node').DAGNode
 var Block = require('./block')
 exports = module.exports
-exports.DAGService= DAGService
-exports.Batch= Batch
+exports.DAGService = DAGService
+exports.Batch = Batch
 
 function DAGService (bs) {
   var blocks
@@ -78,13 +78,12 @@ function DAGService (bs) {
 
       var next = linkStack.pop()
 
-
       if (next) {
         self.getRecursive(next, cb, linkStack, nodeStack)
       } else {
-        for (var k=0; k < nodeStack.length; k++) {
+        for (var k = 0; k < nodeStack.length; k++) {
           var current = nodeStack[k]
-          for (var j= 0; j < current.links.length; j++) {
+          for (var j = 0; j < current.links.length; j++) {
             link = current.links[j]
             var index = nodeStack.findIndex(function (node) {
               return node.key().equals(link.hash)
@@ -112,13 +111,12 @@ function DAGService (bs) {
     return blocks.deleteBlock(key, cb)
   }
 
-  this.batch=function (){
+  this.batch = function () {
     return new Batch(this, 8 * 1024 * 1024)
   }
 
   this.blocks(bs)
 }
-
 
 function Batch (ds, max) {
   if (!ds) {

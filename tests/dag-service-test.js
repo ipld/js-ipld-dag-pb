@@ -52,19 +52,18 @@ node3.addNodeLink('6', node6)
 node1.addNodeLink('2', node2)
 node1.addNodeLink('3', node3)
 
-var batch= dagService.batch()
+var batch = dagService.batch()
 
-test('dag-service: \t\t Add one node to the Service', function(t){
+test('dag-service: \t\t Add one node to the Service', function (t) {
   var addOne = function (err) {
     t.is(!err, true, 'Add one node without error')
     t.end()
   }
 
   dagService.add(node1, addOne)
-
 })
 
-test('dag-service: \t\t Add nine nodes to the Service', function(t){
+test('dag-service: \t\t Add nine nodes to the Service', function (t) {
   var i = 0
   var current
   var next = function (err) {
@@ -85,45 +84,41 @@ test('dag-service: \t\t Add nine nodes to the Service', function(t){
   } else {
     t.end()
   }
-
 })
 
-test('dag-service: \t\t Get one node', function(t){
-  var getOne= function(err, node){
+test('dag-service: \t\t Get one node', function (t) {
+  var getOne = function (err, node) {
     t.is(!err, true, 'Got one node without error')
     t.is(node1.key().equals(node.key()), true, 'Got the right node?')
     t.end()
   }
 
   dagService.get(node1.key().toString('hex'), getOne)
-
 })
 
-test('dag-service: \t\t Get node recursive (get graph)', function(t){
-  var getGraph= function(err, node){
+test('dag-service: \t\t Get node recursive (get graph)', function (t) {
+  var getGraph = function (err, node) {
     t.is(!err, true, 'Got node without error')
     t.is(node1.key().equals(node.key()), true, 'Got the right node?')
-    for(var i = 0; i < node.links.length; i++){
+    for (var i = 0; i < node.links.length; i++) {
       var link = node.links[i]
-      t.is(!!link.node, true, "graph has link nodes")
+      t.is(!!link.node, true, 'graph has link nodes')
     }
     t.end()
   }
   dagService.getRecursive(node1.key().toString('hex'), getGraph)
-
 })
 
-test('dag-service: \t\t Remove one node to the Service', function(t){
+test('dag-service: \t\t Remove one node to the Service', function (t) {
   var addRemove = function (err) {
     t.is(!err, true, 'Remove one node without error')
     t.end()
   }
 
   dagService.remove(node1.key().toString('hex'), addRemove)
-
 })
 
-test('dag-service: \t\t Remove nine nodes to the Service', function(t){
+test('dag-service: \t\t Remove nine nodes to the Service', function (t) {
   var i = 0
   var current
   var next = function (err) {
@@ -144,29 +139,25 @@ test('dag-service: \t\t Remove nine nodes to the Service', function(t){
   } else {
     t.end()
   }
-
 })
 
-
-test('dag-service: \t\t Add nodes by batch', function(t){
+test('dag-service: \t\t Add nodes by batch', function (t) {
   var addRemove = function (err) {
     t.is(!err, true, 'Remove one node without error')
     t.end()
   }
 
   dagService.remove(node1.key().toString('hex'), addRemove)
-
 })
 
-
-test('dag-service: \t\t Add nodes by batch', function(t){
-  for(var i = 0; i < nodes.length; i++){
-    var node= nodes[i]
-    batch.add(node, function(err){
-      t.is(!err, true, 'Added' + (i+1) + ' node to batch without error')
+test('dag-service: \t\t Add nodes by batch', function (t) {
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i]
+    batch.add(node, function (err) {
+      t.is(!err, true, 'Added' + (i + 1) + ' node to batch without error')
     })
   }
-  batch.commit(function(err){
+  batch.commit(function (err) {
     t.is(!err, true, 'batch committed successfully')
 
     t.end()
