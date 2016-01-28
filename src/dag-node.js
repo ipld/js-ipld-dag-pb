@@ -77,7 +77,6 @@ function DAGNode (data, links) {
     }
 
     link.name = name
-    link.node = node
     this.addRawLink(name, link)
   }
 
@@ -87,7 +86,7 @@ function DAGNode (data, links) {
       return
     }
     encoded = null
-    this.links.push(new DAGLink(link.name, link.size, link.hash, link.node))
+    this.links.push(new DAGLink(link.name, link.size, link.hash))
     this.links.sort(linkSort)
   }
 
