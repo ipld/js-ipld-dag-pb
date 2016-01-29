@@ -1,32 +1,43 @@
+/* globals describe, before, after */
+
+'use strict'
+
+const fs = require('fs')
 const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
-const test = require('tape')
+const expect = require('chai').expect
 
-exports = module.exports
+describe('blocks', () => {
+  const repoExample = process.cwd() + '/tests/example-repo'
+  const repoTests = process.cwd() + '/tests/repo-just-for-test' + Date.now()
 
-function setUp (next) {
-  const testRepoPath = __dirname + '/example-repo'
-  const date = Date.now().toString()
-  const repoPath = __dirname + '/repo-just-for-test' + date
-  exports.repoPath = repoPath
-
-  ncp(testRepoPath, repoPath, err => {
-    if (err) { throw err }
-    console.log('# set up complete')
-    next()
+  before(done => {
+    ncp(repoExample, repoTests, err => {
+      process.env.IPFS_PATH = repoTests
+      expect(err).to.equal(null)
+      done()
+    })
   })
-}
 
-function tests () {
-  require('./dag-node-test.js')
-  test.onFinish(tearDown)
-}
-
-function tearDown () {
-  rimraf(exports.repoPath, err => {
-    if (err) { throw err }
-    console.log('# tear down complete')
+  after(done => {
+    rimraf(repoTests, err => {
+      expect(err).to.equal(null)
+      done()
+    })
   })
-}
 
-setUp(tests)
+  const tests = fs.readdirSync(__dirname)
+  tests.filter(file => {
+    if (file === 'index.js' ||
+        file === 'example-repo' ||
+        file.indexOf('repo-just-for-test') > -1 ||
+        file === 'dag-service-test.js' ||
+        file === 'browser.js') {
+      return false
+    } else {
+      return true
+    }
+  }).forEach(file => {
+    require('./' + file)
+  })
+})

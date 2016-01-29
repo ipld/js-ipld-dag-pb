@@ -11,7 +11,7 @@ function DAGService (blockService) {
   this.bs = blockService
 
   // add a DAGNode to the service, storing it on the block service
-  this.add = function (node, callback) {
+  this.add = (node, callback) => {
     var data = node.encoded()
 
     var block = new Block(data)
@@ -23,8 +23,7 @@ function DAGService (blockService) {
   // this.addRecursive
 
   // get retrieves a DAGNode, using the Block Service
-  this.get = get
-  function get (key, callback) {
+  this.get = (key, callback) => {
     if (!key) { return callback(new Error('Invalid Key')) }
 
     this.bs.getBlock(key, function (err, block) {
@@ -37,9 +36,8 @@ function DAGService (blockService) {
 
   // getRecursive fetches a node and all of the nodes on its links recursively
   // TODO add depth param
-  this.getRecursive = getRecursive
-  function getRecursive (key, cb, linkStack, nodeStack) {
-    get(key, function (err, node) {
+  this.getRecursive = (key, cb, linkStack, nodeStack) => {
+    this.get(key, function (err, node) {
       if (err) { return cb(err) }
 
       if (!linkStack) { linkStack = [] }
@@ -57,7 +55,7 @@ function DAGService (blockService) {
       var next = linkStack.pop()
 
       if (next) {
-        getRecursive(next, cb, linkStack, nodeStack)
+        this.getRecursive(next, cb, linkStack, nodeStack)
       } else {
         for (var k = 0; k < nodeStack.length; k++) {
           var current = nodeStack[k]
@@ -77,7 +75,7 @@ function DAGService (blockService) {
   }
 
   // remove deletes a node with given key from the blockService
-  this.remove = function (key, cb) {
+  this.remove = (key, cb) => {
     if (!key) { return cb(new Error('Invalid Key')) }
 
     this.bs.deleteBlock(key, cb)
