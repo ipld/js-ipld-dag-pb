@@ -22,7 +22,7 @@ function DAGService (blockService) {
   // DEPRECATED - https://github.com/ipfs/go-ipfs/issues/2262
   // this.addRecursive
 
-  // Get retrieves a DAGNode, using the Block Service
+  // get retrieves a DAGNode, using the Block Service
   this.get = get
   function get (key, callback) {
     if (!key) { return callback(new Error('Invalid Key')) }
