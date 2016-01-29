@@ -1,113 +1,119 @@
-var test = require('tape')
-var DAGLink = require('../src/dag-node').DAGLink
-var DAGNode = require('../src/dag-node').DAGNode
+/* globals describe, it */
 
-var BlockService = require('ipfs-blocks').BlockService
-var Block = require('ipfs-blocks').Block
-var bs58 = require('bs58')
+'use strict'
 
-var IPFSRepo = require('ipfs-repo')
+const expect = require('chai').expect
+const DAGLink = require('../src/dag-node').DAGLink
+const DAGNode = require('../src/dag-node').DAGNode
 
-test('dag-node: \t\t create a node', function (t) {
-  var dagN = new DAGNode(new Buffer('some data'))
-  t.ok(dagN.data.length > 0, 'node has data')
-  t.ok(Buffer.isBuffer(dagN.data), 'data type of node is zero')
-  t.ok(dagN.size() > 0, 'node size is bigger than zero')
-  t.ok(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data), 'marshal and unmarshal is ok')
-  t.end()
-})
+const BlockService = require('ipfs-blocks').BlockService
+const Block = require('ipfs-blocks').Block
+const bs58 = require('bs58')
 
-test('dag-node: \t\t create a link', function (t) {
-  var buf = new Buffer('multihash of file.txt')
-  var link = new DAGLink('file.txt', 10, buf)
-  t.equal(link.name, 'file.txt', 'has name')
-  t.equal(link.size, 10, 'has size')
-  t.is(link.hash.equals(buf), true, 'has buf')
-  t.end()
-})
+const IPFSRepo = require('ipfs-repo')
 
-test('dag-node: \t\t add a link to a node', function (t) {
-  var dagNode1 = new DAGNode(new Buffer('4444'))
-  var dagNode2 = new DAGNode(new Buffer('22'))
+describe('dag-node', () => {
+  it('create a node', (done) => {
+    var dagN = new DAGNode(new Buffer('some data'))
+    expect(dagN.data.length > 0).to.equal(true)
+    expect(Buffer.isBuffer(dagN.data)).to.equal(true)
+    expect(dagN.size() > 0).to.equal(true)
+    expect(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data)).to.equal(true)
+    done()
+  })
 
-  var dagNode1Size = dagNode1.size()
-  var dagNode1Multihash = dagNode1.multiHash()
+  it('create a link', (done) => {
+    var buf = new Buffer('multihash of file.txt')
+    var link = new DAGLink('file.txt', 10, buf)
+    expect(link.name).to.equal('file.txt')
+    expect(link.size).to.equal(10)
+    expect(link.hash.equals(buf)).to.equal(true)
+    done()
+  })
 
-  dagNode1.addNodeLink('next', dagNode2)
-  t.is(dagNode1.links.length > 0, true, 'link added successfuly')
-  t.is(dagNode1.size() > dagNode1Size, true, 'dagNode size increased')
+  it('add a link to a node', (done) => {
+    var dagNode1 = new DAGNode(new Buffer('4444'))
+    var dagNode2 = new DAGNode(new Buffer('22'))
 
-  t.is(dagNode1.multiHash().equals(dagNode1Multihash), false, 'hash must have changed')
+    var dagNode1Size = dagNode1.size()
+    var dagNode1Multihash = dagNode1.multiHash()
 
-  dagNode1.removeNodeLink('next')
-  t.equal(dagNode1.links.length, 0, 'links should be 0')
+    dagNode1.addNodeLink('next', dagNode2)
+    expect(dagNode1.links.length > 0).to.equal(true)
+    expect(dagNode1.size() > dagNode1Size).to.equal(true)
 
-  t.is(dagNode1.multiHash().equals(dagNode1Multihash), true, 'hash must have returned to the original')
-  t.end()
-})
+    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(false)
 
-test('dag-node: \t\t add several links to a node', function (t) {
-  var dagNode1 = new DAGNode(new Buffer('4444'))
-  var dagNode2 = new DAGNode(new Buffer('22'))
-  var dagNode3 = new DAGNode(new Buffer('333'))
+    dagNode1.removeNodeLink('next')
+    expect(dagNode1.links.length).to.equal(0)
 
-  var dagNode1Size = dagNode1.size()
-  var dagNode1Multihash = dagNode1.multiHash()
+    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(true)
+    done()
+  })
 
-  dagNode1.addNodeLink('next', dagNode2)
-  t.is(dagNode1.links.length > 0, true, 'link added successfuly')
-  t.is(dagNode1.size() > dagNode1Size, true, 'dagNode size increased')
+  it('add several links to a node', (done) => {
+    var dagNode1 = new DAGNode(new Buffer('4444'))
+    var dagNode2 = new DAGNode(new Buffer('22'))
+    var dagNode3 = new DAGNode(new Buffer('333'))
 
-  dagNode1.addNodeLink('next', dagNode3)
-  t.is(dagNode1.links.length > 1, true, 'link added successfuly')
-  t.is(dagNode1.size() > dagNode1Size, true, 'dagNode size increased')
+    var dagNode1Size = dagNode1.size()
+    var dagNode1Multihash = dagNode1.multiHash()
 
-  t.is(dagNode1.multiHash().equals(dagNode1Multihash), false, 'hash must have changed')
+    dagNode1.addNodeLink('next', dagNode2)
+    expect(dagNode1.links.length > 0).to.equal(true)
+    expect(dagNode1.size() > dagNode1Size).to.equal(true)
 
-  dagNode1.removeNodeLink('next')
+    dagNode1.addNodeLink('next', dagNode3)
+    expect(dagNode1.links.length > 1).to.equal(true)
+    expect(dagNode1.size() > dagNode1Size).to.equal(true)
 
-  t.is(dagNode1.multiHash().equals(dagNode1Multihash), true, 'hash must have returned to the original')
-  t.end()
-})
+    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(false)
 
-test('dag-node: \t\t marshal a node and store it with block-service', function (t) {
-  var repo = new IPFSRepo(require('./index.js').repoPath)
-  var bs = new BlockService(repo)
+    dagNode1.removeNodeLink('next')
 
-  var dagN = new DAGNode(new Buffer('some data'))
-  t.ok(dagN.data.length > 0, 'node has data')
-  t.ok(Buffer.isBuffer(dagN.data), 'data type of node is zero')
-  t.ok(dagN.size() > 0, 'node size is bigger than zero')
-  t.ok(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data), 'marshal and unmarshal is ok')
+    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(true)
+    done()
+  })
 
-  var b = new Block(dagN.marshal())
+  it('marshal a node and store it with block-service', (done) => {
+    var repo = new IPFSRepo(process.env.IPFS_PATH)
+    var bs = new BlockService(repo)
 
-  bs.addBlock(b, function (err) {
-    t.ifError(err)
-    bs.getBlock(b.key, function (err, block) {
-      t.ifError(err)
-      t.ok(b.data.equals(block.data), 'Stored block data correctly')
-      t.ok(b.key.equals(block.key), 'Stored block key correctly')
-      var fetchedDagNode = new DAGNode()
-      fetchedDagNode.unMarshal(block.data)
-      t.ok(dagN.data.equals(fetchedDagNode.data), 'marsheled, stored, retried and unmarsheld correctly')
-      t.end()
+    var dagN = new DAGNode(new Buffer('some data'))
+    expect(dagN.data.length > 0).to.equal(true)
+    expect(Buffer.isBuffer(dagN.data)).to.equal(true)
+    expect(dagN.size() > 0).to.equal(true)
+    expect(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data)).to.equal(true)
+
+    var b = new Block(dagN.marshal())
+
+    bs.addBlock(b, (err) => {
+      expect(err).to.not.exist
+      bs.getBlock(b.key, (err, block) => {
+        expect(err).to.not.exist
+        expect(b.data.equals(block.data)).to.equal(true)
+        expect(b.key.equals(block.key)).to.equal(true)
+        var fetchedDagNode = new DAGNode()
+        fetchedDagNode.unMarshal(block.data)
+        expect(dagN.data.equals(fetchedDagNode.data)).to.equal(true)
+        done()
+      })
     })
   })
-})
 
-test('dag-node: \t\t read a go-ipfs marshalled node and assert it gets read correctly', function (t) {
-  var repo = new IPFSRepo(require('./index.js').repoPath)
-  var bs = new BlockService(repo)
+  it('read a go-ipfs marshalled node and assert it gets read correctly', function (done) {
+    var repo = new IPFSRepo(process.env.IPFS_PATH)
+    var bs = new BlockService(repo)
 
-  var mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
+    var mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
 
-  bs.getBlock(mh.toString('hex'), function (err, block) {
-    t.ifError(err)
-    var retrievedDagNode = new DAGNode()
-    retrievedDagNode.unMarshal(block.data)
-    t.ok(retrievedDagNode.data, 'read a go-ipfs marsheled MerkleDAG node correctly')
-    t.equal(retrievedDagNode.links.length, 6, 'right number of links')
-    t.end()
+    bs.getBlock(mh.toString('hex'), (err, block) => {
+      expect(err).to.not.exist
+      var retrievedDagNode = new DAGNode()
+      retrievedDagNode.unMarshal(block.data)
+      expect(retrievedDagNode.data).to.exist
+      expect(retrievedDagNode.links.length).to.equal(6)
+      done()
+    })
   })
 })

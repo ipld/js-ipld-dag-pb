@@ -4,7 +4,7 @@
   "description": "A JavaScript implementations of the IPFS MerkleDAG implementations (protobufs)",
   "main": "./src/index.js",
   "scripts": {
-    "test": "node tests/index.js",
+    "test": "mocha tests/index.js",
     "lint": "standard"
   },
   "pre-commit": [
@@ -24,13 +24,14 @@
   "devDependencies": {
     "async": "^1.5.2",
     "bs58": "^3.0.0",
+    "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
     "ipfs-blocks": "^0.1.0",
     "ipfs-repo": "^0.3.0",
+    "mocha": "^2.4.5",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
     "rimraf": "^2.5.0",
-    "standard": "^5.4.1",
-    "tape": "^4.4.0"
+    "standard": "^5.4.1"
   }
 }
