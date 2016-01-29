@@ -31,7 +31,6 @@ describe('blocks', () => {
     if (file === 'index.js' ||
         file === 'example-repo' ||
         file.indexOf('repo-just-for-test') > -1 ||
-        file === 'dag-service-test.js' ||
         file === 'browser.js') {
       return false
     } else {

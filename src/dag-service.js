@@ -1,5 +1,5 @@
 var DAGNode = require('./dag-node').DAGNode
-var Block = require('./block')
+var Block = require('ipfs-blocks').Block
 
 exports = module.exports = DAGService
 
