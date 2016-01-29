@@ -2,8 +2,8 @@ var test = require('tape')
 var DAGLink = require('../src/dag-node').DAGLink
 var DAGNode = require('../src/dag-node').DAGNode
 
-var BlockService = require('../src').BlockService
-var Block = require('../src').Block
+var BlockService = require('ipfs-blocks').BlockService
+var Block = require('ipfs-blocks').Block
 var bs58 = require('bs58')
 
 var IPFSRepo = require('ipfs-repo')
