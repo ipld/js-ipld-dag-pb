@@ -43,6 +43,7 @@ describe('dag-node', () => {
     expect(dagNode1.size() > dagNode1Size).to.equal(true)
 
     expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(false)
+    expect(dagNode1.links[0].hash.equals(dagNode2.multihash())).to.equal(true)
 
     dagNode1.removeNodeLink('next')
     expect(dagNode1.links.length).to.equal(0)

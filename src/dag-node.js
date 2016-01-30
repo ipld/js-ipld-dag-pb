@@ -44,9 +44,7 @@ function DAGNode (data, links) {
     }
     var link = this.makeLink(node)
 
-    if (!link) {
-      return
-    }
+    if (!link) { return }
 
     link.name = name
     this.addRawLink(name, link)
