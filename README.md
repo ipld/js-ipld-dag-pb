@@ -40,7 +40,7 @@ ipfsMDAG.DAGNode
 ipfsMDAG.DAGLink
 ```
 
-#### DAGNode
+### DAGNode
 
 Create a new DAGLink
 
@@ -54,31 +54,67 @@ Create a new DAGNode
 var node = new ipfsMDAG.DAGNode([<data>, <[links]>])
 ```
 
-##### updateNodeLink
+##### addNodeLink
 
-##### removeNodeLink
-
-##### copy
-
-##### makeLink
+> creates a link on node A to node B by using node B to get its multihash
 
 ##### addRawLink
 
-##### addNodeLinkClean
+> creates a link on node A to node B by using direclty node B multihash
+
+##### updateNodeLink
+
+> updates a link on the node. *caution* this method returns a copy of the MerkleDAG node
+
+##### removeNodeLink
+
+> removes a link from the node by name
+
+##### copy
+
+> creates a copy of the MerkleDAG Node
 
 ##### size
 
-##### encoded
+> size of the node. This is a property, not a function
 
 ##### multihash
 
+> returns the multihash (default: sha2-256)
+
 ##### marshal
+
+> returns a protobuf serialized version, compatible with go-ipfs MerkleDAG
 
 ##### unMarshal
 
-##### getPBNode
+> desirializes a probuf serialized node
 
-#### DAGService
+##### (used internally) getPBNode
+
+> used internally
+
+##### (used internally) makeLink
+
+> used internally
+
+### DAGService
+
+##### add
+
+> stores the node
+
+##### get
+
+> fetches a node by its multihash
+
+##### getRecursive
+
+> fetches a node and all of its links (if possible)
+
+##### remove
+
+> deletes a node
 
 ## License
 
