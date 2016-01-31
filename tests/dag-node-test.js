@@ -22,6 +22,15 @@ describe('dag-node', () => {
     done()
   })
 
+  it('create an emtpy node', (done) => {
+    var dagN = new DAGNode(new Buffer(0))
+    expect(dagN.data.length).to.equal(0)
+    expect(Buffer.isBuffer(dagN.data)).to.equal(true)
+    expect(dagN.size()).to.equal(0)
+    expect(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data)).to.equal(true)
+    done()
+  })
+
   it('create a link', (done) => {
     var buf = new Buffer('multihash of file.txt')
     var link = new DAGLink('file.txt', 10, buf)
