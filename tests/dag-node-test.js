@@ -36,18 +36,19 @@ describe('dag-node', () => {
     var dagNode2 = new DAGNode(new Buffer('22'))
 
     var dagNode1Size = dagNode1.size()
-    var dagNode1Multihash = dagNode1.multiHash()
+    var dagNode1Multihash = dagNode1.multihash()
 
     dagNode1.addNodeLink('next', dagNode2)
     expect(dagNode1.links.length > 0).to.equal(true)
     expect(dagNode1.size() > dagNode1Size).to.equal(true)
 
-    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(false)
+    expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(false)
+    expect(dagNode1.links[0].hash.equals(dagNode2.multihash())).to.equal(true)
 
     dagNode1.removeNodeLink('next')
     expect(dagNode1.links.length).to.equal(0)
 
-    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(true)
+    expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(true)
     done()
   })
 
@@ -57,7 +58,7 @@ describe('dag-node', () => {
     var dagNode3 = new DAGNode(new Buffer('333'))
 
     var dagNode1Size = dagNode1.size()
-    var dagNode1Multihash = dagNode1.multiHash()
+    var dagNode1Multihash = dagNode1.multihash()
 
     dagNode1.addNodeLink('next', dagNode2)
     expect(dagNode1.links.length > 0).to.equal(true)
@@ -67,11 +68,11 @@ describe('dag-node', () => {
     expect(dagNode1.links.length > 1).to.equal(true)
     expect(dagNode1.size() > dagNode1Size).to.equal(true)
 
-    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(false)
+    expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(false)
 
     dagNode1.removeNodeLink('next')
 
-    expect(dagNode1.multiHash().equals(dagNode1Multihash)).to.equal(true)
+    expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(true)
     done()
   })
 

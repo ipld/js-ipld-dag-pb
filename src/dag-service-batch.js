@@ -1,4 +1,4 @@
-var Block = require('./block')
+var Block = require('ipfs-blocks').Block
 
 exports = module.exports = Batch
 
