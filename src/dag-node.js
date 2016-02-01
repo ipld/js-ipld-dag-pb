@@ -144,7 +144,7 @@ function DAGNode (data, links) {
       this.links.push(lnk)
     }
     this.links.sort(linkSort)
-    this.data = pbn.Data
+    this.data = pbn.Data || new Buffer(0)
     return this
   }
 
@@ -155,18 +155,22 @@ function DAGNode (data, links) {
     if (node.data && node.data.length > 0) {
       pbn.Data = node.data
     } else {
-      pbn.Data = new Buffer(0)
+      pbn.Data = null // new Buffer(0)
     }
 
-    pbn.Links = []
+    if (node.links.length > 0) {
+      pbn.Links = []
 
-    for (var i = 0; i < node.links.length; i++) {
-      var link = node.links[i]
-      pbn.Links.push({
-        Hash: link.hash,
-        Name: link.name,
-        Tsize: link.size
-      })
+      for (var i = 0; i < node.links.length; i++) {
+        var link = node.links[i]
+        pbn.Links.push({
+          Hash: link.hash,
+          Name: link.name,
+          Tsize: link.size
+        })
+      }
+    } else {
+      pbn.Links = null
     }
 
     return pbn
