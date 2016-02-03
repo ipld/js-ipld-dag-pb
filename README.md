@@ -3,6 +3,7 @@ IPFS Merkle DAG JavaScript Implementation
 
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 ![](https://img.shields.io/badge/coverage-75%25-yellow.svg?style=flat-square)
+![](https://travis-ci.org/vijayee/js-ipfs-merkle-dag.svg?branch=master)
 [![Dependency Status](https://david-dm.org/ipfs/js-ipfs-merkle-dag.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfs-merkledag)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
