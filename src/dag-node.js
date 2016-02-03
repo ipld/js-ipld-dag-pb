@@ -44,17 +44,12 @@ function DAGNode (data, links) {
     }
     var link = this.makeLink(node)
 
-    if (!link) { return }
-
     link.name = name
-    this.addRawLink(name, link)
+    this.addRawLink(link)
   }
 
   // addRawLink adds a Link to this node from a DAGLink
-  this.addRawLink = (name, link) => {
-    if (typeof name !== 'string') {
-      return
-    }
+  this.addRawLink = (link) => {
     encoded = null
     this.links.push(new DAGLink(link.name, link.size, link.hash))
     this.links.sort(linkSort)
@@ -87,9 +82,6 @@ function DAGNode (data, links) {
   this.makeLink = (node) => {
     var size = node.size()
     var mh = node.multihash()
-    if (!(size && mh)) {
-      return null
-    }
     return new DAGLink(null, size, mh)
   }
 
