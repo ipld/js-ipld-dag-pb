@@ -1,5 +1,6 @@
 var util = require('./util')
 var protobuf = require('protocol-buffers')
+var stable = require('stable')
 
 var schema = 'message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}'
 
@@ -52,7 +53,7 @@ function DAGNode (data, links) {
   this.addRawLink = (link) => {
     encoded = null
     this.links.push(new DAGLink(link.name, link.size, link.hash))
-    this.links.sort(linkSort)
+    stable(this.links,linkSort)
   }
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
@@ -158,7 +159,7 @@ function DAGNode (data, links) {
       var lnk = new DAGLink(link.Name, link.Tsize, link.Hash)
       this.links.push(lnk)
     }
-    this.links.sort(linkSort)
+    stable(this.links, linkSort)
     this.data = pbn.Data || new Buffer(0)
     return this
   }
