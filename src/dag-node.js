@@ -76,6 +76,29 @@ function DAGNode (data, links) {
       }
     })
   }
+  // removeNodeLink removes a Link from this node based on a multihash
+  this.removeNodeLinkByHash = (multihash) => {
+    encoded = null // uncache
+    this.links = this.links.filter(link => {
+      if (link.hash.equals(multihash)) {
+        return false
+      } else {
+        return true
+      }
+    })
+  }
+
+  // removeNodeLink removes a Link from this node based on name
+  this.removeNodeLink = (name) => {
+    encoded = null // uncache
+    this.links = this.links.filter(link => {
+      if (link.name === name) {
+        return false
+      } else {
+        return true
+      }
+    })
+  }
 
   // makeLink returns a DAGLink node from a DAGNode
   // TODO: this would make more sense as an utility
