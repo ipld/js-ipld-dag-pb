@@ -53,7 +53,7 @@ function DAGNode (data, links) {
   this.addRawLink = (link) => {
     encoded = null
     this.links.push(new DAGLink(link.name, link.size, link.hash))
-    stable(this.links,linkSort)
+    stable.inplace(this.links,linkSort)
   }
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
@@ -159,7 +159,7 @@ function DAGNode (data, links) {
       var lnk = new DAGLink(link.Name, link.Tsize, link.Hash)
       this.links.push(lnk)
     }
-    stable(this.links, linkSort)
+    stable.inplace(this.links, linkSort)
     this.data = pbn.Data || new Buffer(0)
     return this
   }
