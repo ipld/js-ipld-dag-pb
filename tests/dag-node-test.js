@@ -56,10 +56,6 @@ describe('dag-node', () => {
 
     dagNode1.removeNodeLink('next')
     expect(dagNode1.links.length).to.equal(0)
-    dagNode1.addNodeLink('next', dagNode2)
-    expect(dagNode1.links.length).to.equal(1)
-    dagNode1.removeNodeLinkByHash(dagNode2.multihash())
-    expect(dagNode1.links.length).to.equal(0)
     expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(true)
     done()
   })
@@ -84,6 +80,25 @@ describe('dag-node', () => {
 
     dagNode1.removeNodeLink('next')
 
+    expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(true)
+    done()
+  })
+
+  it('remove link to a node by hash', (done) => {
+    var dagNode1 = new DAGNode(new Buffer('4444'))
+    var dagNode2 = new DAGNode(new Buffer('22'))
+
+    var dagNode1Size = dagNode1.size()
+    var dagNode1Multihash = dagNode1.multihash()
+
+    dagNode1.addNodeLink('next', dagNode2)
+    expect(dagNode1.links.length > 0).to.equal(true)
+    expect(dagNode1.size() > dagNode1Size).to.equal(true)
+
+    expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(false)
+    expect(dagNode1.links[0].hash.equals(dagNode2.multihash())).to.equal(true)
+    dagNode1.removeNodeLinkByHash(dagNode2.multihash())
+    expect(dagNode1.links.length).to.equal(0)
     expect(dagNode1.multihash().equals(dagNode1Multihash)).to.equal(true)
     done()
   })
