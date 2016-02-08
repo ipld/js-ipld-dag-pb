@@ -73,7 +73,7 @@ var node = new ipfsMDAG.DAGNode([<data>, <[links]>])
 
 > removes a link from the node by name
 
-##### removeNodeLink
+##### removeNodeLinkByHash
 
 > removes a link from the node by the hash of the linked node
 
