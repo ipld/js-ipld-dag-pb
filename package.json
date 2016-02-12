@@ -18,6 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "bl": "^1.0.0",
+    "ipfs-blocks": "^0.1.0",
     "multihashing": "^0.2.0",
     "protocol-buffers": "^3.1.4",
     "stable": "^0.1.5"
@@ -27,7 +28,6 @@
     "bs58": "^3.0.0",
     "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
-    "ipfs-blocks": "^0.1.0",
     "ipfs-repo": "^0.3.0",
     "mocha": "^2.4.5",
     "ncp": "^2.0.0",
