@@ -16,6 +16,11 @@
     "David Dias <daviddias@ipfs.io>"
   ],
   "license": "ISC",
+  "repository" :
+  { 
+    "type" : "git"
+  , "url" : "https://github.com/vijayee/js-ipfs-merkle-dag.git"
+  },
   "dependencies": {
     "bl": "^1.0.0",
     "ipfs-blocks": "^0.1.0",
