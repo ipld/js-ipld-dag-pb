@@ -1,13 +1,12 @@
-/* globals describe, before, after */
-
+/* eslint-env mocha */
 'use strict'
-
-const fs = require('fs')
+const nodetest = require('./merkle-dag-tests')
 const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
 const expect = require('chai').expect
+const IPFSRepo = require('ipfs-repo')
 
-describe('blocks', () => {
+describe('node test blocks', () => {
   const repoExample = process.cwd() + '/tests/example-repo'
   const repoTests = process.cwd() + '/tests/repo-just-for-test' + Date.now()
 
@@ -26,17 +25,20 @@ describe('blocks', () => {
     })
   })
 
-  const tests = fs.readdirSync(__dirname)
-  tests.filter(file => {
-    if (file === 'index.js' ||
-        file === 'example-repo' ||
-        file.indexOf('repo-just-for-test') > -1 ||
-        file === 'browser.js') {
-      return false
-    } else {
-      return true
+  const fsb = require('fs-blob-store')
+
+  const repoOptions = {
+    stores: {
+      keys: fsb,
+      config: fsb,
+      datastore: fsb,
+      // datastoreLegacy: needs https://github.com/ipfs/js-ipfs-repo/issues/6#issuecomment-164650642
+      logs: fsb,
+      locks: fsb,
+      version: fsb
     }
-  }).forEach(file => {
-    require('./' + file)
-  })
+  }
+
+  var repo = new IPFSRepo(repoTests, repoOptions)
+  nodetest(repo)
 })
