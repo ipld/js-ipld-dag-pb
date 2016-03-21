@@ -10,16 +10,16 @@ describe('node test blocks', () => {
   const repoExample = process.cwd() + '/tests/example-repo'
   const repoTests = process.cwd() + '/tests/repo-just-for-test' + Date.now()
 
-  before(done => {
-    ncp(repoExample, repoTests, err => {
+  before((done) => {
+    ncp(repoExample, repoTests, (err) => {
       process.env.IPFS_PATH = repoTests
       expect(err).to.equal(null)
       done()
     })
   })
 
-  after(done => {
-    rimraf(repoTests, err => {
+  after((done) => {
+    rimraf(repoTests, (err) => {
       expect(err).to.equal(null)
       done()
     })
