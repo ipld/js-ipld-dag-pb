@@ -18,9 +18,16 @@
     "David Dias <daviddias@ipfs.io>"
   ],
   "license": "ISC",
+<<<<<<< HEAD
   "repository": {
     "type": "git",
     "url": "https://github.com/vijayee/js-ipfs-merkle-dag.git"
+=======
+  "repository" :
+  { 
+    "type" : "git"
+  , "url" : "https://github.com/vijayee/js-ipfs-merkle-dag.git"
+>>>>>>> 35d8199b0bcfcae27674175cfb578b3869ca8ccb
   },
   "dependencies": {
     "bl": "^1.0.0",
@@ -36,6 +43,7 @@
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
+<<<<<<< HEAD
     "idb-plus-blob-store": "^1.0.0",
     "ipfs-repo": "^0.5.3",
     "json-loader": "^0.5.4",
@@ -48,6 +56,9 @@
     "karma-spec-reporter": "0.0.24",
     "karma-webpack": "^1.7.0",
     "lodash": "^4.6.1",
+=======
+    "ipfs-repo": "^0.3.0",
+>>>>>>> 35d8199b0bcfcae27674175cfb578b3869ca8ccb
     "mocha": "^2.4.5",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
