@@ -4,7 +4,9 @@
   "description": "A JavaScript implementations of the IPFS MerkleDAG implementations (protobufs)",
   "main": "./src/index.js",
   "scripts": {
-    "test": "mocha tests/index.js",
+    "test": "npm run test:node && npm run test:browser",
+    "test:node": "mocha tests/index.js",
+    "test:browser": "karma start --single-run=true karma.conf.js",
     "lint": "standard"
   },
   "pre-commit": [
@@ -16,10 +18,9 @@
     "David Dias <daviddias@ipfs.io>"
   ],
   "license": "ISC",
-  "repository" :
-  { 
-    "type" : "git"
-  , "url" : "https://github.com/vijayee/js-ipfs-merkle-dag.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vijayee/js-ipfs-merkle-dag.git"
   },
   "dependencies": {
     "bl": "^1.0.0",
@@ -30,14 +31,29 @@
   },
   "devDependencies": {
     "async": "^1.5.2",
+    "brfs": "^1.4.3",
     "bs58": "^3.0.0",
+    "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
-    "ipfs-repo": "^0.3.0",
+    "idb-plus-blob-store": "^1.0.0",
+    "ipfs-repo": "^0.5.3",
+    "json-loader": "^0.5.4",
+    "karma": "^0.13.19",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-cli": "^0.1.2",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-mocha": "^0.2.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.24",
+    "karma-webpack": "^1.7.0",
+    "lodash": "^4.6.1",
     "mocha": "^2.4.5",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
     "rimraf": "^2.5.0",
-    "standard": "^5.4.1"
+    "standard": "^6.0.8",
+    "transform-loader": "^0.2.3",
+    "webpack": "^2.0.7-beta"
   }
 }

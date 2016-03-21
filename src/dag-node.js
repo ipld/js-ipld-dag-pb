@@ -53,7 +53,7 @@ function DAGNode (data, links) {
   this.addRawLink = (link) => {
     encoded = null
     this.links.push(new DAGLink(link.name, link.size, link.hash))
-    stable.inplace(this.links,linkSort)
+    stable.inplace(this.links, linkSort)
   }
 
   // UpdateNodeLink return a copy of the node with the link name set to point to
@@ -151,7 +151,7 @@ function DAGNode (data, links) {
 
   // unMarshal - decodes a protobuf into a DAGNode
   // TODO: this would make more sense as an utility
-  this.unMarshal = (data) => {
+  this.unMarshal = function (data) {
     var pbn = mdagpb.PBNode.decode(data)
     this.links = []
     for (var i = 0; i < pbn.Links.length; i++) {
