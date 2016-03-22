@@ -176,8 +176,7 @@ module.exports = function (repo) {
     })
 
     it('get a mdag node from a /ipfs/ path', (done) => {
-      var encodedMh = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
-      var ipfsPath = '/ipfs/' + encodedMh
+      var ipfsPath = '/ipfs/QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
       dagService.get(ipfsPath, (err, fetchedNode) => {
         expect(err).to.not.exist
         expect(fetchedNode.data).to.deep.equal(new Buffer(bs58.decode('cL')))
@@ -198,6 +197,15 @@ module.exports = function (repo) {
 
     it('supply improperly formatted multihash buffer', (done) => {
       var mh = new Buffer('more data data data')
+      dagService.get(mh, (err, fetchedNode) => {
+        var error = 'Error: Invalid Key'
+        expect(err.toString()).to.equal(error)
+        done()
+      })
+    })
+
+    it('supply something weird', (done) => {
+      var mh = 3
       dagService.get(mh, (err, fetchedNode) => {
         var error = 'Error: Invalid Key'
         expect(err.toString()).to.equal(error)

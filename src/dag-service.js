@@ -26,13 +26,20 @@ function DAGService (blockService) {
 
   // get retrieves a DAGNode, using the Block Service
   this.get = function (multihash, callback) {
-    if (Buffer.isBuffer(multihash)) {
+    const isBuf = Buffer.isBuffer(multihash)
+    const isString = typeof multihash === 'string'
+
+    if (!isBuf && !isString) {
+      return callback(new Error('Invalid Key'))
+    }
+
+    if (isBuf) {
       var mhString = base58.encode(multihash)
       if (!isIPFS.multihash(mhString)) { return callback(new Error('Invalid Key')) }
       this.getWith(multihash, callback)
     }
 
-    if (typeof multihash === 'string') {
+    if (isString) {
       var isMhash = isIPFS.multihash(multihash)
       var isPath = isIPFS.path(multihash)
       if (!isMhash && !isPath) {
