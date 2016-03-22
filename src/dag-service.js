@@ -33,14 +33,16 @@ function DAGService (blockService) {
     }
 
     if (typeof multihash === 'string') {
-      if (!isIPFS.multihash(multihash) && !isIPFS.path(multihash)) {
+      var isMhash = isIPFS.multihash(multihash)
+      var isPath = isIPFS.path(multihash)
+      if (!isMhash && !isPath) {
         return callback(new Error('Invalid Key'))
       }
-      if (isIPFS.multihash(multihash)) {
+      if (isMhash) {
         var mhBuffer = new Buffer(base58.decode(multihash))
         this.getWith(mhBuffer, callback)
       }
-      if (isIPFS.path(multihash)) {
+      if (isPath) {
         var ipfsKey = new Buffer(base58.decode(multihash.replace('/ipfs/', '')))
         this.getWith(ipfsKey, callback)
       }
