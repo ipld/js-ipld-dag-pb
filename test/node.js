@@ -7,8 +7,8 @@ const expect = require('chai').expect
 const IPFSRepo = require('ipfs-repo')
 
 describe('node test blocks', () => {
-  const repoExample = process.cwd() + '/tests/example-repo'
-  const repoTests = process.cwd() + '/tests/repo-just-for-test' + Date.now()
+  const repoExample = process.cwd() + '/test/example-repo'
+  const repoTests = process.cwd() + '/test/repo-just-for-test' + Date.now()
 
   before((done) => {
     ncp(repoExample, repoTests, (err) => {
