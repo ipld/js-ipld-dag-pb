@@ -154,7 +154,22 @@ module.exports = function (repo) {
       })
     })
 
-    it('get a mdag node', (done) => {
+    it('get a mdag node from base58 encoded string', (done) => {
+      const node = new DAGNode(new Buffer('more data data data'))
+      dagService.add(node, (err) => {
+        expect(err).to.not.exist
+        var mh = node.multihash()
+        var encodedMh = bs58.encode(mh)
+        dagService.get(encodedMh, (err, fetchedNode) => {
+          expect(err).to.not.exist
+          expect(node.data).to.deep.equal(fetchedNode.data)
+          expect(node.links).to.deep.equal(fetchedNode.links)
+          done()
+        })
+      })
+    })
+
+    it('get a mdag node from a multihash buffer', (done) => {
       const node = new DAGNode(new Buffer('more data data data'))
       dagService.add(node, (err) => {
         expect(err).to.not.exist
@@ -165,6 +180,41 @@ module.exports = function (repo) {
           expect(node.links).to.deep.equal(fetchedNode.links)
           done()
         })
+      })
+    })
+
+    it('get a mdag node from a /ipfs/ path', (done) => {
+      const node = new DAGNode(new Buffer('more data data data'))
+      dagService.add(node, (err) => {
+        expect(err).to.not.exist
+        var mh = node.multihash()
+        var encodedMh = bs58.encode(mh)
+        var ipfsPath = '/ipfs/' + encodedMh
+        dagService.get(ipfsPath, (err, fetchedNode) => {
+          expect(err).to.not.exist
+          expect(node.data).to.deep.equal(fetchedNode.data)
+          expect(node.links).to.deep.equal(fetchedNode.links)
+          done()
+        })
+      })
+    })
+
+    it('supply an improperly formatted string path', (done) => {
+      var mh = 'bad path'
+      var ipfsPath = '/ipfs/' + mh
+      dagService.get(ipfsPath, (err, fetchedNode) => {
+        var error = 'Error: Invalid Key'
+        expect(err.toString()).to.eql(error)
+        done()
+      })
+    })
+
+    it('supply improperly formatted multihash buffer', (done) => {
+      var mh = new Buffer('more data data data')
+      dagService.get(mh, (err, fetchedNode) => {
+        var error = 'Error: Invalid Key'
+        expect(err.toString()).to.eql(error)
+        done()
       })
     })
 

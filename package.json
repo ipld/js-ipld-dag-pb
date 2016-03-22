@@ -23,8 +23,8 @@
     "url": "https://github.com/vijayee/js-ipfs-merkle-dag.git"
   },
   "dependencies": {
-    "bl": "^1.0.0",
     "ipfs-blocks": "^0.1.0",
+    "is-ipfs": "^0.1.0",
     "multihashing": "^0.2.0",
     "protocol-buffers": "^3.1.4",
     "stable": "^0.1.5"
