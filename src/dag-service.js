@@ -1,6 +1,6 @@
 const DAGNode = require('./dag-node').DAGNode
 const Block = require('ipfs-blocks').Block
-const isIPFS = require('../node_modules/is-ipfs/src/index')
+const isIPFS = require('is-ipfs')
 const base58 = require('bs58')
 
 exports = module.exports = DAGService

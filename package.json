@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "ipfs-blocks": "^0.1.0",
-    "is-ipfs": "github:nginnever/is-ipfs.git#0ca3ad3c10e4dfb549f0ca70824a9bb07ea6777b",
+    "is-ipfs": "^0.2.0",
     "multihashing": "^0.2.0",
     "protocol-buffers": "^3.1.4",
     "stable": "^0.1.5"
