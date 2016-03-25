@@ -1,6 +1,6 @@
 const DAGNode = require('./dag-node').DAGNode
 const Block = require('ipfs-blocks').Block
-const isIPFS = require('is-ipfs')
+const isIPFS = require('../node_modules/is-ipfs/src/index')
 const base58 = require('bs58')
 
 exports = module.exports = DAGService
@@ -26,38 +26,26 @@ function DAGService (blockService) {
 
   // get retrieves a DAGNode, using the Block Service
   this.get = function (multihash, callback) {
-    const isBuf = Buffer.isBuffer(multihash)
-    const isString = typeof multihash === 'string'
+    const isMhash = isIPFS.multihash(multihash)
+    const isPath = isIPFS.path(multihash)
 
-    if (!isBuf && !isString) {
+    if (!isMhash && !isPath) {
       return callback(new Error('Invalid Key'))
     }
 
-    if (isBuf) {
-      var mhString = base58.encode(multihash)
-      if (!isIPFS.multihash(mhString)) { return callback(new Error('Invalid Key')) }
+    if (isMhash) {
       this.getWith(multihash, callback)
     }
 
-    if (isString) {
-      var isMhash = isIPFS.multihash(multihash)
-      var isPath = isIPFS.path(multihash)
-      if (!isMhash && !isPath) {
-        return callback(new Error('Invalid Key'))
-      }
-      if (isMhash) {
-        var mhBuffer = new Buffer(base58.decode(multihash))
-        this.getWith(mhBuffer, callback)
-      }
-      if (isPath) {
-        var ipfsKey = new Buffer(base58.decode(multihash.replace('/ipfs/', '')))
-        this.getWith(ipfsKey, callback)
-      }
+    if (isPath) {
+      var ipfsKey = new Buffer(base58.decode(multihash.replace('/ipfs/', '')))
+      this.getWith(ipfsKey, callback)
     }
   }
 
   this.getWith = function (key, callback) {
-    this.bs.getBlock(key, (err, block) => {
+    const formatted = typeof key === 'string' ? new Buffer(base58.decode(key)) : key
+    this.bs.getBlock(formatted, (err, block) => {
       if (err) { return callback(err) }
       var node = new DAGNode()
       node.unMarshal(block.data)
