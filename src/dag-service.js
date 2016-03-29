@@ -38,7 +38,7 @@ function DAGService (blockService) {
     }
 
     if (isPath) {
-      var ipfsKey = new Buffer(base58.decode(multihash.replace('/ipfs/', '')))
+      var ipfsKey = multihash.replace('/ipfs/', '')
       this.getWith(ipfsKey, callback)
     }
   }
