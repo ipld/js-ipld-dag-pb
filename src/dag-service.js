@@ -1,5 +1,7 @@
-var DAGNode = require('./dag-node').DAGNode
-var Block = require('ipfs-blocks').Block
+const DAGNode = require('./dag-node').DAGNode
+const Block = require('ipfs-blocks').Block
+const isIPFS = require('is-ipfs')
+const base58 = require('bs58')
 
 exports = module.exports = DAGService
 
@@ -23,10 +25,27 @@ function DAGService (blockService) {
   // this.addRecursive
 
   // get retrieves a DAGNode, using the Block Service
-  this.get = (multihash, callback) => {
-    if (!multihash) { return callback(new Error('Invalid Key')) }
+  this.get = function (multihash, callback) {
+    const isMhash = isIPFS.multihash(multihash)
+    const isPath = isIPFS.path(multihash)
 
-    this.bs.getBlock(multihash, (err, block) => {
+    if (!isMhash && !isPath) {
+      return callback(new Error('Invalid Key'))
+    }
+
+    if (isMhash) {
+      this.getWith(multihash, callback)
+    }
+
+    if (isPath) {
+      var ipfsKey = multihash.replace('/ipfs/', '')
+      this.getWith(ipfsKey, callback)
+    }
+  }
+
+  this.getWith = function (key, callback) {
+    const formatted = typeof key === 'string' ? new Buffer(base58.decode(key)) : key
+    this.bs.getBlock(formatted, (err, block) => {
       if (err) { return callback(err) }
       var node = new DAGNode()
       node.unMarshal(block.data)

@@ -154,17 +154,62 @@ module.exports = function (repo) {
       })
     })
 
-    it('get a mdag node', (done) => {
-      const node = new DAGNode(new Buffer('more data data data'))
-      dagService.add(node, (err) => {
+    it('get a mdag node from base58 encoded string', (done) => {
+      var encodedMh = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
+      dagService.get(encodedMh, (err, fetchedNode) => {
         expect(err).to.not.exist
-        var mh = node.multihash()
-        dagService.get(mh, (err, fetchedNode) => {
-          expect(err).to.not.exist
-          expect(node.data).to.deep.equal(fetchedNode.data)
-          expect(node.links).to.deep.equal(fetchedNode.links)
-          done()
-        })
+        expect(fetchedNode.data).to.deep.equal(new Buffer(bs58.decode('cL')))
+        // just picking the second link and comparing mhash buffer to expected
+        expect(fetchedNode.links[1].hash).to.deep.equal(new Buffer(bs58.decode('QmYCvbfNbCwFR45HiNP45rwJgvatpiW38D961L5qAhUM5Y')))
+        done()
+      })
+    })
+
+    it('get a mdag node from a multihash buffer', (done) => {
+      var mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
+      dagService.get(mh, (err, fetchedNode) => {
+        expect(err).to.not.exist
+        expect(fetchedNode.data).to.deep.equal(new Buffer(bs58.decode('cL')))
+        expect(fetchedNode.links[1].hash).to.deep.equal(new Buffer(bs58.decode('QmYCvbfNbCwFR45HiNP45rwJgvatpiW38D961L5qAhUM5Y')))
+        done()
+      })
+    })
+
+    it('get a mdag node from a /ipfs/ path', (done) => {
+      var ipfsPath = '/ipfs/QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
+      dagService.get(ipfsPath, (err, fetchedNode) => {
+        expect(err).to.not.exist
+        expect(fetchedNode.data).to.deep.equal(new Buffer(bs58.decode('cL')))
+        expect(fetchedNode.links[1].hash).to.deep.equal(new Buffer(bs58.decode('QmYCvbfNbCwFR45HiNP45rwJgvatpiW38D961L5qAhUM5Y')))
+        done()
+      })
+    })
+
+    it('supply an improperly formatted string path', (done) => {
+      var mh = 'bad path'
+      var ipfsPath = '/ipfs/' + mh
+      dagService.get(ipfsPath, (err, fetchedNode) => {
+        var error = 'Error: Invalid Key'
+        expect(err.toString()).to.equal(error)
+        done()
+      })
+    })
+
+    it('supply improperly formatted multihash buffer', (done) => {
+      var mh = new Buffer('more data data data')
+      dagService.get(mh, (err, fetchedNode) => {
+        var error = 'Error: Invalid Key'
+        expect(err.toString()).to.equal(error)
+        done()
+      })
+    })
+
+    it('supply something weird', (done) => {
+      var mh = 3
+      dagService.get(mh, (err, fetchedNode) => {
+        var error = 'Error: Invalid Key'
+        expect(err.toString()).to.equal(error)
+        done()
       })
     })
 
