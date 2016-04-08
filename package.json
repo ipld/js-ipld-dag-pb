@@ -2,14 +2,16 @@
   "name": "ipfs-merkle-dag",
   "version": "0.3.0",
   "description": "A JavaScript implementations of the IPFS MerkleDAG implementations (protobufs)",
-  "main": "./src/index.js",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
   "scripts": {
     "lint": "dignified-lint",
     "build": "dignified-build",
     "test": "dignified-test",
     "test:node": "dignified-test node",
     "test:browser": "dignified-test browser",
-    "release": "dignified-release"
+    "release": "dignified-release",
+    "coverage": "dignified-coverage"
   },
   "pre-commit": [
     "lint",
@@ -26,6 +28,7 @@
     "url": "https://github.com/vijayee/js-ipfs-merkle-dag.git"
   },
   "dependencies": {
+    "bs58": "^3.0.0",
     "detect-node": "^2.0.3",
     "ipfs-blocks": "^0.1.0",
     "is-ipfs": "^0.2.0",
@@ -35,7 +38,6 @@
   },
   "devDependencies": {
     "async": "^1.5.2",
-    "bs58": "^3.0.0",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "dignified.js": "^1.0.0",
