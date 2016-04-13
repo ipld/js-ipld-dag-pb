@@ -11,6 +11,8 @@
     "test:node": "dignified-test node",
     "test:browser": "dignified-test browser",
     "release": "dignified-release",
+    "release-minor": "dignified-release minor",
+    "release-major": "dignified-release major",
     "coverage": "dignified-coverage"
   },
   "pre-commit": [
@@ -43,7 +45,7 @@
     "dignified.js": "^1.0.0",
     "fs-blob-store": "^5.2.1",
     "idb-plus-blob-store": "^1.0.0",
-    "ipfs-repo": "^0.5.3",
+    "ipfs-repo": "^0.6.1",
     "lodash": "^4.6.1",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
