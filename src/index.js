@@ -1,3 +1,5 @@
+'use strict'
+
 exports.DAGNode = require('./dag-node.js').DAGNode
 exports.DAGLink = require('./dag-node.js').DAGLink
 exports.DAGService = require('./dag-service.js')

@@ -1,3 +1,5 @@
+'use strict'
+
 const DAGNode = require('./dag-node').DAGNode
 const Block = require('ipfs-blocks').Block
 const isIPFS = require('is-ipfs')
@@ -70,8 +72,9 @@ function DAGService (blockService) {
       nodeStack.push(node)
 
       var keys = []
+      var link
       for (var i = 0; i < node.links.length; i++) {
-        var link = node.links[i]
+        link = node.links[i]
         keys.push(link.hash)
       }
       linkStack = linkStack.concat(keys)
@@ -81,13 +84,14 @@ function DAGService (blockService) {
       if (next) {
         this.getRecursive(next, callback, linkStack, nodeStack)
       } else {
+        const compare = (hash) => (node) => {
+          node.multihash().equals(hash)
+        }
         for (var k = 0; k < nodeStack.length; k++) {
           var current = nodeStack[k]
           for (var j = 0; j < current.links.length; j++) {
             link = current.links[j]
-            var index = nodeStack.findIndex((node) => {
-              return node.multihash().equals(link.hash)
-            })
+            var index = nodeStack.findIndex(compare(link.hash))
             if (index !== -1) {
               link.node = nodeStack[index]
             }

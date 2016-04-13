@@ -31,5 +31,8 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 /node_modules
 **/*.log
-tests/repo-just-for-test*
-/tests/blocks
+test/repo-just-for-test*
+/test/blocks
+
+dist
+lib

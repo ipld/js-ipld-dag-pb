@@ -1,3 +1,5 @@
+'use strict'
+
 var util = require('./util')
 var protobuf = require('protocol-buffers')
 var stable = require('stable')
