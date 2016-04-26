@@ -21,7 +21,7 @@ function DAGNode (data, links) {
   this.links = links || []
 
   function linkSort (a, b) {
-    return a.name.localeCompare(b.name)
+    return (new Buffer(a.name, 'ascii').compare(new Buffer(b.name, 'ascii')))
   }
 
   // copy - returns a clone of the DAGNode
