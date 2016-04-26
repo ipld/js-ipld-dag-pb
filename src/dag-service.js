@@ -48,7 +48,9 @@ function DAGService (blockService) {
   this.getWith = function (key, callback) {
     const formatted = typeof key === 'string' ? new Buffer(base58.decode(key)) : key
     this.bs.getBlock(formatted, (err, block) => {
-      if (err) { return callback(err) }
+      if (err) {
+        return callback(err)
+      }
       var node = new DAGNode()
       node.unMarshal(block.data)
       return callback(null, node)
