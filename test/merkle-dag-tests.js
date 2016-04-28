@@ -5,8 +5,8 @@ const DAGLink = require('../src/dag-node').DAGLink
 const DAGNode = require('../src/dag-node').DAGNode
 const DAGService = require('../src').DAGService
 
-const BlockService = require('ipfs-blocks').BlockService
-const Block = require('ipfs-blocks').Block
+const BlockService = require('ipfs-block-service')
+const Block = require('ipfs-block')
 const bs58 = require('bs58')
 const async = require('async')
 

@@ -1,6 +1,6 @@
 'use strict'
 
-var Block = require('ipfs-blocks').Block
+var Block = require('ipfs-block')
 
 exports = module.exports = Batch
 

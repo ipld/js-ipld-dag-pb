@@ -1,7 +1,7 @@
 'use strict'
 
 const DAGNode = require('./dag-node').DAGNode
-const Block = require('ipfs-blocks').Block
+const Block = require('ipfs-block')
 const isIPFS = require('is-ipfs')
 const base58 = require('bs58')
 
