@@ -140,6 +140,42 @@ module.exports = function (repo) {
         done()
       })
     })
+
+    it('dagNode.toJSON with empty Node', (done) => {
+      const node = new DAGNode(new Buffer(0))
+      const nodeJSON = node.toJSON()
+      expect(nodeJSON.Data).to.deep.equal(new Buffer(0))
+      expect(nodeJSON.Links).to.deep.equal([])
+      expect(nodeJSON.Hash).to.exist
+      expect(nodeJSON.Size).to.exist
+      done()
+    })
+
+    it('dagNode.toJSON with data no links', (done) => {
+      const node = new DAGNode(new Buffer('La cucaracha'))
+      const nodeJSON = node.toJSON()
+      expect(nodeJSON.Data).to.deep.equal(new Buffer('La cucaracha'))
+      expect(nodeJSON.Links).to.deep.equal([])
+      expect(nodeJSON.Hash).to.exist
+      expect(nodeJSON.Size).to.exist
+      done()
+    })
+
+    it('dagNode.toJSON with data and links', (done) => {
+      var node1 = new DAGNode(new Buffer('hello'))
+      var node2 = new DAGNode(new Buffer('world'))
+      node1.addNodeLink('continuation', node2)
+      const node1JSON = node1.toJSON()
+      expect(node1JSON.Data).to.deep.equal(new Buffer('hello'))
+      expect(node1JSON.Links).to.deep.equal([{
+        Hash: 'QmPfjpVaf593UQJ9a5ECvdh2x17XuJYG5Yanv5UFnH3jPE',
+        Name: 'continuation',
+        Size: 7
+      }])
+      expect(node1JSON.Hash).to.exist
+      expect(node1JSON.Size).to.exist
+      done()
+    })
   })
 
   describe('dag-service', function () {
