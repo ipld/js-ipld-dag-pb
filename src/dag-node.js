@@ -1,8 +1,9 @@
 'use strict'
 
-var util = require('./util')
-var protobuf = require('protocol-buffers')
-var stable = require('stable')
+const util = require('./util')
+const protobuf = require('protocol-buffers')
+const stable = require('stable')
+const bs58 = require('bs58')
 
 var schema = 'message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}'
 
@@ -193,6 +194,15 @@ function DAGNode (data, links) {
 
     return pbn
   }
+
+  this.toJSON = () => {
+    return {
+      Data: this.data,
+      Links: this.links.map((l) => { return l.toJSON() }),
+      Hash: bs58.encode(this.multihash()).toString(),
+      Size: this.size()
+    }
+  }
 }
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
@@ -200,4 +210,12 @@ function DAGLink (name, size, hash) {
   this.name = name
   this.size = size
   this.hash = hash
+
+  this.toJSON = () => {
+    return {
+      Name: this.name,
+      Size: this.size,
+      Hash: bs58.encode(this.hash).toString()
+    }
+  }
 }
