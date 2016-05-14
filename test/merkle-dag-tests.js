@@ -21,6 +21,33 @@ module.exports = function (repo) {
       done()
     })
 
+    it('create a node with links', () => {
+      const l1 = [{
+        Name: 'some link',
+        Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
+        Size: 8
+      }, {
+        Name: 'some other link',
+        Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
+        Size: 10
+      }]
+      const d1 = new DAGNode(new Buffer('some data'), l1)
+
+      expect(d1.toJSON()).to.be.eql({
+        Data: new Buffer('some data'),
+        Links: l1,
+        Hash: 'QmRNwg6hP7nVUvhE4XWXsMt3SqDwHeh1kM6QtRybMWNDqN',
+        Size: 137
+      })
+
+      const l2 = l1.map((l) => {
+        return new DAGLink(l.Name, l.Size, l.Hash)
+      })
+      const d2 = new DAGNode(new Buffer('some data'), l2)
+      expect(d1.toJSON()).to.be.eql(d2.toJSON())
+      expect(d1.marshal()).to.be.eql(d2.marshal())
+    })
+
     it('create an emtpy node', function (done) {
       var dagN = new DAGNode(new Buffer(0))
       expect(dagN.data.length).to.equal(0)
