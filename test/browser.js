@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
-const tests = require('./merkle-dag-tests')
-const async = require('async')
+
+const series = require('run-series')
 const store = require('idb-plus-blob-store')
 const _ = require('lodash')
 const IPFSRepo = require('ipfs-repo')
@@ -15,11 +15,11 @@ const idb = window.indexedDB ||
 idb.deleteDatabase('ipfs')
 idb.deleteDatabase('ipfs/blocks')
 
-describe('ipfs merkle dag browser tests', function () {
+describe('Browser tests', function () {
   before(function (done) {
     this.timeout(10000)
 
-    var repoData = []
+    const repoData = []
     repoContext.keys().forEach(function (key) {
       repoData.push({
         key: key.replace('./', ''),
@@ -30,7 +30,7 @@ describe('ipfs merkle dag browser tests', function () {
     const mainBlob = store('ipfs')
     const blocksBlob = store('ipfs/blocks')
 
-    async.eachSeries(repoData, (file, cb) => {
+    series(repoData.map((file) => (cb) => {
       if (_.startsWith(file.key, 'datastore/')) {
         return cb()
       }
@@ -42,19 +42,12 @@ describe('ipfs merkle dag browser tests', function () {
       blob.createWriteStream({
         key: key
       }).end(file.value, cb)
-    }, done)
+    }), done)
   })
-  const options = {
-    stores: {
-      keys: store,
-      config: store,
-      datastore: store,
-      // datastoreLegacy: needs https://github.com/ipfsBlobStore/js-ipfsBlobStore-repo/issues/6#issuecomment-164650642
-      logs: store,
-      locks: store,
-      version: store
-    }
-  }
-  const repo = new IPFSRepo('ipfs', options)
-  tests(repo)
+
+  const repo = new IPFSRepo('ipfs', {stores: store})
+
+  require('./dag-service-test')(repo)
+  require('./dag-node-test')(repo)
+  require('./dag-link-test')(repo)
 })

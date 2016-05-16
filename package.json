@@ -36,25 +36,25 @@
   },
   "dependencies": {
     "bs58": "^3.0.0",
-    "detect-node": "^2.0.3",
     "ipfs-block": "^0.3.0",
     "is-ipfs": "^0.2.0",
+    "multihashes": "^0.2.2",
     "multihashing": "^0.2.0",
     "protocol-buffers": "^3.1.4",
     "stable": "^0.1.5"
   },
   "devDependencies": {
     "aegir": "^3.0.1",
-    "async": "^1.5.2",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
     "idb-plus-blob-store": "^1.0.0",
-    "ipfs-block-service": "^0.3.0",
-    "ipfs-repo": "^0.7.4",
+    "ipfs-block-service": "^0.4.0",
+    "ipfs-repo": "^0.8.0",
     "lodash": "^4.6.1",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
-    "rimraf": "^2.5.0"
+    "rimraf": "^2.5.0",
+    "run-series": "^1.1.4"
   }
 }

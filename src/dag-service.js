@@ -1,33 +1,30 @@
 'use strict'
 
-const DAGNode = require('./dag-node').DAGNode
 const Block = require('ipfs-block')
 const isIPFS = require('is-ipfs')
 const base58 = require('bs58')
 
-exports = module.exports = DAGService
+const DAGNode = require('./dag-node')
 
-function DAGService (blockService) {
-  if (!blockService) {
-    throw new Error('DAGService requires a BlockService instance')
+module.exports = class DAGService {
+  constructor (blockService) {
+    if (!blockService) {
+      throw new Error('DAGService requires a BlockService instance')
+    }
+
+    this.bs = blockService
   }
 
-  this.bs = blockService
-
   // add a DAGNode to the service, storing it on the block service
-  this.add = (node, callback) => {
-    var data = node.encoded()
-
-    var block = new Block(data)
-
-    this.bs.addBlock(block, callback)
+  add (node, callback) {
+    this.bs.addBlock(new Block(node.encoded()), callback)
   }
 
   // DEPRECATED - https://github.com/ipfs/go-ipfs/issues/2262
   // this.addRecursive
 
   // get retrieves a DAGNode, using the Block Service
-  this.get = function (multihash, callback) {
+  get (multihash, callback) {
     const isMhash = isIPFS.multihash(multihash)
     const isPath = isIPFS.path(multihash)
 
@@ -40,18 +37,19 @@ function DAGService (blockService) {
     }
 
     if (isPath) {
-      var ipfsKey = multihash.replace('/ipfs/', '')
+      const ipfsKey = multihash.replace('/ipfs/', '')
       this.getWith(ipfsKey, callback)
     }
   }
 
-  this.getWith = function (key, callback) {
+  getWith (key, callback) {
     const formatted = typeof key === 'string' ? new Buffer(base58.decode(key)) : key
     this.bs.getBlock(formatted, (err, block) => {
       if (err) {
         return callback(err)
       }
-      var node = new DAGNode()
+
+      const node = new DAGNode()
       node.unMarshal(block.data)
       return callback(null, node)
     })
@@ -59,7 +57,7 @@ function DAGService (blockService) {
 
   // getRecursive fetches a node and all of the nodes on its links recursively
   // TODO add depth param
-  this.getRecursive = (multihash, callback, linkStack, nodeStack) => {
+  getRecursive (multihash, callback, linkStack, nodeStack) {
     this.get(multihash, (err, node) => {
       if (err && nodeStack.length > 0) {
         return callback(new Error('Could not complete the recursive get'), nodeStack)
@@ -73,15 +71,13 @@ function DAGService (blockService) {
 
       nodeStack.push(node)
 
-      var keys = []
-      var link
-      for (var i = 0; i < node.links.length; i++) {
-        link = node.links[i]
-        keys.push(link.hash)
-      }
+      const keys = node.links.map((link) => {
+        return link.hash
+      })
+
       linkStack = linkStack.concat(keys)
 
-      var next = linkStack.pop()
+      const next = linkStack.pop()
 
       if (next) {
         this.getRecursive(next, callback, linkStack, nodeStack)
@@ -89,11 +85,13 @@ function DAGService (blockService) {
         const compare = (hash) => (node) => {
           node.multihash().equals(hash)
         }
-        for (var k = 0; k < nodeStack.length; k++) {
-          var current = nodeStack[k]
-          for (var j = 0; j < current.links.length; j++) {
+
+        let link
+        for (let k = 0; k < nodeStack.length; k++) {
+          const current = nodeStack[k]
+          for (let j = 0; j < current.links.length; j++) {
             link = current.links[j]
-            var index = nodeStack.findIndex(compare(link.hash))
+            const index = nodeStack.findIndex(compare(link.hash))
             if (index !== -1) {
               link.node = nodeStack[index]
             }
@@ -105,8 +103,10 @@ function DAGService (blockService) {
   }
 
   // remove deletes a node with given multihash from the blockService
-  this.remove = (multihash, cb) => {
-    if (!multihash) { return cb(new Error('Invalid multihash')) }
+  remove (multihash, cb) {
+    if (!multihash) {
+      return cb(new Error('Invalid multihash'))
+    }
 
     this.bs.deleteBlock(multihash, cb)
   }

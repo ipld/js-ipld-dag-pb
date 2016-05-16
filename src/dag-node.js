@@ -1,13 +1,15 @@
 'use strict'
 
-const util = require('./util')
 const protobuf = require('protocol-buffers')
 const stable = require('stable')
-const bs58 = require('bs58')
+const fs = require('fs')
+const path = require('path')
+const mh = require('multihashes')
 
-var schema = 'message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}'
+const util = require('./util')
+const DAGLink = require('./dag-link')
 
-var mdagpb = protobuf(schema)
+const proto = protobuf(fs.readFileSync(path.join(__dirname, 'merkledag.proto')))
 
 function linkSort (a, b) {
   return (new Buffer(a.name, 'ascii').compare(new Buffer(b.name, 'ascii')))
@@ -15,7 +17,7 @@ function linkSort (a, b) {
 
 // Helper method to get a protobuf object equivalent
 function toProtoBuf (node) {
-  var pbn = {}
+  const pbn = {}
 
   if (node.data && node.data.length > 0) {
     pbn.Data = node.data
@@ -24,16 +26,13 @@ function toProtoBuf (node) {
   }
 
   if (node.links.length > 0) {
-    pbn.Links = []
-
-    for (var i = 0; i < node.links.length; i++) {
-      var link = node.links[i]
-      pbn.Links.push({
+    pbn.Links = node.links.map((link) => {
+      return {
         Hash: link.hash,
         Name: link.name,
         Tsize: link.size
-      })
-    }
+      }
+    })
   } else {
     pbn.Links = null
   }
@@ -41,7 +40,7 @@ function toProtoBuf (node) {
   return pbn
 }
 
-class DAGNode {
+module.exports = class DAGNode {
   constructor (data, links) {
     this._cached = null
     this._encoded = null
@@ -65,9 +64,9 @@ class DAGNode {
 
   // copy - returns a clone of the DAGNode
   copy () {
-    var clone = new DAGNode()
+    const clone = new DAGNode()
     if (this.data && this.data.length > 0) {
-      var buf = new Buffer(this.data.length)
+      const buf = new Buffer(this.data.length)
       this.data.copy(buf)
       clone.data = buf
     }
@@ -84,7 +83,7 @@ class DAGNode {
     if (typeof name !== 'string') {
       return
     }
-    var link = this.makeLink(node)
+    const link = this.makeLink(node)
 
     link.name = name
     this.addRawLink(link)
@@ -101,7 +100,7 @@ class DAGNode {
   // that. If a link of the same name existed, it is replaced.
   // TODO this would make more sense as an utility
   updateNodeLink (name, node) {
-    var newnode = this.copy()
+    const newnode = this.copy()
     newnode.removeNodeLink(name)
     newnode.addNodeLink(name, node)
     return newnode
@@ -134,9 +133,7 @@ class DAGNode {
   // makeLink returns a DAGLink node from a DAGNode
   // TODO: this would make more sense as an utility
   makeLink (node) {
-    var size = node.size()
-    var mh = node.multihash()
-    return new DAGLink(null, size, mh)
+    return new DAGLink(null, node.size(), node.multihash())
   }
 
   // multihash - returns the multihash value of this DAGNode
@@ -148,15 +145,12 @@ class DAGNode {
   // Size returns the total size of the data addressed by node,
   // including the total sizes of references.
   size () {
-    var buf = this.encoded()
+    const buf = this.encoded()
     if (!buf) {
       return 0
     }
-    var size = buf.length
-    for (var i = 0; i < this.links.length; i++) {
-      size += this.links[i].size
-    }
-    return size
+
+    return this.links.reduce((sum, l) => sum + l.size, buf.length)
   }
 
   // Encoded returns the encoded raw data version of a Node instance.
@@ -174,21 +168,17 @@ class DAGNode {
 
   // marshal - encodes the DAGNode into a probuf
   marshal () {
-    var pbn = toProtoBuf(this)
-    var data = mdagpb.PBNode.encode(pbn)
-    return data
+    return proto.PBNode.encode(toProtoBuf(this))
   }
 
   // unMarshal - decodes a protobuf into a DAGNode
   // TODO: this would make more sense as an utility
   unMarshal (data) {
-    var pbn = mdagpb.PBNode.decode(data)
-    this.links = []
-    for (var i = 0; i < pbn.Links.length; i++) {
-      var link = pbn.Links[i]
-      var lnk = new DAGLink(link.Name, link.Tsize, link.Hash)
-      this.links.push(lnk)
-    }
+    const pbn = proto.PBNode.decode(data)
+    this.links = pbn.Links.map((link) => {
+      return new DAGLink(link.Name, link.Tsize, link.Hash)
+    })
+
     stable.inplace(this.links, linkSort)
     this.data = pbn.Data || new Buffer(0)
     return this
@@ -197,34 +187,14 @@ class DAGNode {
   toJSON () {
     return {
       Data: this.data,
-      Links: this.links.map((l) => { return l.toJSON() }),
-      Hash: bs58.encode(this.multihash()).toString(),
+      Links: this.links.map((l) => l.toJSON()),
+      Hash: mh.toB58String(this.multihash()),
       Size: this.size()
     }
   }
-}
 
-// Link represents an IPFS Merkle DAG Link between Nodes.
-function DAGLink (name, size, hash) {
-  if (typeof hash === 'string') {
-    this.hash = new Buffer(bs58.decode(hash))
-  } else {
-    this.hash = hash
+  toString () {
+    const hash = mh.toB58String(this.multihash())
+    return `DAGNode <${hash} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size()}>`
   }
-
-  this.name = name
-  this.size = size
-
-  this.toJSON = () => {
-    return {
-      Name: this.name,
-      Size: this.size,
-      Hash: bs58.encode(this.hash).toString()
-    }
-  }
-}
-
-exports = module.exports = {
-  DAGLink: DAGLink,
-  DAGNode: DAGNode
 }
