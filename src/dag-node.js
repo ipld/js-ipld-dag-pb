@@ -1,60 +1,99 @@
 'use strict'
 
-const util = require('./util')
 const protobuf = require('protocol-buffers')
 const stable = require('stable')
-const bs58 = require('bs58')
+const fs = require('fs')
+const path = require('path')
+const mh = require('multihashes')
 
-var schema = 'message PBLink {optional bytes Hash = 1; optional string Name = 2;optional uint64 Tsize = 3;} message PBNode {repeated PBLink Links = 2; optional bytes Data = 1;}'
+const util = require('./util')
+const DAGLink = require('./dag-link')
 
-var mdagpb = protobuf(schema)
+const proto = protobuf(fs.readFileSync(path.join(__dirname, 'merkledag.proto')))
 
-exports = module.exports = {
-  DAGLink: DAGLink,
-  DAGNode: DAGNode
+function linkSort (a, b) {
+  return (new Buffer(a.name, 'ascii').compare(new Buffer(b.name, 'ascii')))
 }
 
-function DAGNode (data, links) {
-  var cached
-  var encoded
+// Helper method to get a protobuf object equivalent
+function toProtoBuf (node) {
+  const pbn = {}
 
-  this.data = data
-  this.links = links || []
+  if (node.data && node.data.length > 0) {
+    pbn.Data = node.data
+  } else {
+    pbn.Data = null // new Buffer(0)
+  }
 
-  function linkSort (a, b) {
-    return (new Buffer(a.name, 'ascii').compare(new Buffer(b.name, 'ascii')))
+  if (node.links.length > 0) {
+    pbn.Links = node.links.map((link) => {
+      return {
+        Hash: link.hash,
+        Name: link.name,
+        Tsize: link.size
+      }
+    })
+  } else {
+    pbn.Links = null
+  }
+
+  return pbn
+}
+
+module.exports = class DAGNode {
+  constructor (data, links) {
+    this._cached = null
+    this._encoded = null
+
+    this.data = data
+    this.links = []
+
+    // ensure links are instances of DAGLink
+    if (links) {
+      links.forEach((l) => {
+        if (l.name && typeof l.toJSON === 'function') {
+          this.links.push(l)
+        } else {
+          this.links.push(
+            new DAGLink(l.Name, l.Size, l.Hash)
+          )
+        }
+      })
+
+      stable.inplace(this.links, linkSort)
+    }
   }
 
   // copy - returns a clone of the DAGNode
-  this.copy = () => {
-    var clone = new DAGNode()
+  copy () {
+    const clone = new DAGNode()
     if (this.data && this.data.length > 0) {
-      var buf = new Buffer(this.data.length)
+      const buf = new Buffer(this.data.length)
       this.data.copy(buf)
       clone.data = buf
     }
 
     if (this.links.length > 0) {
-      clone.links = links.slice()
+      clone.links = this.links.slice()
     }
 
     return clone
   }
 
   // addNodeLink - adds a DAGLink to this node that points to node by a name
-  this.addNodeLink = (name, node) => {
+  addNodeLink (name, node) {
     if (typeof name !== 'string') {
       return
     }
-    var link = this.makeLink(node)
+    const link = this.makeLink(node)
 
     link.name = name
     this.addRawLink(link)
   }
 
   // addRawLink adds a Link to this node from a DAGLink
-  this.addRawLink = (link) => {
-    encoded = null
+  addRawLink (link) {
+    this._encoded = null
     this.links.push(new DAGLink(link.name, link.size, link.hash))
     stable.inplace(this.links, linkSort)
   }
@@ -62,16 +101,16 @@ function DAGNode (data, links) {
   // UpdateNodeLink return a copy of the node with the link name set to point to
   // that. If a link of the same name existed, it is replaced.
   // TODO this would make more sense as an utility
-  this.updateNodeLink = (name, node) => {
-    var newnode = this.copy()
+  updateNodeLink (name, node) {
+    const newnode = this.copy()
     newnode.removeNodeLink(name)
     newnode.addNodeLink(name, node)
     return newnode
   }
 
   // removeNodeLink removes a Link from this node based on name
-  this.removeNodeLink = (name) => {
-    encoded = null // uncache
+  removeNodeLink (name) {
+    this._encoded = null // uncache
     this.links = this.links.filter((link) => {
       if (link.name === name) {
         return false
@@ -80,9 +119,10 @@ function DAGNode (data, links) {
       }
     })
   }
+
   // removeNodeLink removes a Link from this node based on a multihash
-  this.removeNodeLinkByHash = (multihash) => {
-    encoded = null // uncache
+  removeNodeLinkByHash (multihash) {
+    this._encoded = null // uncache
     this.links = this.links.filter((link) => {
       if (link.hash.equals(multihash)) {
         return false
@@ -92,130 +132,71 @@ function DAGNode (data, links) {
     })
   }
 
-  // removeNodeLink removes a Link from this node based on name
-  this.removeNodeLink = (name) => {
-    encoded = null // uncache
-    this.links = this.links.filter((link) => {
-      if (link.name === name) {
-        return false
-      } else {
-        return true
-      }
-    })
-  }
-
   // makeLink returns a DAGLink node from a DAGNode
   // TODO: this would make more sense as an utility
-  this.makeLink = (node) => {
-    var size = node.size()
-    var mh = node.multihash()
-    return new DAGLink(null, size, mh)
+  makeLink (node) {
+    return new DAGLink(null, node.size(), node.multihash())
   }
 
   // multihash - returns the multihash value of this DAGNode
-  this.multihash = () => {
+  multihash () {
     this.encoded()
-    return cached
+    return this._cached
   }
 
   // Size returns the total size of the data addressed by node,
   // including the total sizes of references.
-  this.size = () => {
-    var buf = this.encoded()
+  size () {
+    const buf = this.encoded()
     if (!buf) {
       return 0
     }
-    var size = buf.length
-    for (var i = 0; i < this.links.length; i++) {
-      size += this.links[i].size
-    }
-    return size
+
+    return this.links.reduce((sum, l) => sum + l.size, buf.length)
   }
 
   // Encoded returns the encoded raw data version of a Node instance.
   // It may use a cached encoded version, unless the force flag is given.
-  this.encoded = (force) => {
-    if (force || !encoded) {
-      encoded = this.marshal()
+  encoded (force) {
+    if (force || !this._encoded) {
+      this._encoded = this.marshal()
 
-      if (encoded) {
-        cached = util.hash(encoded)
+      if (this._encoded) {
+        this._cached = util.hash(this._encoded)
       }
     }
-    return encoded
+    return this._encoded
   }
 
   // marshal - encodes the DAGNode into a probuf
-  this.marshal = () => {
-    var pbn = toProtoBuf(this)
-    var data = mdagpb.PBNode.encode(pbn)
-    return data
+  marshal () {
+    return proto.PBNode.encode(toProtoBuf(this))
   }
 
   // unMarshal - decodes a protobuf into a DAGNode
   // TODO: this would make more sense as an utility
-  this.unMarshal = function (data) {
-    var pbn = mdagpb.PBNode.decode(data)
-    this.links = []
-    for (var i = 0; i < pbn.Links.length; i++) {
-      var link = pbn.Links[i]
-      var lnk = new DAGLink(link.Name, link.Tsize, link.Hash)
-      this.links.push(lnk)
-    }
+  unMarshal (data) {
+    const pbn = proto.PBNode.decode(data)
+    this.links = pbn.Links.map((link) => {
+      return new DAGLink(link.Name, link.Tsize, link.Hash)
+    })
+
     stable.inplace(this.links, linkSort)
     this.data = pbn.Data || new Buffer(0)
     return this
   }
 
-  // Helper method to get a protobuf object equivalent
-  function toProtoBuf (node) {
-    var pbn = {}
-
-    if (node.data && node.data.length > 0) {
-      pbn.Data = node.data
-    } else {
-      pbn.Data = null // new Buffer(0)
-    }
-
-    if (node.links.length > 0) {
-      pbn.Links = []
-
-      for (var i = 0; i < node.links.length; i++) {
-        var link = node.links[i]
-        pbn.Links.push({
-          Hash: link.hash,
-          Name: link.name,
-          Tsize: link.size
-        })
-      }
-    } else {
-      pbn.Links = null
-    }
-
-    return pbn
-  }
-
-  this.toJSON = () => {
+  toJSON () {
     return {
       Data: this.data,
-      Links: this.links.map((l) => { return l.toJSON() }),
-      Hash: bs58.encode(this.multihash()).toString(),
+      Links: this.links.map((l) => l.toJSON()),
+      Hash: mh.toB58String(this.multihash()),
       Size: this.size()
     }
   }
-}
 
-// Link represents an IPFS Merkle DAG Link between Nodes.
-function DAGLink (name, size, hash) {
-  this.name = name
-  this.size = size
-  this.hash = hash
-
-  this.toJSON = () => {
-    return {
-      Name: this.name,
-      Size: this.size,
-      Hash: bs58.encode(this.hash).toString()
-    }
+  toString () {
+    const hash = mh.toB58String(this.multihash())
+    return `DAGNode <${hash} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size()}>`
   }
 }

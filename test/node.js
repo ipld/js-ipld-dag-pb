@@ -1,12 +1,13 @@
 /* eslint-env mocha */
 'use strict'
-const nodetest = require('./merkle-dag-tests')
+
 const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
 const expect = require('chai').expect
 const IPFSRepo = require('ipfs-repo')
+const store = require('fs-blob-store')
 
-describe('node test blocks', () => {
+describe('Node.js Tests', () => {
   const repoExample = process.cwd() + '/test/example-repo'
   const repoTests = process.cwd() + '/test/repo-just-for-test' + Date.now()
 
@@ -25,20 +26,9 @@ describe('node test blocks', () => {
     })
   })
 
-  const fsb = require('fs-blob-store')
+  const repo = new IPFSRepo(repoTests, {stores: store})
 
-  const repoOptions = {
-    stores: {
-      keys: fsb,
-      config: fsb,
-      datastore: fsb,
-      // datastoreLegacy: needs https://github.com/ipfs/js-ipfs-repo/issues/6#issuecomment-164650642
-      logs: fsb,
-      locks: fsb,
-      version: fsb
-    }
-  }
-
-  var repo = new IPFSRepo(repoTests, repoOptions)
-  nodetest(repo)
+  require('./dag-service-test')(repo)
+  require('./dag-node-test')(repo)
+  require('./dag-link-test')(repo)
 })
