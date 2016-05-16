@@ -45,6 +45,7 @@ module.exports = function (repo) {
       const d2 = new DAGNode(new Buffer('some data'), l2)
       expect(d1.toJSON()).to.be.eql(d2.toJSON())
       expect(d1.marshal()).to.be.eql(d2.marshal())
+      expect(d2.links).to.be.eql(l2)
     })
 
     it('create an emtpy node', function (done) {

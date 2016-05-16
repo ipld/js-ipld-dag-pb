@@ -50,15 +50,17 @@ module.exports = class DAGNode {
 
     // ensure links are instances of DAGLink
     if (links) {
-      links.map((l) => {
-        return {
-          size: l.size || l.Size,
-          name: l.name || l.Name,
-          hash: l.hash || l.Hash
+      links.forEach((l) => {
+        if (l.name && typeof l.toJSON === 'function') {
+          this.links.push(l)
+        } else {
+          this.links.push(
+            new DAGLink(l.Name, l.Size, l.Hash)
+          )
         }
-      }).forEach((l) => {
-        this.addRawLink(l)
       })
+
+      stable.inplace(this.links, linkSort)
     }
   }
 
