@@ -51,7 +51,7 @@ module.exports = class DAGNode {
     // ensure links are instances of DAGLink
     if (links) {
       links.forEach((l) => {
-        if (l.name && typeof l.toJSON === 'function') {
+        if (l instanceof DAGLink) {
           this.links.push(l)
         } else {
           this.links.push(
