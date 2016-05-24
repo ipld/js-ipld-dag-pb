@@ -63,7 +63,7 @@ var node = new ipfsMDAG.DAGNode([<data>, <[links]>])
 
 ##### addRawLink
 
-> creates a link on node A to node B by using direclty node B multihash
+> creates a link on node A to node B by using directly node B multihash
 
 ##### updateNodeLink
 
@@ -84,7 +84,11 @@ var node = new ipfsMDAG.DAGNode([<data>, <[links]>])
 
 ##### size
 
-> size of the node. This is a property, not a function
+> (property) size of the node, in bytes
+
+##### links
+
+> (property) an array of `DAGLink`s belonging to the node
 
 ##### multihash
 
@@ -96,7 +100,7 @@ var node = new ipfsMDAG.DAGNode([<data>, <[links]>])
 
 ##### unMarshal
 
-> desirializes a probuf serialized node
+> deserializes a node encoded using protobuf
 
 ##### (used internally) getPBNode
 
