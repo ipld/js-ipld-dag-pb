@@ -51,7 +51,7 @@ module.exports = class DAGNode {
     // ensure links are instances of DAGLink
     if (links) {
       links.forEach((l) => {
-        if (l instanceof DAGLink) {
+        if (l.constructor && l.constructor.name === 'DAGLink') {
           this.links.push(l)
         } else {
           this.links.push(
