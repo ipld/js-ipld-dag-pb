@@ -204,6 +204,22 @@ module.exports = function (repo) {
       done()
     })
 
+    it('create a unnamed dagLink', (done) => {
+      const node1 = new DAGNode(new Buffer('1'))
+      const node2 = new DAGNode(new Buffer('2'))
+      node1.addNodeLink('', node2)
+      const node1JSON = node1.toJSON()
+      expect(node1JSON.Data).to.deep.equal(new Buffer('1'))
+      expect(node1JSON.Links).to.deep.equal([{
+        Hash: 'QmNRGfMaSjNcjtyS56JrZBEU5QcGtfViWWG8V9pVqgVpmT',
+        Name: '',
+        Size: 3
+      }])
+      expect(node1JSON.Hash).to.exist
+      expect(node1JSON.Size).to.exist
+      done()
+    })
+
     it('toString', () => {
       const node = new DAGNode(new Buffer('hello world'))
 

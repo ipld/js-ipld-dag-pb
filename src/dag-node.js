@@ -12,7 +12,7 @@ const DAGLink = require('./dag-link')
 const proto = protobuf(fs.readFileSync(path.join(__dirname, 'merkledag.proto')))
 
 function linkSort (a, b) {
-  return (new Buffer(a.name, 'ascii').compare(new Buffer(b.name, 'ascii')))
+  return (new Buffer(a.name || '', 'ascii').compare(new Buffer(b.name || '', 'ascii')))
 }
 
 // Helper method to get a protobuf object equivalent
@@ -83,7 +83,7 @@ module.exports = class DAGNode {
   // addNodeLink - adds a DAGLink to this node that points to node by a name
   addNodeLink (name, node) {
     if (typeof name !== 'string') {
-      return
+      throw new Error('first argument must be link name')
     }
     const link = this.makeLink(node)
 
