@@ -213,5 +213,28 @@ module.exports = function (repo) {
         'DAGNode <QmU1Sq1B7RPQD2XcQNLB58qJUyJffVJqihcxmmN1STPMxf - data: "hello world", links: 0, size: 13>'
       )
     })
+
+    it('add two nameless links to a node', function (done) {
+      const l1 = {
+        Name: '',
+        Hash: 'QmbAmuwox51c91FmC2jEX5Ng4zS4HyVgpA5GNPBF5QsWMA',
+        Size: 57806
+      }
+      const l2 = {
+        Name: '',
+        Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy',
+        Size: 262158
+      }
+      const link1 = new DAGLink(l1.Name, l1.Size, new Buffer(bs58.decode(l1.Hash)))
+      const link2 = new DAGLink(l2.Name, l2.Size, new Buffer(bs58.decode(l2.Hash)))
+
+      function createNode () {
+        return new DAGNode(new Buffer('hiya'), [link1, link2])
+      }
+
+      expect(createNode).to.not.throw()
+
+      done()
+    })
   })
 }
