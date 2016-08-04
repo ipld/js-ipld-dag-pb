@@ -44,7 +44,7 @@
     "stable": "^0.1.5"
   },
   "devDependencies": {
-    "aegir": "^3.0.1",
+    "aegir": "^5.0.1",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
