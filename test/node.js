@@ -3,9 +3,8 @@
 
 const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
-const expect = require('chai').expect
 const IPFSRepo = require('ipfs-repo')
-const store = require('fs-blob-store')
+const Store = require('fs-pull-blob-store')
 
 describe('Node.js Tests', () => {
   const repoExample = process.cwd() + '/test/example-repo'
@@ -14,19 +13,15 @@ describe('Node.js Tests', () => {
   before((done) => {
     ncp(repoExample, repoTests, (err) => {
       process.env.IPFS_PATH = repoTests
-      expect(err).to.equal(null)
-      done()
+      done(err)
     })
   })
 
   after((done) => {
-    rimraf(repoTests, (err) => {
-      expect(err).to.equal(null)
-      done()
-    })
+    rimraf(repoTests, done)
   })
 
-  const repo = new IPFSRepo(repoTests, {stores: store})
+  const repo = new IPFSRepo(repoTests, {stores: Store})
 
   require('./dag-service-test')(repo)
   require('./dag-node-test')(repo)
