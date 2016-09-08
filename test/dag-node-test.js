@@ -140,9 +140,9 @@ module.exports = function (repo) {
 
       const b = new Block(dagN.marshal())
 
-      bs.addBlock(b, (err) => {
+      bs.put(b, (err) => {
         expect(err).to.not.exist
-        bs.getBlock(b.key, (err, block) => {
+        bs.get(b.key, (err, block) => {
           expect(err).to.not.exist
           expect(b.data.equals(block.data)).to.equal(true)
           expect(b.key.equals(block.key)).to.equal(true)
@@ -158,7 +158,7 @@ module.exports = function (repo) {
       const bs = new BlockService(repo)
 
       const mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
-      bs.getBlock(mh, function (err, block) {
+      bs.get(mh, function (err, block) {
         expect(err).to.not.exist
         const retrievedDagNode = new DAGNode()
         retrievedDagNode.unMarshal(block.data)

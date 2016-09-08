@@ -2,7 +2,9 @@
 
 const Block = require('ipfs-block')
 const isIPFS = require('is-ipfs')
-const base58 = require('bs58')
+const pull = require('pull-stream')
+const mh = require('multihashes')
+const traverse = require('pull-traverse')
 
 const DAGNode = require('./dag-node')
 
@@ -16,90 +18,71 @@ module.exports = class DAGService {
   }
 
   // add a DAGNode to the service, storing it on the block service
-  add (node, callback) {
-    this.bs.addBlock(new Block(node.encoded()), callback)
+  put (node, callback) {
+    callback = callback || (() => {})
+    pull(
+      pull.values([node]),
+      this.putStream(callback)
+    )
   }
 
-  // DEPRECATED - https://github.com/ipfs/go-ipfs/issues/2262
-  // this.addRecursive
+  putStream (callback) {
+    return pull(
+      pull.map((node) => new Block(node.encoded())),
+      this.bs.putStream(),
+      pull.onEnd(callback)
+    )
+  }
 
   // get retrieves a DAGNode, using the Block Service
-  get (multihash, callback) {
-    const isMhash = isIPFS.multihash(multihash)
-    const isPath = isIPFS.path(multihash)
-
-    if (!isMhash && !isPath) {
-      return callback(new Error('Invalid Key'))
-    }
-
-    if (isMhash) {
-      this.getWith(multihash, callback)
-    }
-
-    if (isPath) {
-      const ipfsKey = multihash.replace('/ipfs/', '')
-      this.getWith(ipfsKey, callback)
-    }
-  }
-
-  getWith (key, callback) {
-    const formatted = typeof key === 'string' ? new Buffer(base58.decode(key)) : key
-    this.bs.getBlock(formatted, (err, block) => {
-      if (err) {
-        return callback(err)
-      }
-
-      const node = new DAGNode()
-      node.unMarshal(block.data)
-      return callback(null, node)
-    })
-  }
-
-  // getRecursive fetches a node and all of the nodes on its links recursively
-  // TODO add depth param
-  getRecursive (multihash, callback, linkStack, nodeStack) {
-    this.get(multihash, (err, node) => {
-      if (err && nodeStack.length > 0) {
-        return callback(new Error('Could not complete the recursive get'), nodeStack)
-      }
-      if (err) {
-        return callback(err)
-      }
-
-      if (!linkStack) { linkStack = [] }
-      if (!nodeStack) { nodeStack = [] }
-
-      nodeStack.push(node)
-
-      const keys = node.links.map((link) => {
-        return link.hash
+  get (key, callback) {
+    pull(
+      this.getStream(key),
+      pull.collect((err, res) => {
+        if (err) return callback(err)
+        callback(null, res[0])
       })
+    )
+  }
 
-      linkStack = linkStack.concat(keys)
+  getStream (key) {
+    const normalizedKey = normalizeKey(key)
 
-      const next = linkStack.pop()
+    if (!normalizedKey) {
+      return pull.error(new Error('Invalid Key'))
+    }
 
-      if (next) {
-        this.getRecursive(next, callback, linkStack, nodeStack)
-      } else {
-        const compare = (hash) => (node) => {
-          node.multihash().equals(hash)
-        }
+    return pull(
+      this.bs.getStream(normalizedKey),
+      pull.map((block) => {
+        const node = new DAGNode()
+        node.unMarshal(block.data)
+        return node
+      })
+    )
+  }
 
-        let link
-        for (let k = 0; k < nodeStack.length; k++) {
-          const current = nodeStack[k]
-          for (let j = 0; j < current.links.length; j++) {
-            link = current.links[j]
-            const index = nodeStack.findIndex(compare(link.hash))
-            if (index !== -1) {
-              link.node = nodeStack[index]
-            }
-          }
-        }
-        return callback(null, nodeStack)
-      }
-    })
+  getRecursive (key, cb) {
+    pull(
+      this.getRecursiveStream(key),
+      pull.collect(cb)
+    )
+  }
+
+  // Fetches a node and all of the nodes on its links recursively
+  // TODO: add depth param
+  getRecursiveStream (multihash) {
+    return pull(
+      this.getStream(multihash),
+      pull.map((node) => traverse.widthFirst(node, (node) => {
+        return pull(
+          pull.values(node.links),
+          pull.map((link) => this.getStream(link.hash)),
+          pull.flatten()
+        )
+      })),
+      pull.flatten()
+    )
   }
 
   // remove deletes a node with given multihash from the blockService
@@ -108,9 +91,28 @@ module.exports = class DAGService {
       return cb(new Error('Invalid multihash'))
     }
 
-    this.bs.deleteBlock(multihash, cb)
+    this.bs.delete(multihash, cb)
+  }
+}
+
+function normalizeKey (key) {
+  let res
+  const isMhash = isIPFS.multihash(key)
+  const isPath = isIPFS.path(key)
+
+  if (!isMhash && !isPath) {
+    return null
   }
 
-  // DEPRECATED - https://github.com/ipfs/go-ipfs/issues/2262
-  // this.removeRecursive = (key, callback) => { }
+  if (isMhash) {
+    res = key
+  } else if (isPath) {
+    res = key.replace('/ipfs/', '')
+  }
+
+  if (typeof res === 'string') {
+    return mh.fromB58String(res)
+  }
+
+  return res
 }
