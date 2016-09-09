@@ -40,6 +40,7 @@
     "multihashes": "^0.2.2",
     "multihashing": "^0.2.1",
     "protocol-buffers": "^3.1.6",
+    "pull-stream": "^3.4.5",
     "pull-traverse": "^1.0.3",
     "stable": "^0.1.5"
   },
