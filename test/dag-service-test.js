@@ -232,5 +232,25 @@ module.exports = function (repo) {
         )
       ], done)
     })
+
+    it('get a node with unnamed links', (done) => {
+      var b58MH = 'QmRR6dokkN7dZzNZUuqqvUGWbuwvXkavWC6dJY3nT17Joc'
+      dagService.get(b58MH, (err, node) => {
+        expect(err).to.not.exist
+        expect(node.toJSON().Links).to.deep.equal([
+          {
+            Name: '',
+            Size: 45623854,
+            Hash: 'QmREcKL7eXVme1ZmedsBYwLUnYmqYt3QyeJfthnp1SGo3z'
+          },
+          {
+            Name: '',
+            Size: 41485691,
+            Hash: 'QmWEpWQA5mJL6KzRzGqL6RCsFhLCWmovx6wHji7BzA8qmi'
+          }
+        ])
+        done()
+      })
+    })
   })
 }
