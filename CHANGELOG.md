@@ -1,3 +1,8 @@
+<a name="0.7.3"></a>
+## [0.7.3](https://github.com/ipfs/js-ipfs-merkle-dag/compare/v0.7.2...v0.7.3) (2016-09-09)
+
+
+
 <a name="0.7.2"></a>
 ## [0.7.2](https://github.com/ipfs/js-ipfs-merkle-dag/compare/v0.7.1...v0.7.2) (2016-09-09)
 
