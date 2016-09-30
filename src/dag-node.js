@@ -9,7 +9,7 @@ const mh = require('multihashes')
 const util = require('./util')
 const DAGLink = require('./dag-link')
 
-const proto = protobuf(fs.readFileSync(path.join(__dirname, 'merkledag.proto')))
+const proto = protobuf(fs.readFileSync(path.join(__dirname, 'dag.proto')))
 
 function linkSort (a, b) {
   return (new Buffer(a.name || '', 'ascii').compare(new Buffer(b.name || '', 'ascii')))
@@ -98,8 +98,9 @@ module.exports = class DAGNode {
     stable.inplace(this.links, linkSort)
   }
 
-  // UpdateNodeLink return a copy of the node with the link name set to point to
-  // that. If a link of the same name existed, it is replaced.
+  // UpdateNodeLink return a copy of the node with the link name
+  // set to point to that. If a link of the same name existed,
+  // it is replaced.
   // TODO this would make more sense as an utility
   updateNodeLink (name, node) {
     const newnode = this.copy()
@@ -159,7 +160,7 @@ module.exports = class DAGNode {
   // It may use a cached encoded version, unless the force flag is given.
   encoded (force) {
     if (force || !this._encoded) {
-      this._encoded = this.marshal()
+      this._encoded = this.serialize()
 
       if (this._encoded) {
         this._cached = util.hash(this._encoded)
@@ -168,14 +169,14 @@ module.exports = class DAGNode {
     return this._encoded
   }
 
-  // marshal - encodes the DAGNode into a probuf
-  marshal () {
+  // serialize - encodes the DAGNode into a probuf
+  serialize () {
     return proto.PBNode.encode(toProtoBuf(this))
   }
 
-  // unMarshal - decodes a protobuf into a DAGNode
+  // deserialize - decodes a protobuf into a DAGNode
   // TODO: this would make more sense as an utility
-  unMarshal (data) {
+  deserialize (data) {
     const pbn = proto.PBNode.decode(data)
     this.links = pbn.Links.map((link) => {
       return new DAGLink(link.Name, link.Tsize, link.Hash)

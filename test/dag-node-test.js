@@ -16,7 +16,7 @@ module.exports = function (repo) {
       expect(dagN.data.length > 0).to.equal(true)
       expect(Buffer.isBuffer(dagN.data)).to.equal(true)
       expect(dagN.size() > 0).to.equal(true)
-      expect(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data)).to.equal(true)
+      expect(dagN.data.equals(dagN.deserialize(dagN.serialize()).data)).to.equal(true)
       done()
     })
 
@@ -44,7 +44,7 @@ module.exports = function (repo) {
       })
       const d2 = new DAGNode(new Buffer('some data'), l2)
       expect(d1.toJSON()).to.be.eql(d2.toJSON())
-      expect(d1.marshal()).to.be.eql(d2.marshal())
+      expect(d1.serialize()).to.be.eql(d2.serialize())
       expect(d2.links).to.be.eql(l2)
     })
 
@@ -53,7 +53,7 @@ module.exports = function (repo) {
       expect(dagN.data.length).to.equal(0)
       expect(Buffer.isBuffer(dagN.data)).to.equal(true)
       expect(dagN.size()).to.equal(0)
-      expect(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data)).to.equal(true)
+      expect(dagN.data.equals(dagN.deserialize(dagN.serialize()).data)).to.equal(true)
       done()
     })
 
@@ -136,9 +136,9 @@ module.exports = function (repo) {
       expect(dagN.data.length > 0).to.equal(true)
       expect(Buffer.isBuffer(dagN.data)).to.equal(true)
       expect(dagN.size() > 0).to.equal(true)
-      expect(dagN.data.equals(dagN.unMarshal(dagN.marshal()).data)).to.equal(true)
+      expect(dagN.data.equals(dagN.deserialize(dagN.serialize()).data)).to.equal(true)
 
-      const b = new Block(dagN.marshal())
+      const b = new Block(dagN.serialize())
 
       bs.put(b, (err) => {
         expect(err).to.not.exist
@@ -147,7 +147,7 @@ module.exports = function (repo) {
           expect(b.data.equals(block.data)).to.equal(true)
           expect(b.key.equals(block.key)).to.equal(true)
           const fetchedDagNode = new DAGNode()
-          fetchedDagNode.unMarshal(block.data)
+          fetchedDagNode.deserialize(block.data)
           expect(dagN.data.equals(fetchedDagNode.data)).to.equal(true)
           done()
         })
@@ -161,7 +161,7 @@ module.exports = function (repo) {
       bs.get(mh, function (err, block) {
         expect(err).to.not.exist
         const retrievedDagNode = new DAGNode()
-        retrievedDagNode.unMarshal(block.data)
+        retrievedDagNode.deserialize(block.data)
         expect(retrievedDagNode.data).to.exist
         expect(retrievedDagNode.links.length).to.equal(6)
         done()
