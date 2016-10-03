@@ -11,35 +11,6 @@ const DAGLink = require('./dag-link')
 
 const proto = protobuf(fs.readFileSync(path.join(__dirname, 'dag.proto')))
 
-function linkSort (a, b) {
-  return (new Buffer(a.name || '', 'ascii').compare(new Buffer(b.name || '', 'ascii')))
-}
-
-// Helper method to get a protobuf object equivalent
-function toProtoBuf (node) {
-  const pbn = {}
-
-  if (node.data && node.data.length > 0) {
-    pbn.Data = node.data
-  } else {
-    pbn.Data = null // new Buffer(0)
-  }
-
-  if (node.links.length > 0) {
-    pbn.Links = node.links.map((link) => {
-      return {
-        Hash: link.hash,
-        Name: link.name,
-        Tsize: link.size
-      }
-    })
-  } else {
-    pbn.Links = null
-  }
-
-  return pbn
-}
-
 class DAGNode {
   constructor (data, links) {
     this._cached = undefined
@@ -60,11 +31,14 @@ class DAGNode {
         }
       })
 
-      stable.inplace(this.links, linkSort)
+      stable.inplace(this.links, util.linkSort)
     }
   }
 
-  // addNodeLink - adds a DAGLink to this node that points to node by a name
+  /*
+   * addNodeLink - adds a DAGLink to this node that points
+   * to node by a name
+   */
   addNodeLink (name, node) {
     if (typeof name !== 'string') {
       throw new Error('first argument must be link name')
@@ -75,16 +49,20 @@ class DAGNode {
     this.addRawLink(link)
   }
 
-  // addRawLink adds a Link to this node from a DAGLink
+  /*
+   * addRawLink adds a Link to this node from a DAGLink
+   */
   addRawLink (link) {
     this._updated = true
     this.links.push(new DAGLink(link.name, link.size, link.hash))
-    stable.inplace(this.links, linkSort)
+    stable.inplace(this.links, util.linkSort)
   }
 
-  // UpdateNodeLink return a copy of the node with the link name
-  // set to point to that. If a link of the same name existed,
-  // it is replaced.
+  /*
+   * UpdateNodeLink return a copy of the node with the link name
+   * set to point to that. If a link of the same name existed,
+   * it is replaced.
+   */
   // TODO ?? this would make more sense as an utility
   updateNodeLink (name, node) {
     const newnode = this.copy()
@@ -93,7 +71,9 @@ class DAGNode {
     return newnode
   }
 
-  // removeNodeLink removes a Link from this node based on name
+  /*
+   * removeNodeLink removes a Link from this node based on name
+   */
   removeNodeLink (name) {
     this._updated = true
 
@@ -106,7 +86,9 @@ class DAGNode {
     })
   }
 
-  // removeNodeLink removes a Link from this node based on a multihash
+  /*
+   * removeNodeLink removes a Link from this node based on a multihash
+   */
   removeNodeLinkByHash (multihash) {
     this._updated = true
 
@@ -119,13 +101,17 @@ class DAGNode {
     })
   }
 
-  // makeLink returns a DAGLink node from a DAGNode
+  /*
+   * makeLink returns a DAGLink node from a DAGNode
+   */
   // TODO: this would make more sense as an utility
   makeLink (node) {
     return new DAGLink(null, node.size(), node.multihash())
   }
 
-  // clone - returns a clone of the DAGNode
+  /*
+   * clone - returns a clone of the DAGNode
+   */
   clone () {
     const clone = new DAGNode()
     if (this.data && this.data.length > 0) {
@@ -141,11 +127,16 @@ class DAGNode {
     return clone
   }
 
+  /*
+   * cid - returns a cid instance
+   */
   cid () {
     // TODO
   }
 
-  // multihash - returns the multihash value of this DAGNode
+  /*
+   * multihash - returns the multihash value of this DAGNode
+   */
   multihash () {
     if (!this.cached || this._updated) {
       this._cached = util.hash(this.serialize())
@@ -155,8 +146,10 @@ class DAGNode {
     return this._cached
   }
 
-  // Size returns the total size of the data addressed by node,
-  // including the total sizes of references.
+  /*
+   * size - returns the total size of the data addressed by node,
+   * including the total sizes of references.
+   */
   size () {
     const buf = this.serialize()
     if (!buf) {
@@ -168,12 +161,16 @@ class DAGNode {
     }, buf.length)
   }
 
-  // serialize - encodes the DAGNode into a probuf
+  /*
+   * serialize - encodes the DAGNode into a probuf
+   */
   serialize () {
-    return proto.PBNode.encode(toProtoBuf(this))
+    return proto.PBNode.encode(util.toProtoBuf(this))
   }
 
-  // deserialize - decodes a protobuf into a DAGNode
+  /*
+   * deserialize - decodes a protobuf into a DAGNode
+   */
   // TODO: ?? this would make more sense as an utility
   deserialize (data) {
     const pbn = proto.PBNode.decode(data)
@@ -181,7 +178,7 @@ class DAGNode {
       return new DAGLink(link.Name, link.Tsize, link.Hash)
     })
 
-    stable.inplace(this.links, linkSort)
+    stable.inplace(this.links, util.linkSort)
     this.data = pbn.Data || new Buffer(0)
     return this
   }
