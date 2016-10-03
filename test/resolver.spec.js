@@ -1,4 +1,6 @@
 /* eslint-env mocha */
+/* eslint max-nested-callbacks: ["error", 8] */
+
 'use strict'
 
 const expect = require('chai').expect
@@ -85,11 +87,11 @@ describe('IPLD format resolver (local)', () => {
     it('resolver.tree', () => {
       const paths = resolver.tree(linksNodeBlock)
       expect(paths).to.eql([{
-        'path': '',
-        'value': 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
+        path: '',
+        value: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
       }, {
-        'path': 'named link',
-        'value': 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'
+        path: 'named link',
+        value: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'
       }])
     })
 
@@ -118,14 +120,14 @@ describe('IPLD format resolver (local)', () => {
     it('resolver.tree', () => {
       const paths = resolver.tree(dataLinksNodeBlock)
       expect(paths).to.eql([{
-        'path': '',
-        'value': 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
+        path: '',
+        value: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
       }, {
-        'path': 'named link',
-        'value': 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'
+        path: 'named link',
+        value: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'
       }, {
-        'path': 'data',
-        'value': new Buffer('aaah the data')
+        path: 'data',
+        value: new Buffer('aaah the data')
       }])
     })
 
