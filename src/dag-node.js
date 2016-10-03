@@ -8,6 +8,7 @@ const mh = require('multihashes')
 
 const util = require('./util')
 const DAGLink = require('./dag-link')
+const CID = require('cids')
 
 const proto = protobuf(fs.readFileSync(path.join(__dirname, 'dag.proto')))
 
@@ -131,6 +132,7 @@ class DAGNode {
    * cid - returns a cid instance
    */
   cid () {
+    return new CID(this.multihash())
     // TODO
   }
 

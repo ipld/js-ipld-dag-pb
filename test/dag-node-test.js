@@ -130,27 +130,36 @@ module.exports = function (repo) {
       done()
     })
 
-    it.skip('marshal a node and store it with block-service', function (done) {
+    it('get node CID', () => {
+      const node = new DAGNode(new Buffer('some data'))
+
+      const cid = node.cid()
+      expect(cid.multihash).to.exist
+      expect(cid.codec).to.equal('dag-pb')
+      expect(cid.version).to.equal(0)
+    })
+
+    it('marshal a node and store it with block-service', (done) => {
       const bs = new BlockService(repo)
 
-      const dagN = new DAGNode(new Buffer('some data'))
-      expect(dagN.data.length > 0).to.equal(true)
-      expect(Buffer.isBuffer(dagN.data)).to.equal(true)
-      expect(dagN.size() > 0).to.equal(true)
-      expect(dagN.data.equals(dagN.deserialize(dagN.serialize()).data)).to.equal(true)
+      const node = new DAGNode(new Buffer('some data'))
+      expect(node.data.length > 0).to.equal(true)
+      expect(Buffer.isBuffer(node.data)).to.equal(true)
+      expect(node.size() > 0).to.equal(true)
+      expect(node.data).to.eql(node.deserialize(node.serialize()).data)
+      const b = new Block(node.serialize())
 
-      const b = new Block(dagN.serialize())
-      const cid = new CID(b.key())
-
-      bs.put(b, cid, (err) => {
+      bs.put({ block: b, cid: node.cid() }, (err) => {
         expect(err).to.not.exist
-        bs.get(cid, (err, block) => {
+
+        bs.get(node.cid(), (err, block) => {
           expect(err).to.not.exist
-          expect(b.data.equals(block.data)).to.equal(true)
-          expect(cid.multihash.equals(block.key())).to.equal(true)
-          const fetchedDagNode = new DAGNode()
-          fetchedDagNode.deserialize(block.data)
-          expect(dagN.data.equals(fetchedDagNode.data)).to.equal(true)
+          expect(b.data).to.eql(block.data)
+          expect(node.multihash()).to.eql(block.key())
+
+          const retrievedNode = new DAGNode()
+          retrievedNode.deserialize(block.data)
+          expect(node.data).to.eql(retrievedNode.data)
           done()
         })
       })
@@ -159,8 +168,10 @@ module.exports = function (repo) {
     it('read a go-ipfs marshalled node and assert it gets read correctly', function (done) {
       const bs = new BlockService(repo)
 
-      const mh = new Buffer(bs58.decode('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'))
-      bs.get(mh, function (err, block) {
+      const cidStr = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
+      const cid = new CID(cidStr)
+
+      bs.get(cid, function (err, block) {
         expect(err).to.not.exist
         const retrievedDagNode = new DAGNode()
         retrievedDagNode.deserialize(block.data)
