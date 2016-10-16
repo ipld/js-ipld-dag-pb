@@ -18,17 +18,46 @@ exports.resolve = (block, path) => {
   const split = path.split('/')
 
   if (split[0] === 'links') {
-    let value = node.links.map((l) => {
-      return l.toJSON()
-    })
+    let remainderPath = ''
 
-    if (split[1]) {
-      value = value[Number(split[1])]
+    // all links
+    if (!split[1]) {
+      return {
+        value: node.links.map((l) => {
+          return l.toJSON()
+        }),
+        remainderPath: ''
+      }
     }
 
-    return value
+    // select one link
+
+    const values = {}
+
+    // populate both index number and name to enable both cases
+    // for the resolver
+    node.links.forEach((l, i) => {
+      const link = l.toJSON()
+      values[i] = link.Hash
+      values[link.Name] = link.Hash
+    })
+
+    let value = values[split[1]]
+
+    // if remainderPath exists, value needs to be CID
+    if (split[2]) {
+      split.shift()
+      split.shift()
+      remainderPath = split.join('/')
+
+      value = {
+        '/': value
+      }
+    }
+
+    return { value: value, remainderPath: remainderPath }
   } else if (split[0] === 'data') {
-    return node.data
+    return { value: node.data, remainderPath: '' }
   } else {
     throw new Error('path not available')
   }
