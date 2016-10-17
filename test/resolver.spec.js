@@ -4,9 +4,11 @@
 'use strict'
 
 const expect = require('chai').expect
-// const DAGLink = require('../src').DAGLink
-const DAGNode = require('../src').DAGNode
-const resolver = require('../src').resolver
+const dagPB = require('../src')
+// const DAGLink = dagPB.DAGLink
+const DAGNode = dagPB.DAGNode
+const util = dagPB.util
+const resolver = dagPB.resolver
 
 const Block = require('ipfs-block')
 
@@ -33,11 +35,9 @@ describe('IPLD format resolver (local)', () => {
     const linksNode = new DAGNode(new Buffer(0), links)
     const dataLinksNode = new DAGNode(new Buffer('aaah the data'), links)
 
-    // TODO we need to hint block with its CID,
-    // so it knows how to hash it
-    emptyNodeBlock = new Block(emptyNode.serialize())
-    linksNodeBlock = new Block(linksNode.serialize())
-    dataLinksNodeBlock = new Block(dataLinksNode.serialize())
+    emptyNodeBlock = new Block(util.serialize(emptyNode))
+    linksNodeBlock = new Block(util.serialize(linksNode))
+    dataLinksNodeBlock = new Block(util.serialize(dataLinksNode))
   })
 
   it('multicodec is dag-pb', () => {

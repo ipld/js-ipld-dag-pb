@@ -1,16 +1,8 @@
 'use strict'
 
-const protobuf = require('protocol-buffers')
 const stable = require('stable')
-const fs = require('fs')
-const path = require('path')
 const mh = require('multihashes')
-
-const util = require('./util')
 const DAGLink = require('./dag-link')
-const CID = require('cids')
-
-const proto = protobuf(fs.readFileSync(path.join(__dirname, 'dag.proto')))
 
 class DAGNode {
   constructor (data, links) {
@@ -129,19 +121,11 @@ class DAGNode {
   }
 
   /*
-   * cid - returns a cid instance
-   */
-  cid () {
-    return new CID(this.multihash())
-    // TODO
-  }
-
-  /*
    * multihash - returns the multihash value of this DAGNode
    */
   multihash () {
     if (!this.cached || this._updated) {
-      this._cached = util.hash(this.serialize())
+      this._cached = util.hash(util.serialize(this))
       this._updated = false
     }
 
@@ -153,7 +137,7 @@ class DAGNode {
    * including the total sizes of references.
    */
   size () {
-    const buf = this.serialize()
+    const buf = util.serialize(this)
     if (!buf) {
       return 0
     }
@@ -161,28 +145,6 @@ class DAGNode {
     return this.links.reduce((sum, l) => {
       return sum + l.size
     }, buf.length)
-  }
-
-  /*
-   * serialize - encodes the DAGNode into a probuf
-   */
-  serialize () {
-    return proto.PBNode.encode(util.toProtoBuf(this))
-  }
-
-  /*
-   * deserialize - decodes a protobuf into a DAGNode
-   */
-  // TODO: ?? this would make more sense as an utility
-  deserialize (data) {
-    const pbn = proto.PBNode.decode(data)
-    this.links = pbn.Links.map((link) => {
-      return new DAGLink(link.Name, link.Tsize, link.Hash)
-    })
-
-    stable.inplace(this.links, util.linkSort)
-    this.data = pbn.Data || new Buffer(0)
-    return this
   }
 
   toJSON () {
@@ -201,3 +163,4 @@ class DAGNode {
 }
 
 module.exports = DAGNode
+const util = require('./util')

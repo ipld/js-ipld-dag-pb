@@ -2,23 +2,24 @@
 'use strict'
 
 const expect = require('chai').expect
-const DAGLink = require('../src').DAGLink
-const DAGNode = require('../src').DAGNode
+const dagPB = require('../src')
+const DAGLink = dagPB.DAGLink
+const DAGNode = dagPB.DAGNode
+const util = dagPB.util
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
 const CID = require('cids')
 const bs58 = require('bs58')
 
-module.exports = function (repo) {
-  describe('DAGNode', function () {
-    it('create a node', function (done) {
+module.exports = (repo) => {
+  describe('DAGNode', () => {
+    it('create a node', () => {
       const dagN = new DAGNode(new Buffer('some data'))
       expect(dagN.data.length > 0).to.equal(true)
       expect(Buffer.isBuffer(dagN.data)).to.equal(true)
       expect(dagN.size() > 0).to.equal(true)
-      expect(dagN.data.equals(dagN.deserialize(dagN.serialize()).data)).to.equal(true)
-      done()
+      expect(dagN.data).to.eql(util.deserialize((util.serialize(dagN))).data)
     })
 
     it('create a node with links', () => {
@@ -45,7 +46,7 @@ module.exports = function (repo) {
       })
       const d2 = new DAGNode(new Buffer('some data'), l2)
       expect(d1.toJSON()).to.be.eql(d2.toJSON())
-      expect(d1.serialize()).to.be.eql(d2.serialize())
+      expect(util.serialize(d1)).to.be.eql(util.serialize(d2))
       expect(d2.links).to.be.eql(l2)
     })
 
@@ -54,7 +55,7 @@ module.exports = function (repo) {
       expect(dagN.data.length).to.equal(0)
       expect(Buffer.isBuffer(dagN.data)).to.equal(true)
       expect(dagN.size()).to.equal(0)
-      expect(dagN.data.equals(dagN.deserialize(dagN.serialize()).data)).to.equal(true)
+      expect(dagN.data).to.eql(util.deserialize((util.serialize(dagN))).data)
       done()
     })
 
@@ -133,7 +134,7 @@ module.exports = function (repo) {
     it('get node CID', () => {
       const node = new DAGNode(new Buffer('some data'))
 
-      const cid = node.cid()
+      const cid = util.cid(node)
       expect(cid.multihash).to.exist
       expect(cid.codec).to.equal('dag-pb')
       expect(cid.version).to.equal(0)
@@ -146,19 +147,18 @@ module.exports = function (repo) {
       expect(node.data.length > 0).to.equal(true)
       expect(Buffer.isBuffer(node.data)).to.equal(true)
       expect(node.size() > 0).to.equal(true)
-      expect(node.data).to.eql(node.deserialize(node.serialize()).data)
-      const b = new Block(node.serialize())
+      expect(node.data).to.eql(util.deserialize((util.serialize(node))).data)
+      const b = new Block(util.serialize(node))
 
-      bs.put({ block: b, cid: node.cid() }, (err) => {
+      bs.put({ block: b, cid: util.cid(node) }, (err) => {
         expect(err).to.not.exist
 
-        bs.get(node.cid(), (err, block) => {
+        bs.get(util.cid(node), (err, block) => {
           expect(err).to.not.exist
           expect(b.data).to.eql(block.data)
           expect(node.multihash()).to.eql(block.key())
 
-          const retrievedNode = new DAGNode()
-          retrievedNode.deserialize(block.data)
+          const retrievedNode = util.deserialize(block.data)
           expect(node.data).to.eql(retrievedNode.data)
           done()
         })
@@ -173,8 +173,7 @@ module.exports = function (repo) {
 
       bs.get(cid, function (err, block) {
         expect(err).to.not.exist
-        const retrievedDagNode = new DAGNode()
-        retrievedDagNode.deserialize(block.data)
+        const retrievedDagNode = util.deserialize(block.data)
         expect(retrievedDagNode.data).to.exist
         expect(retrievedDagNode.links.length).to.equal(6)
         done()

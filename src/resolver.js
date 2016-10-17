@@ -1,6 +1,6 @@
 'use strict'
 
-const DAGNode = require('./index').DAGNode
+const util = require('./util')
 const bs58 = require('bs58')
 
 exports = module.exports
@@ -12,8 +12,7 @@ exports.multicodec = 'dag-pb'
  * throw if not possible. `block` is an IPFS Block instance (contains data+key)
  */
 exports.resolve = (block, path) => {
-  const node = new DAGNode()
-  node.deserialize(block.data)
+  const node = util.deserialize(block.data)
 
   const split = path.split('/')
 
@@ -71,8 +70,7 @@ exports.tree = (block, options) => {
   if (!options) {
     options = {}
   }
-  const node = new DAGNode()
-  node.deserialize(block.data)
+  const node = util.deserialize(block.data)
   const paths = []
   node.links.forEach((link) => {
     paths.push({

@@ -1,6 +1,15 @@
 'use strict'
 
 const multihashing = require('multihashing')
+const CID = require('cids')
+const stable = require('stable')
+const protobuf = require('protocol-buffers')
+const fs = require('fs')
+const path = require('path')
+const proto = protobuf(fs.readFileSync(path.join(__dirname, 'dag.proto')))
+
+const DAGNode = require('./dag-node')
+const DAGLink = require('./dag-link')
 
 exports = module.exports
 
@@ -33,5 +42,29 @@ exports.toProtoBuf = (node) => {
   }
 
   return pbn
+}
+
+exports.serialize = (dagNode) => {
+  return proto.PBNode.encode(exports.toProtoBuf(dagNode))
+}
+
+exports.deserialize = (data) => {
+  const pbn = proto.PBNode.decode(data)
+
+  const links = pbn.Links.map((link) => {
+    return new DAGLink(link.Name, link.Tsize, link.Hash)
+  })
+
+  stable.inplace(links, exports.linkSort)
+
+  const buf = pbn.Data || new Buffer(0)
+
+  const dagNode = new DAGNode(buf, links)
+
+  return dagNode
+}
+
+exports.cid = (dagNode) => {
+  return new CID(dagNode.multihash())
 }
 
