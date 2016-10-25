@@ -192,7 +192,7 @@ module.exports = (repo) => {
       ], done)
     })
 
-    it('add several links to a node', function (done) {
+    it('add several links to a node', (done) => {
       const node1 = new DAGNode(new Buffer('4444'))
       const node2 = new DAGNode(new Buffer('22'))
       const node3 = new DAGNode(new Buffer('333'))

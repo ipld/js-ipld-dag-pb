@@ -80,19 +80,9 @@ var node = new dagPB.DAGNode([<data>, <[links]>])
 
 > (property) an array of `DAGLink`s belonging to the node
 
-#### `cid()`
-
-#### `multihash()`
+#### `multihash(callback)`
 
 > returns the multihash (default: sha2-256)
-
-#### `serialize()`
-
-> returns a protobuf serialized version, compatible with go-ipfs MerkleDAG
-
-#### `deserialize()`
-
-> deserializes a node encoded using protobuf
 
 #### `getPBNode`
 
