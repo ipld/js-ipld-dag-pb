@@ -32,14 +32,18 @@ class DAGNode {
    * addNodeLink - adds a DAGLink to this node that points
    * to node by a name
    */
-  addNodeLink (name, node) {
+  addNodeLink (name, node, callback) {
     if (typeof name !== 'string') {
       throw new Error('first argument must be link name')
     }
-    const link = this.makeLink(node)
-
-    link.name = name
-    this.addRawLink(link)
+    this.makeLink(node, (err, link) => {
+      if (err) {
+        return callback(err)
+      }
+      link.name = name
+      this.addRawLink(link)
+      callback()
+    })
   }
 
   /*
@@ -98,8 +102,18 @@ class DAGNode {
    * makeLink returns a DAGLink node from a DAGNode
    */
   // TODO: this would make more sense as an utility
-  makeLink (node) {
-    return new DAGLink(null, node.size(), node.multihash())
+  makeLink (node, callback) {
+    node.multihash((err, multihash) => {
+      if (err) {
+        return callback(err)
+      }
+      node.size((err, size) => {
+        if (err) {
+          return callback(err)
+        }
+        callback(null, new DAGLink(null, size, multihash))
+      })
+    })
   }
 
   /*
@@ -123,42 +137,78 @@ class DAGNode {
   /*
    * multihash - returns the multihash value of this DAGNode
    */
-  multihash () {
+  multihash (callback) {
     if (!this.cached || this._updated) {
-      this._cached = util.hash(util.serialize(this))
-      this._updated = false
+      util.serialize(this, (err, serialized) => {
+        if (err) {
+          return callback(err)
+        }
+        this._cached = util.hash(serialized)
+        this._updated = false
+        callback(null, this._cached)
+      })
+    } else {
+      callback(null, this._cached)
     }
-
-    return this._cached
   }
 
   /*
    * size - returns the total size of the data addressed by node,
    * including the total sizes of references.
    */
-  size () {
-    const buf = util.serialize(this)
-    if (!buf) {
-      return 0
-    }
+  size (callback) {
+    util.serialize(this, (err, serialized) => {
+      if (err) {
+        return callback(err)
+      }
 
-    return this.links.reduce((sum, l) => {
-      return sum + l.size
-    }, buf.length)
+      if (!serialized) {
+        return 0
+      }
+
+      callback(null, this.links.reduce((sum, l) => {
+        return sum + l.size
+      }, serialized.length))
+    })
   }
 
-  toJSON () {
-    return {
-      Data: this.data,
-      Links: this.links.map((l) => l.toJSON()),
-      Hash: mh.toB58String(this.multihash()),
-      Size: this.size()
-    }
+  toJSON (callback) {
+    this.multihash((err, multihash) => {
+      if (err) {
+        return callback(err)
+      }
+      this.size((err, size) => {
+        if (err) {
+          return callback(err)
+        }
+
+        const obj = {
+          Data: this.data,
+          Links: this.links.map((l) => l.toJSON()),
+          Hash: multihash,
+          Size: size
+        }
+
+        callback(null, obj)
+      })
+    })
   }
 
-  toString () {
-    const hash = mh.toB58String(this.multihash())
-    return `DAGNode <${hash} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size()}>`
+  toString (callback) {
+    this.multihash((err, multihash) => {
+      if (err) {
+        return callback(err)
+      }
+      const multihashStr = mh.toB58String(multihash)
+      this.size((err, size) => {
+        if (err) {
+          return callback(err)
+        }
+
+        const str = `DAGNode <${multihashStr} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${size}>`
+        callback(null, str)
+      })
+    })
   }
 }
 
