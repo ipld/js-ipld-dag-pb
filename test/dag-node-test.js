@@ -19,7 +19,7 @@ const CID = require('cids')
 const bs58 = require('bs58')
 
 module.exports = (repo) => {
-  describe.only('DAGNode', () => {
+  describe('DAGNode', () => {
     it('create a node', (done) => {
       expect(7).checks(done)
 

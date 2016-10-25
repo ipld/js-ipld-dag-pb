@@ -11,54 +11,60 @@ exports.multicodec = 'dag-pb'
  * resolve: receives a path and a block and returns the value on path,
  * throw if not possible. `block` is an IPFS Block instance (contains data+key)
  */
-exports.resolve = (block, path) => {
-  const node = util.deserialize(block.data)
+exports.resolve = (block, path, callback) => {
+  util.deserialize(block.data, gotNode)
 
-  const split = path.split('/')
-
-  if (split[0] === 'links') {
-    let remainderPath = ''
-
-    // all links
-    if (!split[1]) {
-      return {
-        value: node.links.map((l) => {
-          return l.toJSON()
-        }),
-        remainderPath: ''
-      }
+  function gotNode (err, node) {
+    if (err) {
+      return callback(err)
     }
 
-    // select one link
+    const split = path.split('/')
 
-    const values = {}
+    if (split[0] === 'links') {
+      let remainderPath = ''
 
-    // populate both index number and name to enable both cases
-    // for the resolver
-    node.links.forEach((l, i) => {
-      const link = l.toJSON()
-      values[i] = link.Hash
-      values[link.Name] = link.Hash
-    })
-
-    let value = values[split[1]]
-
-    // if remainderPath exists, value needs to be CID
-    if (split[2]) {
-      split.shift()
-      split.shift()
-      remainderPath = split.join('/')
-
-      value = {
-        '/': value
+      // all links
+      if (!split[1]) {
+        return callback(null, {
+          value: node.links.map((l) => {
+            return l.toJSON()
+          }),
+          remainderPath: ''
+        })
       }
-    }
 
-    return { value: value, remainderPath: remainderPath }
-  } else if (split[0] === 'data') {
-    return { value: node.data, remainderPath: '' }
-  } else {
-    throw new Error('path not available')
+      // select one link
+
+      const values = {}
+
+      // populate both index number and name to enable both cases
+      // for the resolver
+      node.links.forEach((l, i) => {
+        const link = l.toJSON()
+        values[i] = link.Hash
+        values[link.Name] = link.Hash
+      })
+
+      let value = values[split[1]]
+
+      // if remainderPath exists, value needs to be CID
+      if (split[2]) {
+        split.shift()
+        split.shift()
+        remainderPath = split.join('/')
+
+        value = {
+          '/': value
+        }
+      }
+
+      callback(null, { value: value, remainderPath: remainderPath })
+    } else if (split[0] === 'data') {
+      callback(null, { value: node.data, remainderPath: '' })
+    } else {
+      callback(new Error('path not available'))
+    }
   }
 }
 
@@ -66,27 +72,31 @@ exports.resolve = (block, path) => {
  * tree: returns a flattened array with paths: values of the project. options
  * are option (i.e. nestness)
  */
-exports.tree = (block, options) => {
+exports.tree = (block, options, callback) => {
+  if (typeof options === 'function') {
+    callback = options
+    options = {}
+  }
+
   if (!options) {
     options = {}
   }
-  const node = util.deserialize(block.data)
-  const paths = []
-  node.links.forEach((link) => {
-    paths.push({
-      path: link.name,
-      value: bs58.encode(link.hash).toString()
+
+  util.deserialize(block.data, (err, node) => {
+    if (err) {
+      return callback(err)
+    }
+    const paths = []
+    node.links.forEach((link) => {
+      paths.push({
+        path: link.name,
+        value: bs58.encode(link.hash).toString()
+      })
     })
+
+    if (node.data && node.data.length > 0) {
+      paths.push({ path: 'data', value: node.data })
+    }
+    callback(null, paths)
   })
-
-  if (node.data && node.data.length > 0) {
-    paths.push({ path: 'data', value: node.data })
-  }
-  return paths
 }
-
-// TODO recheck this API
-/*
- * patch: modifies or adds value on path, yields a new block with that change
- */
-exports.patch = (block, path, value) => {}
