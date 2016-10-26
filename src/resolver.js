@@ -70,7 +70,7 @@ exports.resolve = (block, path, callback) => {
 
 /*
  * tree: returns a flattened array with paths: values of the project. options
- * are option (i.e. nestness)
+ * is an object that can carry several options (i.e. nestness)
  */
 exports.tree = (block, options, callback) => {
   if (typeof options === 'function') {
