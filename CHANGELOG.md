@@ -1,3 +1,28 @@
+<a name="0.1.0"></a>
+# 0.1.0 (2016-10-26)
+
+
+### Bug Fixes
+
+* **dag-node:** ensure links are always DAGLinks ([219cf5d](https://github.com/ipfs/js-ipfs-merkle-dag/commit/219cf5d))
+* **deps:** add missing pull-stream dependency ([5ef7176](https://github.com/ipfs/js-ipfs-merkle-dag/commit/5ef7176))
+* browser testing (dixie problem) ([0c98929](https://github.com/ipfs/js-ipfs-merkle-dag/commit/0c98929))
+* do not convert existing daglinks ([0e4361f](https://github.com/ipfs/js-ipfs-merkle-dag/commit/0e4361f))
+
+
+### Features
+
+* generate cid ([6165a91](https://github.com/ipfs/js-ipfs-merkle-dag/commit/6165a91))
+* let utils be utils ([82fc2fe](https://github.com/ipfs/js-ipfs-merkle-dag/commit/82fc2fe))
+* migrate dag-node size, multihash and util serialize, deserialize and cid to async from sync ([d2bf303](https://github.com/ipfs/js-ipfs-merkle-dag/commit/d2bf303))
+* migrate resolver to async API ([2d3d220](https://github.com/ipfs/js-ipfs-merkle-dag/commit/2d3d220))
+* new util API, move serialize, deserialize and cid out ([473a991](https://github.com/ipfs/js-ipfs-merkle-dag/commit/473a991))
+* resolver, tree + tests ([23ba424](https://github.com/ipfs/js-ipfs-merkle-dag/commit/23ba424))
+* s/copy/clone, simplify internal API (encoded stuff) and update tests to understand cid ([bbb5ab9](https://github.com/ipfs/js-ipfs-merkle-dag/commit/bbb5ab9))
+* yield remainderPath if not possible to result through ([680bf4e](https://github.com/ipfs/js-ipfs-merkle-dag/commit/680bf4e))
+
+
+
 <a name="0.7.3"></a>
 ## [0.7.3](https://github.com/ipfs/js-ipfs-merkle-dag/compare/v0.7.2...v0.7.3) (2016-09-09)
 
