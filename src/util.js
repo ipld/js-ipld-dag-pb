@@ -45,14 +45,16 @@ exports.toProtoBuf = (node) => {
 }
 
 exports.serialize = (dagNode, callback) => {
+  let serialized
+
   try {
     const pb = exports.toProtoBuf(dagNode)
-    const serialized = proto.PBNode.encode(pb)
-
-    callback(null, serialized)
+    serialized = proto.PBNode.encode(pb)
   } catch (err) {
-    callback(err)
+    return callback(err)
   }
+
+  callback(null, serialized)
 }
 
 exports.deserialize = (data, callback) => {
