@@ -163,12 +163,14 @@ class DAGNode {
       }
 
       if (!serialized) {
-        return 0
+        return callback(null, 0)
       }
 
-      callback(null, this.links.reduce((sum, l) => {
+      const size = this.links.reduce((sum, l) => {
         return sum + l.size
-      }, serialized.length))
+      }, serialized.length)
+
+      callback(null, size)
     })
   }
 
