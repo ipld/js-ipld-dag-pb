@@ -51,7 +51,6 @@ describe('Browser tests', function () {
 
   const repo = new IPFSRepo('ipfs', {stores: Store})
 
-  require('./dag-service-test')(repo)
   require('./dag-node-test')(repo)
   require('./dag-link-test')(repo)
 })

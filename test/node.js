@@ -23,7 +23,6 @@ describe('Node.js Tests', () => {
 
   const repo = new IPFSRepo(repoTests, {stores: Store})
 
-  require('./dag-service-test')(repo)
   require('./dag-node-test')(repo)
   require('./dag-link-test')(repo)
 })
