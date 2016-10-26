@@ -1,3 +1,13 @@
+<a name="0.1.1"></a>
+## [0.1.1](https://github.com/ipfs/js-ipfs-merkle-dag/compare/v0.1.0...v0.1.1) (2016-10-26)
+
+
+### Bug Fixes
+
+* size func ([655a964](https://github.com/ipfs/js-ipfs-merkle-dag/commit/655a964))
+
+
+
 <a name="0.1.0"></a>
 # 0.1.0 (2016-10-26)
 
