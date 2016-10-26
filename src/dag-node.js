@@ -2,11 +2,13 @@
 
 const stable = require('stable')
 const mh = require('multihashes')
+const waterfall = require('async/waterfall')
+
 const DAGLink = require('./dag-link')
 
 class DAGNode {
   constructor (data, links) {
-    this._cached = undefined
+    this._cached = {}
     this._updated = false
 
     this.data = data
@@ -137,18 +139,26 @@ class DAGNode {
   /*
    * multihash - returns the multihash value of this DAGNode
    */
-  multihash (callback) {
-    if (!this.cached || this._updated) {
-      util.serialize(this, (err, serialized) => {
+  multihash (type, callback) {
+    if (typeof type === 'function') {
+      callback = type
+      type = 'sha2-256'
+    }
+    if (!this._cached[type] || this._updated) {
+      waterfall([
+        (cb) => util.serialize(this, cb),
+        (serialized, cb) => util.hash(type, serialized, cb)
+      ], (err, digest) => {
         if (err) {
           return callback(err)
         }
-        this._cached = util.hash(serialized)
+
+        this._cached[type] = digest
         this._updated = false
-        callback(null, this._cached)
+        callback(null, this._cached[type])
       })
     } else {
-      callback(null, this._cached)
+      callback(null, this._cached[type])
     }
   }
 

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const series = require('run-series')
+const series = require('async/series')
 const Store = require('idb-pull-blob-store')
 const _ = require('lodash')
 const IPFSRepo = require('ipfs-repo')

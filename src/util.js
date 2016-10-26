@@ -1,12 +1,10 @@
 'use strict'
 
-const multihashing = require('multihashing')
+const multihashing = require('multihashing-async')
 const CID = require('cids')
 const stable = require('stable')
 const protobuf = require('protocol-buffers')
-const fs = require('fs')
-const path = require('path')
-const proto = protobuf(fs.readFileSync(path.join(__dirname, 'dag.proto')))
+const proto = protobuf(require('./dag.proto'))
 
 const DAGNode = require('./dag-node')
 const DAGLink = require('./dag-link')
@@ -14,7 +12,7 @@ const DAGLink = require('./dag-link')
 exports = module.exports
 
 // Hash is the global IPFS hash function. uses multihash SHA2_256, 256 bits
-exports.hash = (data) => multihashing(data, 'sha2-256')
+exports.hash = (type, data, cb) => multihashing(data, type, cb)
 
 exports.linkSort = (a, b) => {
   return (new Buffer(a.name || '', 'ascii').compare(new Buffer(b.name || '', 'ascii')))

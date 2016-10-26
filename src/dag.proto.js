@@ -1,3 +1,6 @@
+'use strict'
+
+module.exports = `
 // An IPFS MerkleDAG Link
 message PBLink {
 
@@ -20,3 +23,4 @@ message PBNode {
   // opaque user data
   optional bytes Data = 1;
 }
+`

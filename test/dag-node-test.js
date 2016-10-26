@@ -316,10 +316,13 @@ module.exports = (repo) => {
           bs.get(cid, (err, retrievedBlock) => {
             expect(err).to.not.exist
             expect(retrievedBlock.data).to.eql(block.data)
-            expect(retrievedBlock.key()).to.eql(cid.multihash)
-            cb()
+            retrievedBlock.key((err, key) => {
+              expect(err).to.not.exist
+              expect(key).to.eql(cid.multihash)
+              cb()
+            })
           })
-        }
+        },
       ], done)
     })
 
