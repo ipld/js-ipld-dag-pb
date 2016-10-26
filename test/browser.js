@@ -16,20 +16,21 @@ const idb = window.indexedDB ||
 idb.deleteDatabase('ipfs')
 idb.deleteDatabase('ipfs/blocks')
 
-describe('Browser tests', function () {
-  before(function (done) {
-    this.timeout(10000)
+describe('Browser tests', () => {
+  const path = 'ipfs' + Math.random()
 
+  before((done) => {
     const repoData = []
-    repoContext.keys().forEach(function (key) {
+
+    repoContext.keys().forEach((key) => {
       repoData.push({
         key: key.replace('./', ''),
         value: repoContext(key)
       })
     })
 
-    const mainBlob = new Store('ipfs')
-    const blocksBlob = new Store('ipfs/blocks')
+    const mainBlob = new Store(path)
+    const blocksBlob = new Store(path + '/blocks')
 
     series(repoData.map((file) => (cb) => {
       if (_.startsWith(file.key, 'datastore/')) {
@@ -49,7 +50,7 @@ describe('Browser tests', function () {
     }), done)
   })
 
-  const repo = new IPFSRepo('ipfs', {stores: Store})
+  const repo = new IPFSRepo(path, {stores: Store})
 
   require('./dag-node-test')(repo)
   require('./dag-link-test')(repo)
