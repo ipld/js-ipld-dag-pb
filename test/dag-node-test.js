@@ -322,7 +322,7 @@ module.exports = (repo) => {
               cb()
             })
           })
-        },
+        }
       ], done)
     })
 
