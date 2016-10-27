@@ -187,7 +187,7 @@ class DAGNode {
         const obj = {
           Data: this.data,
           Links: this.links.map((l) => l.toJSON()),
-          Hash: multihash,
+          Hash: mh.toB58String(multihash),
           Size: size
         }
 
