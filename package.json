@@ -1,6 +1,6 @@
 {
   "name": "ipld-dag-pb",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "JavaScript Implementation of the MerkleDAG Node in Protobuf.",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",

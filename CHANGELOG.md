@@ -1,3 +1,13 @@
+<a name="0.1.3"></a>
+## [0.1.3](https://github.com/ipfs/js-ipfs-merkle-dag/compare/v0.1.2...v0.1.3) (2016-10-27)
+
+
+### Bug Fixes
+
+* toJSON should return multihash as a b58String ([3c34563](https://github.com/ipfs/js-ipfs-merkle-dag/commit/3c34563))
+
+
+
 <a name="0.1.2"></a>
 ## [0.1.2](https://github.com/ipfs/js-ipfs-merkle-dag/compare/v0.1.1...v0.1.2) (2016-10-26)
 
