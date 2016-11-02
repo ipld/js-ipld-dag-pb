@@ -1,7 +1,6 @@
 'use strict'
 
-module.exports = `
-// An IPFS MerkleDAG Link
+module.exports = `// An IPFS MerkleDAG Link
 message PBLink {
 
   // multihash of the target object
@@ -22,5 +21,4 @@ message PBNode {
 
   // opaque user data
   optional bytes Data = 1;
-}
-`
+}`
