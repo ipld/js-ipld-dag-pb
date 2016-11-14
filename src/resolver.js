@@ -1,6 +1,6 @@
 'use strict'
 
-const util = require('./util')
+const util = require('./util').util
 const bs58 = require('bs58')
 
 exports = module.exports

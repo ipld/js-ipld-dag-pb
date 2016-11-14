@@ -29,10 +29,10 @@ module.exports = (repo) => {
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.above(0).mark()
 
-        util.serialize(node, (err, serialized) => {
+        DAGNode.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
 
-          util.deserialize(serialized, (err, deserialized) => {
+          DAGNode.util.deserialize(serialized, (err, deserialized) => {
             expect(err).to.not.exist.mark()
             expect(node.data).to.eql(deserialized.data).mark()
           })
@@ -77,7 +77,7 @@ module.exports = (repo) => {
         }
       ], (err) => {
         expect(err).to.not.exist
-        expect(node1.json).to.eql(node2.json)
+        expect(node1.toJSON()).to.eql(node2.toJSON())
         expect(node1.serialized).to.eql(node2.serialized)
         done()
       })
@@ -90,12 +90,12 @@ module.exports = (repo) => {
         expect(err).to.not.exist.mark()
         expect(node.data.length).to.be.equal(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.size).to.be.equal(0).mark()
+        expect(node.size).to.be.equal(2).mark()
 
-        util.serialize(node, (err, serialized) => {
+        DAGNode.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
 
-          util.deserialize(serialized, (err, deserialized) => {
+          DAGNode.util.deserialize(serialized, (err, deserialized) => {
             expect(err).to.not.exist.mark()
             expect(node.data).to.eql(deserialized.data).mark()
           })
@@ -297,7 +297,7 @@ module.exports = (repo) => {
 
         series([
           (cb) => {
-            util.serialize(node, (err, serialized) => {
+            DAGNode.util.serialize(node, (err, serialized) => {
               expect(err).to.not.exist
               block = new Block(serialized)
               cb()
@@ -339,7 +339,7 @@ module.exports = (repo) => {
 
       bs.get(cid, (err, block) => {
         expect(err).to.not.exist
-        util.deserialize(block.data, (err, node) => {
+        DAGNode.util.deserialize(block.data, (err, node) => {
           expect(err).to.not.exist
           expect(node.data).to.exist
           expect(node.links.length).to.equal(6)
@@ -351,10 +351,10 @@ module.exports = (repo) => {
     it('dagNode.toJSON with empty Node', (done) => {
       DAGNode.create(new Buffer(0), (err, node) => {
         expect(err).to.not.exist
-        expect(node.json.data).to.deep.equal(new Buffer(0))
-        expect(node.json.links).to.deep.equal([])
-        expect(node.json.hash).to.exist
-        expect(node.json.size).to.exist
+        expect(node.toJSON().data).to.deep.equal(new Buffer(0))
+        expect(node.toJSON().links).to.deep.equal([])
+        expect(node.toJSON().hash).to.exist
+        expect(node.toJSON().size).to.exist
         done()
       })
     })
@@ -363,10 +363,10 @@ module.exports = (repo) => {
       const data = new Buffer('La cucaracha')
       DAGNode.create(data, (err, node) => {
         expect(err).to.not.exist
-        expect(node.json.data).to.eql(data)
-        expect(node.json.links).to.deep.equal([])
-        expect(node.json.hash).to.exist
-        expect(node.json.size).to.exist
+        expect(node.toJSON().data).to.eql(data)
+        expect(node.toJSON().links).to.deep.equal([])
+        expect(node.toJSON().hash).to.exist
+        expect(node.toJSON().size).to.exist
         done()
       })
     })

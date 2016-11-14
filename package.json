@@ -50,8 +50,9 @@
     "stable": "^0.1.5"
   },
   "devDependencies": {
-    "aegir": "^9.1.1",
+    "aegir": "^9.1.2",
     "bs58": "^3.0.0",
+    "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "chai-checkmark": "^1.0.1",
     "fs-pull-blob-store": "^0.4.1",
