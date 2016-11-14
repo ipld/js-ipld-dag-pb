@@ -3,28 +3,28 @@
 const mh = require('multihashes')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
-module.exports = class DAGLink {
-  constructor (name, size, hash) {
+class DAGLink {
+  constructor (name, size, multihash) {
     this.name = name
     this.size = size
 
-    if (typeof hash === 'string') {
-      this.hash = mh.fromB58String(hash)
-    } else if (Buffer.isBuffer(hash)) {
-      this.hash = hash
+    if (typeof multihash === 'string') {
+      this.multihash = mh.fromB58String(multihash)
+    } else if (Buffer.isBuffer(multihash)) {
+      this.multihash = multihash
     }
-  }
 
-  toJSON () {
-    return {
-      Name: this.name,
-      Size: this.size,
-      Hash: mh.toB58String(this.hash)
+    this.json = {
+      name: this.name,
+      size: this.size,
+      hash: this.multihash ? mh.toB58String(this.multihash) : undefined
     }
   }
 
   toString () {
-    const hash = mh.toB58String(this.hash)
-    return `DAGLink <${hash} - name: "${this.name}", size: ${this.size}>`
+    const mhStr = mh.toB58String(this.multihash)
+    return `DAGLink <${mhStr} - name: "${this.name}", size: ${this.size}>`
   }
 }
+
+module.exports = DAGLink

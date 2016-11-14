@@ -28,7 +28,7 @@
 ## Install
 
 ```bash
-> npm i ipld-dag-pb
+> npm install ipld-dag-pb --save
 ```
 
 ## Usage
@@ -37,8 +37,10 @@
 const dagPB = require('ipld-dag-pb')
 
 // then, to access each of the components
-dagPB.DAGNode
+dagPB.DAGNode // DAGNode Class
+dagPB.DAGNode.create // function to create DAGNodes (recommended usage)
 dagPB.resolver
+dagPB.util
 ```
 
 ## API

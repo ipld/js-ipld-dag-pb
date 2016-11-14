@@ -2,102 +2,134 @@
 
 const stable = require('stable')
 const mh = require('multihashes')
-const waterfall = require('async/waterfall')
+const series = require('async/series')
+const assert = require('assert')
 
 const DAGLink = require('./dag-link')
 
+function immutableError () {
+  throw new Error('Immutable property')
+}
+
 class DAGNode {
-  constructor (data, links) {
-    this._cached = {}
-    this._updated = false
+  constructor (data, links, serialized, size, multihash, json) {
+    assert(serialized, 'DAGNode needs its serialized format')
+    assert(multihash, 'DAGNode needs its multihash')
+    assert(json, 'DAGNode needs its json representation')
 
-    this.data = data
-    this.links = []
+    if (typeof multihash === 'string') {
+      multihash = mh.fromB58String(multihash)
+    }
 
-    // validate links
-    if (links) {
-      links.forEach((l) => {
-        if (l.constructor && l.constructor.name === 'DAGLink') {
-          this.links.push(l)
-        } else {
-          this.links.push(
-            new DAGLink(l.Name, l.Size, l.Hash)
-          )
+    Object.defineProperty(this, 'data', {
+      get () {
+        return data
+      },
+      set: immutableError
+    })
+
+    Object.defineProperty(this, 'links', {
+      get () {
+        return links
+      },
+      set: immutableError
+    })
+
+    Object.defineProperty(this, 'serialized', {
+      get () {
+        return serialized
+      },
+      set: immutableError
+    })
+
+    Object.defineProperty(this, 'size', {
+      get () {
+        return size
+      },
+      set: immutableError
+    })
+
+    Object.defineProperty(this, 'multihash', {
+      get () {
+        return multihash
+      },
+      set: immutableError
+    })
+
+    Object.defineProperty(this, 'json', {
+      get () {
+        return json
+      },
+      set: immutableError
+    })
+
+    this.link = {
+      add: (nameOrLink, nodeOrMultihash, callback) => {
+        if ((nameOrLink.constructor &&
+             nameOrLink.constructor.name === 'DAGLink')) {
+          // It's a link
+          const link = nameOrLink
+          // TODO
+          // 1. add to the set of links
+          // 2. create new node
+        } else if (typeof nameOrLink === 'string') {
+          // It's a name
+          const name = nameOrLink
+          if ((nodeOrMultihash.constructor &&
+             nodeOrMultihash.constructor.name === 'DAGNode')) {
+            // It's a node
+            // TODO
+            // 1. create link from name + node
+            // 2. add to the set of links
+            // 3. create new node
+          } else {
+            // It's a multihash
+            let multihash = nodeOrMultihash
+            if (typeof multihash === 'string') {
+              multihash = mh.fromB58String(multihash)
+            }
+            // TODO
+            // 1. create link from name + multihash
+            // 2. add to the set of links
+            // 3. create new node
+          }
         }
-      })
+        callback(new Error('invalid arguments'))
+      },
+      rm: (nameOrMultihash, callback) => {
+        let links
+        if (typeof nameOrMultihash === 'string') {
+          const name = nameOrMultihash
+          links = this.links.filter((link) => {
+            if (link.name === name) {
+              return false
+            } else {
+              return true
+            }
+          })
+        } else if (Buffer.isBuffer(nameOrMultihash)) {
+          const multihash = nameOrMultihash
+          links = this.links.filter((link) => {
+            if (link.hash.equals(multihash)) {
+              return false
+            } else {
+              return true
+            }
+          })
+        } else {
+          callback(new Error('first arg needs to be a name or multihash'))
+        }
 
-      stable.inplace(this.links, util.linkSort)
+        let dataClone
+
+        if (this.data && this.data.length > 0) {
+          dataClone = new Buffer(this.data.length)
+          this.data.copy(dataClone)
+        }
+
+        DAGNode.create(dataClone, links, callback)
+      }
     }
-  }
-
-  /*
-   * addNodeLink - adds a DAGLink to this node that points
-   * to node by a name
-   */
-  addNodeLink (name, node, callback) {
-    if (typeof name !== 'string') {
-      throw new Error('first argument must be link name')
-    }
-    this.makeLink(node, (err, link) => {
-      if (err) {
-        return callback(err)
-      }
-      link.name = name
-      this.addRawLink(link)
-      callback()
-    })
-  }
-
-  /*
-   * addRawLink adds a Link to this node from a DAGLink
-   */
-  addRawLink (link) {
-    this._updated = true
-    this.links.push(new DAGLink(link.name, link.size, link.hash))
-    stable.inplace(this.links, util.linkSort)
-  }
-
-  /*
-   * UpdateNodeLink return a copy of the node with the link name
-   * set to point to that. If a link of the same name existed,
-   * it is replaced.
-   */
-  // TODO ?? this would make more sense as an utility
-  updateNodeLink (name, node) {
-    const newnode = this.copy()
-    newnode.removeNodeLink(name)
-    newnode.addNodeLink(name, node)
-    return newnode
-  }
-
-  /*
-   * removeNodeLink removes a Link from this node based on name
-   */
-  removeNodeLink (name) {
-    this._updated = true
-
-    this.links = this.links.filter((link) => {
-      if (link.name === name) {
-        return false
-      } else {
-        return true
-      }
-    })
-  }
-
-  /*
-   * removeNodeLink removes a Link from this node based on a multihash
-   */
-  removeNodeLinkByHash (multihash) {
-    this._updated = true
-
-    this.links = this.links.filter((link) => {
-      if (link.hash.equals(multihash)) {
-        return false
-      } else {
-        return true
-      }
-    })
   }
 
   /*
@@ -121,108 +153,129 @@ class DAGNode {
   /*
    * clone - returns a clone of the DAGNode
    */
-  clone () {
-    const clone = new DAGNode()
+  clone (callback) {
+    let dataClone
+    let linksClone
+
     if (this.data && this.data.length > 0) {
-      const buf = new Buffer(this.data.length)
-      this.data.copy(buf)
-      clone.data = buf
+      dataClone = new Buffer(this.data.length)
+      this.data.copy(dataClone)
     }
 
     if (this.links.length > 0) {
-      clone.links = this.links.slice()
+      linksClone = this.links.slice()
     }
 
-    return clone
+    DAGNode.create(dataClone, linksClone, callback)
   }
 
-  /*
-   * multihash - returns the multihash value of this DAGNode
-   */
-  multihash (type, callback) {
-    if (typeof type === 'function') {
-      callback = type
-      type = 'sha2-256'
-    }
-    if (!this._cached[type] || this._updated) {
-      waterfall([
-        (cb) => util.serialize(this, cb),
-        (serialized, cb) => util.hash(type, serialized, cb)
-      ], (err, digest) => {
-        if (err) {
-          return callback(err)
-        }
+  toString () {
+    const mhStr = mh.toB58String(this.multihash)
 
-        this._cached[type] = digest
-        this._updated = false
-        callback(null, this._cached[type])
-      })
-    } else {
-      callback(null, this._cached[type])
-    }
-  }
-
-  /*
-   * size - returns the total size of the data addressed by node,
-   * including the total sizes of references.
-   */
-  size (callback) {
-    util.serialize(this, (err, serialized) => {
-      if (err) {
-        return callback(err)
-      }
-
-      if (!serialized) {
-        return callback(null, 0)
-      }
-
-      const size = this.links.reduce((sum, l) => {
-        return sum + l.size
-      }, serialized.length)
-
-      callback(null, size)
-    })
-  }
-
-  toJSON (callback) {
-    this.multihash((err, multihash) => {
-      if (err) {
-        return callback(err)
-      }
-      this.size((err, size) => {
-        if (err) {
-          return callback(err)
-        }
-
-        const obj = {
-          Data: this.data,
-          Links: this.links.map((l) => l.toJSON()),
-          Hash: mh.toB58String(multihash),
-          Size: size
-        }
-
-        callback(null, obj)
-      })
-    })
-  }
-
-  toString (callback) {
-    this.multihash((err, multihash) => {
-      if (err) {
-        return callback(err)
-      }
-      const multihashStr = mh.toB58String(multihash)
-      this.size((err, size) => {
-        if (err) {
-          return callback(err)
-        }
-
-        const str = `DAGNode <${multihashStr} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${size}>`
-        callback(null, str)
-      })
-    })
+    return `DAGNode <${mhStr} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size}>`
   }
 }
 
-module.exports = DAGNode
+function create (data, dagLinks, hashAlg, callback) {
+  if (typeof data === 'function') {
+    // empty obj
+    callback = data
+    data = undefined
+  }
+  if (typeof dagLinks === 'function') {
+    // empty obj
+    callback = dagLinks
+    dagLinks = []
+  }
+  if (typeof hashAlg === 'function') {
+    // empty obj
+    callback = hashAlg
+    hashAlg = undefined
+  }
+
+  if (!hashAlg) {
+    hashAlg = 'sha2-256'
+  }
+
+  // validate links
+  const links = []
+
+  if (dagLinks) {
+    dagLinks.forEach((l) => {
+      if (l.constructor && l.constructor.name === 'DAGLink') {
+        links.push(l)
+      } else {
+        links.push(
+          new DAGLink(l.name || l.Name,
+                      l.size || l.Size,
+                      l.hash || l.Hash || l.multihash)
+        )
+      }
+    })
+
+    stable.inplace(links, util.linkSort)
+  }
+
+  let serialized
+  let multihash
+  let size
+  let json
+
+  series([
+    (cb) => {
+      util.serialize({
+        data: data,
+        links: links
+      }, (err, _serialized) => {
+        if (err) {
+          return cb(err)
+        }
+        serialized = _serialized
+        cb()
+      })
+    },
+    (cb) => {
+      util.hash(hashAlg, serialized, (err, _multihash) => {
+        if (err) {
+          return cb(err)
+        }
+        multihash = _multihash
+        cb()
+      })
+    },
+    (cb) => {
+      if (!serialized) {
+        size = 0
+      }
+
+      size = links.reduce((sum, l) => {
+        return sum + l.size
+      }, serialized.length)
+      cb()
+    },
+    (cb) => {
+      json = {
+        data: data,
+        links: links.map((l) => l.json),
+        hash: mh.toB58String(multihash),
+        size: size
+      }
+      cb()
+    }
+  ], (err) => {
+    if (err) {
+      return callback(err)
+    }
+    const node = new DAGNode(data,
+                             links,
+                             serialized,
+                             size,
+                             multihash,
+                             json)
+    callback(null, node)
+  })
+}
+
+exports = module.exports = DAGNode
+exports.create = create
 const util = require('./util')

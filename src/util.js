@@ -42,11 +42,11 @@ exports.toProtoBuf = (node) => {
   return pbn
 }
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = (node, callback) => {
   let serialized
 
   try {
-    const pb = exports.toProtoBuf(dagNode)
+    const pb = exports.toProtoBuf(node)
     serialized = proto.PBNode.encode(pb)
   } catch (err) {
     return callback(err)
@@ -66,18 +66,10 @@ exports.deserialize = (data, callback) => {
 
   const buf = pbn.Data || new Buffer(0)
 
-  const dagNode = new DAGNode(buf, links)
-
-  callback(null, dagNode)
+  DAGNode.create(buf, links, callback)
 }
 
-exports.cid = (dagNode, callback) => {
-  dagNode.multihash((err, multihash) => {
-    if (err) {
-      return callback(err)
-    }
-    const cid = new CID(multihash)
-    callback(null, cid)
-  })
+exports.cid = (node, callback) => {
+  callback(null, new CID(node.multihash))
 }
 
