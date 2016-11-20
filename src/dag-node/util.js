@@ -26,8 +26,8 @@ function linkSort (a, b) {
 /*
  * toDAGLink converts a DAGNode to a DAGLink
  */
-function toDAGLink (dagNode) {
-  return new DAGLink(null, dagNode.size, dagNode.multihash)
+function toDAGLink (node) {
+  return new DAGLink('', node.size, node.multihash)
 }
 
 exports.cloneData = cloneData

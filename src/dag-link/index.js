@@ -7,6 +7,8 @@ const assert = require('assert')
 class DAGLink {
   constructor (name, size, multihash) {
     assert(multihash, 'A link requires a multihash to point to')
+    assert(size, 'A link requires a size')
+
     this._name = name
     this._size = size
 

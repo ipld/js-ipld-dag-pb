@@ -97,16 +97,28 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 
 Creates a link on node A to node B by using node B to get its multihash. Returns a *new* instance of DAGNode without modifying the old one.
 
+Creates a new DAGNode instance with the union of node.links plus the new link.
+
+`link` can be:
+- DAGLink instance
+- DAGNode instance
+- Object with the following properties:
+
 ```JavaScript
-DAGNode.addLink(node, "Link1" (err, dagNode) => ...) 
+{
+  name: '<some string>', // optional
+  size: <size in bytes>,
+  multihash: <multihash> // can be a String multihash or multihash buffer
+}
 ```
 
-#### removeLink(node, nameOrMultihash, callback)
+
+#### rmLink(node, nameOrMultihash, callback)
 
 Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
 
 ```JavaScript
-DAGNode.removeLink(node, "Link1" (err, dagNode) => ...) 
+DAGNode.rmLink(node, "Link1" (err, dagNode) => ...) 
 ```
 
 #### clone(node, callback)

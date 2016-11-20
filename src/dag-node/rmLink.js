@@ -12,7 +12,7 @@ function rmLink (dagNode, nameOrMultihash, callback) {
   if (typeof nameOrMultihash === 'string') {
     links = links.filter((link) => link.name !== nameOrMultihash)
   } else if (Buffer.isBuffer(nameOrMultihash)) {
-    links = links.filter((link) => !link.hash.equals(nameOrMultihash))
+    links = links.filter((link) => !link.multihash.equals(nameOrMultihash))
   } else {
     return callback(new Error('second arg needs to be a name or multihash'), null)
   }

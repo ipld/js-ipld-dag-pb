@@ -10,6 +10,7 @@ chai.use(checkmark)
 const dagPB = require('../src')
 const DAGLink = dagPB.DAGLink
 const DAGNode = dagPB.DAGNode
+const toDAGLink = require('../src/dag-node/util').toDAGLink
 const util = dagPB.util
 const series = require('async/series')
 
@@ -104,172 +105,228 @@ module.exports = (repo) => {
       })
     })
 
-    it('create a link', (done) => {
-      const buf = new Buffer('fake multihash of file.txt')
-      const link = new DAGLink('file.txt', 10, buf)
-      expect(link.name).to.equal('file.txt')
-      expect(link.size).to.equal(10)
-      expect(link.multihash.equals(buf)).to.equal(true)
-      done()
-    })
-
-    it.skip('add a link to a node', (done) => {
-      // let node1
-      // let node2
+    it('addLink by DAGNode', (done) => {
+      let node1
+      let node2
 
       series([
         (cb) => {
-          DAGNode.create(new Buffer('4444'), (err, node) => {
+          DAGNode.create(new Buffer('1'), (err, node) => {
             expect(err).to.not.exist
-            // node1 = node
+            node1 = node
             cb()
           })
         },
         (cb) => {
-          DAGNode.create(new Buffer('22'), (err, node) => {
+          DAGNode.create(new Buffer('2'), (err, node) => {
             expect(err).to.not.exist
-            // node2 = node
-            cb()
-          })
-        }
-      ], (err) => {
-        expect(err).to.not.exist
-        done()
-      })
-      /*
-      let node1Multihash
-
-      series([
-        (cb) => {
-          node1.size((err, size) => {
-            expect(err).to.not.exist
-            node1Size = size
+            node2 = node
             cb()
           })
         },
         (cb) => {
-          node1.multihash((err, multihash) => {
+          DAGNode.addLink(node1, node2, (err, node1b) => {
             expect(err).to.not.exist
-            node1Multihash = multihash
-            cb()
-          })
-        },
-        (cb) => {
-          // Adding the link to the node
-          node1.addNodeLink('next', node2, (err) => {
-            expect(err).to.not.exist
-            expect(node1.links.length).to.be.above(0)
-            series([
-              (innerCb) => {
-                node1.size((err, size) => {
-                  expect(err).to.not.exist
-                  expect(size).to.be.above(node1Size)
-                  innerCb()
-                })
-              },
-              (innerCb) => {
-                node1.multihash((err, multihash) => {
-                  expect(err).to.not.exist
-                  expect(multihash).to.not.eql(node1Multihash)
-                  innerCb()
-                })
-              },
-              (innerCB) => {
-                node2.multihash((err, multihash) => {
-                  expect(err).to.not.exist
-                  expect(node1.links[0].hash).to.eql(multihash)
-                  innerCB()
-                })
-              }
-            ], cb)
-          })
-        },
-        (cb) => {
-          node1.removeNodeLink('next')
-          expect(node1.links.length).to.equal(0)
-          node1.multihash((err, multihash) => {
-            expect(err).to.not.exist
-            expect(multihash).to.eql(node1Multihash)
-            cb()
-          })
-        }
-      ], done)
-      */
-    })
-
-    it.skip('add several links to a node', (done) => {
-      const node1 = new DAGNode(new Buffer('4444'))
-      const node2 = new DAGNode(new Buffer('22'))
-      const node3 = new DAGNode(new Buffer('333'))
-
-      let node1Multihash
-
-      series([
-        (cb) => {
-          node1.multihash((err, multihash) => {
-            expect(err).to.not.exist
-            node1Multihash = multihash
-            cb()
-          })
-        },
-        (cb) => {
-          node1.addNodeLink('next', node2, cb)
-        },
-        (cb) => {
-          node1.addNodeLink('next', node3, cb)
-        },
-        (cb) => {
-          node1.multihash((err, multihash) => {
-            expect(err).to.not.exist
-            expect(multihash).to.not.eql(node1Multihash)
-            expect(node1.links.length).to.be.above(1)
+            expect(node1b.links.length).to.equal(1)
+            expect(node1b.links[0].multihash)
+              .to.eql(node2.multihash)
+            expect(node1b.links[0].size)
+              .to.eql(node2.size)
+            expect(node1b.links[0].name).to.not.exist
             cb()
           })
         }
       ], done)
     })
 
-    it.skip('remove link to a node by hash', (done) => {
-      const node1 = new DAGNode(new Buffer('4444'))
-      const node2 = new DAGNode(new Buffer('22'))
-
-      let node1Multihash
-      let node2Multihash
+    it('addLink by DAGLink', (done) => {
+      let node1
+      let node2
 
       series([
         (cb) => {
-          node1.multihash((err, multihash) => {
+          DAGNode.create(new Buffer('1'), (err, node) => {
             expect(err).to.not.exist
-            node1Multihash = multihash
+            node1 = node
             cb()
           })
         },
         (cb) => {
-          node2.multihash((err, multihash) => {
+          DAGNode.create(new Buffer('2'), (err, node) => {
             expect(err).to.not.exist
-            node2Multihash = multihash
+            node2 = node
             cb()
           })
         },
         (cb) => {
-          node1.addNodeLink('next', node2, cb)
-        },
-        (cb) => {
-          expect(node1.links.length).to.be.above(0)
-          node1.multihash((err, multihash) => {
+          const link = toDAGLink(node2)
+
+          DAGNode.addLink(node1, link, (err, node1b) => {
             expect(err).to.not.exist
-            expect(multihash).to.not.eql(node1Multihash)
+            expect(node1b.links.length).to.equal(1)
+            expect(node1b.links[0].multihash)
+              .to.eql(node2.multihash)
+            expect(node1b.links[0].size)
+              .to.eql(node2.size)
+            expect(node1b.links[0].name).to.not.exist
+            cb()
+          })
+        }
+      ], done)
+    })
+
+    it('addLink by object', (done) => {
+      let node1
+      let node2
+
+      series([
+        (cb) => {
+          DAGNode.create(new Buffer('1'), (err, node) => {
+            expect(err).to.not.exist
+            node1 = node
             cb()
           })
         },
         (cb) => {
-          node1.removeNodeLinkByHash(node2Multihash)
+          DAGNode.create(new Buffer('2'), (err, node) => {
+            expect(err).to.not.exist
+            node2 = node
+            cb()
+          })
+        },
+        (cb) => {
+          const link = toDAGLink(node2).toJSON()
+
+          DAGNode.addLink(node1, link, (err, node1b) => {
+            expect(err).to.not.exist
+            expect(node1b.links.length).to.equal(1)
+            expect(node1b.links[0].multihash)
+              .to.eql(node2.multihash)
+            expect(node1b.links[0].size)
+              .to.eql(node2.size)
+            expect(node1b.links[0].name).to.not.exist
+            cb()
+          })
+        }
+      ], done)
+    })
+
+    it('addLink - add several links', (done) => {
+      let node1a
+      let node1b
+      let node1c
+
+      series([
+        (cb) => {
+          DAGNode.create(new Buffer('1'), (err, node) => {
+            expect(err).to.not.exist
+            node1a = node
+            cb()
+          })
+        },
+        (cb) => {
+          DAGNode.create(new Buffer('2'), (err, node) => {
+            expect(err).to.not.exist
+            DAGNode.addLink(node1a, node, (err, node) => {
+              expect(err).to.not.exist
+              node1b = node
+              cb()
+            })
+          })
+        },
+        (cb) => {
+          DAGNode.create(new Buffer('3'), (err, node) => {
+            expect(err).to.not.exist
+            DAGNode.addLink(node1b, node, (err, node) => {
+              expect(err).to.not.exist
+              node1c = node
+              cb()
+            })
+          })
+        },
+        (cb) => {
+          expect(node1a.links.length).to.equal(0)
+          expect(node1b.links.length).to.equal(1)
+          expect(node1c.links.length).to.equal(2)
           cb()
+        }
+      ], done)
+    })
+
+    it('rmLink by name', (done) => {
+      let node1a
+      let node1b
+      let node2
+
+      series([
+        (cb) => {
+          DAGNode.create(new Buffer('1'), (err, node) => {
+            expect(err).to.not.exist
+            node1a = node
+            cb()
+          })
         },
         (cb) => {
-          node1.multihash((err, multihash) => {
+          DAGNode.create(new Buffer('2'), (err, node) => {
             expect(err).to.not.exist
-            expect(multihash).to.eql(node1Multihash)
+            node2 = node
+            cb()
+          })
+        },
+        (cb) => {
+          const link = toDAGLink(node2).toJSON()
+          link.name = 'banana'
+
+          DAGNode.addLink(node1a, link, (err, node) => {
+            expect(err).to.not.exist
+            node1b = node
+            cb()
+          })
+        },
+        (cb) => {
+          DAGNode.rmLink(node1b, 'banana', (err, node) => {
+            expect(err).to.not.exist
+            expect(node1a.toJSON()).to.eql(node.toJSON())
+            cb()
+          })
+        }
+      ], done)
+    })
+
+    it('rmLink by hash', (done) => {
+      let node1a
+      let node1b
+      let node2
+
+      series([
+        (cb) => {
+          DAGNode.create(new Buffer('1'), (err, node) => {
+            expect(err).to.not.exist
+            node1a = node
+            cb()
+          })
+        },
+        (cb) => {
+          DAGNode.create(new Buffer('2'), (err, node) => {
+            expect(err).to.not.exist
+            node2 = node
+            cb()
+          })
+        },
+        (cb) => {
+          const link = toDAGLink(node2).toJSON()
+          link.name = 'banana'
+
+          DAGNode.addLink(node1a, link, (err, node) => {
+            expect(err).to.not.exist
+            node1b = node
+            cb()
+          })
+        },
+        (cb) => {
+          DAGNode.rmLink(node1b, node2.multihash, (err, node) => {
+            expect(err).to.not.exist
+            expect(node1a.toJSON()).to.eql(node.toJSON())
             cb()
           })
         }
@@ -370,68 +427,6 @@ module.exports = (repo) => {
         expect(node.toJSON().size).to.exist
         done()
       })
-    })
-
-    it.skip('dagNode.toJSON with data and links', (done) => {
-      const node1 = new DAGNode(new Buffer('hello'))
-      const node2 = new DAGNode(new Buffer('world'))
-
-      let node1JSON
-
-      series([
-        (cb) => {
-          node1.addNodeLink('continuation', node2, cb)
-        },
-        (cb) => {
-          node1.toJSON((err, obj) => {
-            expect(err).to.not.exist
-            node1JSON = obj
-            cb()
-          })
-        },
-        (cb) => {
-          expect(node1JSON.Data).to.deep.equal(new Buffer('hello'))
-          expect(node1JSON.Links).to.deep.equal([{
-            Hash: 'QmPfjpVaf593UQJ9a5ECvdh2x17XuJYG5Yanv5UFnH3jPE',
-            Name: 'continuation',
-            Size: 7
-          }])
-          expect(node1JSON.Hash).to.exist
-          expect(node1JSON.Size).to.exist
-          cb()
-        }
-      ], done)
-    })
-
-    it.skip('create a unnamed dagLink', (done) => {
-      const node1 = new DAGNode(new Buffer('1'))
-      const node2 = new DAGNode(new Buffer('2'))
-
-      let node1JSON
-
-      series([
-        (cb) => {
-          node1.addNodeLink('', node2, cb)
-        },
-        (cb) => {
-          node1.toJSON((err, obj) => {
-            expect(err).to.not.exist
-            node1JSON = obj
-            cb()
-          })
-        },
-        (cb) => {
-          expect(node1JSON.Data).to.deep.equal(new Buffer('1'))
-          expect(node1JSON.Links).to.deep.equal([{
-            Hash: 'QmNRGfMaSjNcjtyS56JrZBEU5QcGtfViWWG8V9pVqgVpmT',
-            Name: '',
-            Size: 3
-          }])
-          expect(node1JSON.Hash).to.exist
-          expect(node1JSON.Size).to.exist
-          cb()
-        }
-      ], done)
     })
 
     it('add two nameless links to a node', (done) => {
