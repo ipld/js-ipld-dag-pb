@@ -34,7 +34,7 @@ class DAGLink {
   }
 
   set name (name) {
-    throw new Error(`Can't set property: 'name' is immutable`)
+    throw new Error("Can't set property: 'name' is immutable")
   }
 
   get size () {
@@ -42,7 +42,7 @@ class DAGLink {
   }
 
   set size (size) {
-    throw new Error(`Can't set property: 'size' is immutable`)
+    throw new Error("Can't set property: 'size' is immutable")
   }
 
   get multihash () {
@@ -50,8 +50,9 @@ class DAGLink {
   }
 
   set multihash (multihash) {
-    throw new Error(`Can't set property: 'multihash' is immutable`)
+    throw new Error("Can't set property: 'multihash' is immutable")
   }
 }
 
-module.exports = DAGLink
+exports = module.exports = DAGLink
+exports.create = require('./create')
