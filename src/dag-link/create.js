@@ -1,3 +1,5 @@
+'use strict'
+
 const DAGLink = require('./index.js')
 
 function create (name, size, multihash, callback) {

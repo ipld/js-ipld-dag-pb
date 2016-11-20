@@ -1,3 +1,5 @@
+'use strict'
+
 const dagNodeUtil = require('./util')
 const cloneLinks = dagNodeUtil.cloneLinks
 const cloneData = dagNodeUtil.cloneData
