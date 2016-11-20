@@ -5,7 +5,7 @@ const series = require('async/series')
 const Store = require('idb-pull-blob-store')
 const _ = require('lodash')
 const IPFSRepo = require('ipfs-repo')
-const repoContext = require.context('buffer!./example-repo', true)
+const repoContext = require.context('buffer!./test-repo', true)
 const pull = require('pull-stream')
 
 const idb = window.indexedDB ||

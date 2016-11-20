@@ -1,13 +1,14 @@
 'use strict'
 
 const mh = require('multihashes')
+const assert = require('assert')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
   constructor (name, size, multihash) {
+    assert(multihash, 'A link requires a multihash to point to')
     this._name = name
     this._size = size
-    this._multihash = null
 
     if (typeof multihash === 'string') {
       this._multihash = mh.fromB58String(multihash)

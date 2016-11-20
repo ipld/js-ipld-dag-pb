@@ -12,7 +12,7 @@ const parallel = require('async/parallel')
 
 const Block = require('ipfs-block')
 
-describe('IPLD format resolver (local)', () => {
+describe.skip('IPLD Format resolver (local)', () => {
   let emptyNodeBlock
   let linksNodeBlock
   let dataLinksNodeBlock
