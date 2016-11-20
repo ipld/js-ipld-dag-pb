@@ -49,7 +49,7 @@ function toProtoBuf (node) {
   if (node.links.length > 0) {
     pbn.Links = node.links.map((link) => {
       return {
-        Hash: link.hash,
+        Hash: link.multihash,
         Name: link.name,
         Tsize: link.size
       }

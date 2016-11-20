@@ -6,54 +6,46 @@
 const expect = require('chai').expect
 const dagPB = require('../src')
 const DAGNode = dagPB.DAGNode
-const util = dagPB.util
 const resolver = dagPB.resolver
 const parallel = require('async/parallel')
 
 const Block = require('ipfs-block')
 
-describe.skip('IPLD Format resolver (local)', () => {
+describe('IPLD Format resolver (local)', () => {
   let emptyNodeBlock
   let linksNodeBlock
   let dataLinksNodeBlock
 
   const links = [{
-    Name: '',
-    Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
-    Size: 10
+    name: undefined,
+    hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
+    size: 10
   }, {
-    Name: 'named link',
-    Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
-    Size: 8
+    name: 'named link',
+    hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
+    size: 8
   }]
 
   before((done) => {
-    // create a bunch of nodes serialized into Blocks
-    //    const d1 = new DAGNode(new Buffer('some data'), l1)
-    const emptyNode = new DAGNode(new Buffer(0))
-
-    const linksNode = new DAGNode(new Buffer(0), links)
-    const dataLinksNode = new DAGNode(new Buffer('aaah the data'), links)
-
     parallel([
       (cb) => {
-        util.serialize(emptyNode, (err, serialized) => {
+        DAGNode.create(new Buffer(0), (err, node) => {
           expect(err).to.not.exist
-          emptyNodeBlock = new Block(serialized)
+          emptyNodeBlock = new Block(node.serialized)
           cb()
         })
       },
       (cb) => {
-        util.serialize(linksNode, (err, serialized) => {
+        DAGNode.create(new Buffer(0), links, (err, node) => {
           expect(err).to.not.exist
-          linksNodeBlock = new Block(serialized)
+          linksNodeBlock = new Block(node.serialized)
           cb()
         })
       },
       (cb) => {
-        util.serialize(dataLinksNode, (err, serialized) => {
+        DAGNode.create(new Buffer('aaah the data'), links, (err, node) => {
           expect(err).to.not.exist
-          dataLinksNodeBlock = new Block(serialized)
+          dataLinksNodeBlock = new Block(node.serialized)
           cb()
         })
       }
@@ -115,7 +107,7 @@ describe.skip('IPLD Format resolver (local)', () => {
       it('links position path', (done) => {
         resolver.resolve(linksNodeBlock, 'links/1', (err, result) => {
           expect(err).to.not.exist
-          expect(result.value).to.eql(links[1].Hash)
+          expect(result.value).to.eql(links[1].hash)
           expect(result.remainderPath).to.eql('')
           done()
         })

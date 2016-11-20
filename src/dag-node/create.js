@@ -32,10 +32,9 @@ function create (data, dagLinks, hashAlg, callback) {
       return l
     }
 
-    const link = new DAGLink(l.name || l.Name,
-                             l.size || l.Size,
-                             l.hash || l.Hash || l.multihash)
-    return link
+    return new DAGLink(l.name || l.Name,
+                       l.size || l.Size,
+                       l.hash || l.Hash || l.multihash)
   })
 
   sortInplace(links, linkSort)
