@@ -29,10 +29,10 @@ module.exports = (repo) => {
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.above(0).mark()
 
-        DAGNode.util.serialize(node, (err, serialized) => {
+        dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
 
-          DAGNode.util.deserialize(serialized, (err, deserialized) => {
+          dagPB.util.deserialize(serialized, (err, deserialized) => {
             expect(err).to.not.exist.mark()
             expect(node.data).to.eql(deserialized.data).mark()
           })
@@ -92,10 +92,10 @@ module.exports = (repo) => {
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.equal(2).mark()
 
-        DAGNode.util.serialize(node, (err, serialized) => {
+        dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
 
-          DAGNode.util.deserialize(serialized, (err, deserialized) => {
+          dagPB.util.deserialize(serialized, (err, deserialized) => {
             expect(err).to.not.exist.mark()
             expect(node.data).to.eql(deserialized.data).mark()
           })
@@ -297,7 +297,7 @@ module.exports = (repo) => {
 
         series([
           (cb) => {
-            DAGNode.util.serialize(node, (err, serialized) => {
+            dagPB.util.serialize(node, (err, serialized) => {
               expect(err).to.not.exist
               block = new Block(serialized)
               cb()
@@ -339,7 +339,7 @@ module.exports = (repo) => {
 
       bs.get(cid, (err, block) => {
         expect(err).to.not.exist
-        DAGNode.util.deserialize(block.data, (err, node) => {
+        dagPB.util.deserialize(block.data, (err, node) => {
           expect(err).to.not.exist
           expect(node.data).to.exist
           expect(node.links.length).to.equal(6)

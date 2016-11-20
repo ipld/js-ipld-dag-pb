@@ -1,7 +1,11 @@
 'use strict'
 
-const DAGNode = require('./util.js')
-exports.DAGNode = DAGNode
-exports.DAGLink = require('./dag-link.js')
-exports.resolver = require('./resolver.js')
-exports.util = DAGNode.util
+exports.DAGNode = require('./dag-node')
+exports.DAGLink = require('./dag-link')
+
+/*
+ * Functions to fulfil IPLD Format interface
+ * https://github.com/ipld/interface-ipld-format
+ */
+exports.resolver = require('./resolver')
+exports.util = require('./util')
