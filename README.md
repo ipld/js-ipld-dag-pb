@@ -102,10 +102,16 @@ const DAGNode = dagPB.DAGNode
 
 #### DAGNode.create(data, links, hashAlg, callback)
 
+- `data` - type: Buffer
+- `links`- type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
+- `hashAlg` - type: String
+- `callback` - type: function with signature `function (err, node) {}`
+
 Create a DAGNode.
 
 ```JavaScript
-DAGNode.create("data", links, (err, dagNode) => {
+DAGNode.create('data', links, (err, dagNode) => {
+  // ...
 })
 ```
 
@@ -120,6 +126,10 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 ```
 
 #### addLink(node, link, callback)
+
+- `node` - type: DAGNode
+- `link` - type: DAGLink or DAGLink in its json format
+- `callback` - type: function with signature `function (err, node) {}`
 
 Creates a link on node A to node B by using node B to get its multihash. Returns a *new* instance of DAGNode without modifying the old one.
 
@@ -141,13 +151,20 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
 
 #### rmLink(node, nameOrMultihash, callback)
 
+- `node` - type: DAGNode
+- `nameOrMultihash` - type: String or multihash buffer
+- `callback` - type: function with signature `function (err, node) {}`
+
 Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
 
 ```JavaScript
-DAGNode.rmLink(node, "Link1" (err, dagNode) => ...) 
+DAGNode.rmLink(node, 'Link1' (err, dagNode) => ...) 
 ```
 
 #### clone(node, callback)
+
+- `node` - type: DAGNode
+- `callback` - type: function with signature `function (err, node) {}`
 
 Creates a clone of the DAGNode instance passed
 
@@ -192,14 +209,15 @@ const DAGLink = dagPB.DAGLink
 #### DAGLink.create(name, size, multihash, callback)
 
 ```JavaScript
-DAGLink.create('link-to-file',  // name of the link (can be empty)
-               10,              // size in bytes
-               'QmSomeHash...', // can be multihash buffer or string
-               (err, link) => {
-                 if (err) {
-                   throw err
-                 }
-                 // link is a DAGLink instance
+DAGLink.create(
+  'link-to-file',  // name of the link (can be empty)
+  10,              // size in bytes
+  'QmSomeHash...', // can be multihash buffer or string
+  (err, link) => {
+    if (err) {
+      throw err
+    }
+   // link is a DAGLink instance
 })
 ```
 
