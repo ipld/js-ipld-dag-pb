@@ -5,18 +5,20 @@ const DAGLink = require('./../dag-link')
 exports = module.exports
 
 function cloneData (dagNode) {
-  let data = new Buffer(0)
+  let data
 
   if (dagNode.data && dagNode.data.length > 0) {
     data = new Buffer(dagNode.data.length)
     dagNode.data.copy(data)
+  } else {
+    data = new Buffer(0)
   }
 
   return data
 }
 
 function cloneLinks (dagNode) {
-  return dagNode.links.length > 0 ? dagNode.links.slice() : []
+  return dagNode.links.slice()
 }
 
 function linkSort (a, b) {

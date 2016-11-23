@@ -411,7 +411,7 @@ module.exports = (repo) => {
         expect(err).to.not.exist
         expect(node.toJSON().data).to.deep.equal(new Buffer(0))
         expect(node.toJSON().links).to.deep.equal([])
-        expect(node.toJSON().hash).to.exist
+        expect(node.toJSON().multihash).to.exist
         expect(node.toJSON().size).to.exist
         done()
       })
@@ -423,7 +423,7 @@ module.exports = (repo) => {
         expect(err).to.not.exist
         expect(node.toJSON().data).to.eql(data)
         expect(node.toJSON().links).to.deep.equal([])
-        expect(node.toJSON().hash).to.exist
+        expect(node.toJSON().multihash).to.exist
         expect(node.toJSON().size).to.exist
         done()
       })

@@ -42,8 +42,8 @@ exports.resolve = (block, path, callback) => {
       // for the resolver
       node.links.forEach((l, i) => {
         const link = l.toJSON()
-        values[i] = link.hash
-        values[link.name] = link.hash
+        values[i] = link.multihash
+        values[link.name] = link.multihash
       })
 
       let value = values[split[1]]

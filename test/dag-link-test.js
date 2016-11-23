@@ -36,7 +36,7 @@ module.exports = (repo) => {
       expect(link.toJSON()).to.eql({
         name: 'hello',
         size: 3,
-        hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
+        multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
       })
     })
 

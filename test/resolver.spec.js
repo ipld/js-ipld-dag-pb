@@ -18,11 +18,11 @@ describe('IPLD Format resolver (local)', () => {
 
   const links = [{
     name: undefined,
-    hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
+    multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
     size: 10
   }, {
     name: 'named link',
-    hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
+    multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
     size: 8
   }]
 
@@ -107,7 +107,7 @@ describe('IPLD Format resolver (local)', () => {
       it('links position path', (done) => {
         resolver.resolve(linksNodeBlock, 'links/1', (err, result) => {
           expect(err).to.not.exist
-          expect(result.value).to.eql(links[1].hash)
+          expect(result.value).to.eql(links[1].multihash)
           expect(result.remainderPath).to.eql('')
           done()
         })
