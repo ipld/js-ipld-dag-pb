@@ -52,13 +52,39 @@ dagPB.util
 #### Create a DAGNode
 
 ```JavaScript
-// TODO
+DAGNode.create(new Buffer('some data'), (err, node) => {
+  if (err) {
+    throw error
+  }
+  // node is your DAGNode instance
+})
 ```
 
 #### Add and remove a Link
 
 ```JavaScript
-// TODO
+const link = {
+  name: 'I am a link',
+  multihash: 'QmHash..'
+  size: 42
+}
+
+DAGNode.addLink(node, link, (err, nodeA) => {
+  if (err) {
+    throw err
+  }
+  // node - DAGNode instance with the link
+  console.log('with link', nodeA.toJSON())
+
+  DAGNode.rmLink(nodeA, 'I am a link', (err, nodeB) => {
+    if (err) {
+      throw err
+    }
+
+  // node - DAGNode instance without the link, equal to just node
+  console.log('without link', nodeB.toJSON())
+  })
+})
 ```
 
 ## API

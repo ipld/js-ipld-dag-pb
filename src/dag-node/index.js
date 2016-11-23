@@ -22,7 +22,7 @@ class DAGNode {
     this._json = {
       data: this.data,
       links: this.links.map((l) => l.json),
-      hash: mh.toB58String(this.multihash),
+      multihash: mh.toB58String(this.multihash),
       size: this.size
     }
   }
