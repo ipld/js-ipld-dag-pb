@@ -1,3 +1,17 @@
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.0...v0.9.1) (2016-11-24)
+
+
+### Bug Fixes
+
+* ensure empty link names are preserved ([ad11b7a](https://github.com/ipld/js-ipld-dag-pb/commit/ad11b7a))
+* fixtures loading in the browser ([405dd01](https://github.com/ipld/js-ipld-dag-pb/commit/405dd01))
+* linting ([d51245c](https://github.com/ipld/js-ipld-dag-pb/commit/d51245c))
+* sort links in creation ([8519b3b](https://github.com/ipld/js-ipld-dag-pb/commit/8519b3b))
+* use aegir fixtures instead ([c492997](https://github.com/ipld/js-ipld-dag-pb/commit/c492997))
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.8.0...v0.9.0) (2016-11-24)
 
