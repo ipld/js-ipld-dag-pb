@@ -33,8 +33,8 @@ function create (data, dagLinks, hashAlg, callback) {
     }
 
     return new DAGLink(
-      l.name != null ? l.name : l.Name,
-      l.size != null ? l.size : l.Size,
+      l.name ? l.name : l.Name,
+      l.size ? l.size : l.Size,
       l.hash || l.Hash || l.multihash
     )
   })

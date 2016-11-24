@@ -420,8 +420,8 @@ module.exports = (repo) => {
       })
     })
 
-    it('deserialize go-ipfs block ', (done) => {
-      const buf = fs.readFileSync(path.join(__dirname, 'data/test-block'))
+    it('deserialize go-ipfs block with unnamed links', (done) => {
+      const buf = fs.readFileSync(path.join(__dirname, 'data/test-block-unnamed-links'))
 
       const expectedLinks = [
         {
@@ -466,6 +466,41 @@ module.exports = (repo) => {
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
         expect(nodeJSON.multihash).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
+        done()
+      })
+    })
+
+    it('deserialize go-ipfs block with named links', (done) => {
+      const buf = fs.readFileSync(path.join(__dirname, 'data/test-block-named-links'))
+
+      const expectedLinks = [
+        {
+          'name': 'audio_only.m4a',
+          'multihash': 'QmaUAwAQJNtvUdJB42qNbTTgDpzPYD1qdsKNtctM5i7DGB',
+          'size': 23319629
+        },
+        {
+          'name': 'chat.txt',
+          'multihash': 'QmNVrxbB25cKTRuKg2DuhUmBVEK9NmCwWEHtsHPV6YutHw',
+          'size': 996
+        },
+        {
+          'name': 'playback.m3u',
+          'multihash': 'QmUcjKzDLXBPmB6BKHeKSh6ZoFZjss4XDhMRdLYRVuvVfu',
+          'size': 116
+        },
+        {
+          'name': 'zoom_0.mp4',
+          'multihash': 'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX',
+          'size': 306281879
+        }
+      ]
+
+      dagPB.util.deserialize(buf, (err, node) => {
+        expect(err).to.not.exist
+        const nodeJSON = node.toJSON()
+        expect(nodeJSON.links).to.eql(expectedLinks)
+        expect(nodeJSON.multihash).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
         done()
       })
     })
