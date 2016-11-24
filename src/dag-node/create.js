@@ -1,7 +1,7 @@
 'use strict'
 
 const multihashing = require('multihashing-async')
-const sortInplace = require('stable')
+const sort = require('stable')
 const dagPBUtil = require('../util.js')
 const serialize = dagPBUtil.serialize
 const dagNodeUtil = require('./util.js')
@@ -38,7 +38,7 @@ function create (data, dagLinks, hashAlg, callback) {
       l.hash || l.Hash || l.multihash
     )
   })
-  const sortedLinks = sortInplace(links, linkSort)
+  const sortedLinks = sort(links, linkSort)
 
   serialize({
     data: data,
