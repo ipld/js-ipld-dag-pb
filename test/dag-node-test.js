@@ -87,12 +87,14 @@ module.exports = (repo) => {
 
     it('create an empty node', (done) => {
       expect(7).checks(done)
+      const fromGoIPFS = 'QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n'
 
       DAGNode.create(new Buffer(0), (err, node) => {
         expect(err).to.not.exist.mark()
         expect(node.data.length).to.be.equal(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.size).to.be.equal(2).mark()
+        expect(node.toJSON().multihash).to.eql(fromGoIPFS)
+        expect(node.size).to.be.equal(0).mark()
 
         dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()

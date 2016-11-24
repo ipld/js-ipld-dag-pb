@@ -43,7 +43,8 @@ function toProtoBuf (node) {
   if (node.data && node.data.length > 0) {
     pbn.Data = node.data
   } else {
-    pbn.Data = new Buffer(0)
+    // NOTE: this has to be null in order to match go-ipfs serialization `null !== new Buffer(0)`
+    pbn.Data = null
   }
 
   if (node.links.length > 0) {
