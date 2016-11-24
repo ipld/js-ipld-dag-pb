@@ -15,6 +15,11 @@ module.exports = (repo) => {
           .to.equal('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43')
       })
 
+      it('empty string', () => {
+        const link = new DAGLink('', 4, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+        expect(link.name).to.be.eql('')
+      })
+
       it('create with multihash as a multihash Buffer', () => {
         const link = new DAGLink('hello', 3, new Buffer('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43', 'hex'))
 
