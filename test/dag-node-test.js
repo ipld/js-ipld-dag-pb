@@ -18,6 +18,8 @@ const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
 const CID = require('cids')
 const bs58 = require('bs58')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = (repo) => {
   describe('DAGNode', () => {
@@ -401,7 +403,7 @@ module.exports = (repo) => {
       })
     })
 
-    it('read a go-ipfs marshalled node and assert it gets read correctly', (done) => {
+    it('deserialize go-ipfs block from ipldResolver', (done) => {
       const bs = new BlockService(repo)
 
       const cidStr = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
@@ -415,6 +417,56 @@ module.exports = (repo) => {
           expect(node.links.length).to.equal(6)
           done()
         })
+      })
+    })
+
+    it('deserialize go-ipfs block ', (done) => {
+      const buf = fs.readFileSync(path.join(__dirname, 'data/test-block'))
+
+      const expectedLinks = [
+        {
+          'name': '',
+          'multihash': 'QmSbCgdsX12C4KDw3PDmpBN9iCzS87a5DjgSCoW9esqzXk',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'Qma4GxWNhywSvWFzPKtEswPGqeZ9mLs2Kt76JuBq9g3fi2',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmQfyxyys7a1e3mpz9XsntSsTGc8VgpjPj5BF1a1CGdGNc',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmSh2wTTZT4N8fuSeCFw7wterzdqbE93j1XDhfN3vQHzDV',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmVXsSVjwxMsCwKRCUxEkGb4f4B98gXVy3ih3v4otvcURK',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmZjhH97MEYwQXzCqSQbdjGDhXWuwW4RyikR24pNqytWLj',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmRs6U5YirCqC7taTynz3x2GNaHJZ3jDvMVAzaiXppwmNJ',
+          'size': 32538395
+        }
+      ]
+
+      dagPB.util.deserialize(buf, (err, node) => {
+        expect(err).to.not.exist
+        const nodeJSON = node.toJSON()
+        expect(nodeJSON.links).to.eql(expectedLinks)
+        expect(nodeJSON.multihash).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
+        done()
       })
     })
 
