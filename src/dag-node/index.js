@@ -21,7 +21,7 @@ class DAGNode {
 
     this._json = {
       data: this.data,
-      links: this.links.map((l) => l.json),
+      links: this.links.map((l) => l.toJSON()),
       multihash: mh.toB58String(this.multihash),
       size: this.size
     }

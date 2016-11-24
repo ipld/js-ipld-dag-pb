@@ -28,7 +28,7 @@ function create (data, dagLinks, hashAlg, callback) {
   }
 
   const links = dagLinks.map((l) => {
-    if (!l.constructor && l.constructor.name !== 'DAGLink') {
+    if (l.constructor && l.constructor.name === 'DAGLink') {
       return l
     }
 
