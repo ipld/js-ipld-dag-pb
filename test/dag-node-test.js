@@ -18,6 +18,10 @@ const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
 const CID = require('cids')
 const bs58 = require('bs58')
+const loadFixture = require('aegir/fixtures')
+
+const testBlockNamedLinks = loadFixture(__dirname, 'data/test-block-named-links')
+const testBlockUnnamedLinks = loadFixture(__dirname, 'data/test-block-unnamed-links')
 
 module.exports = (repo) => {
   describe('DAGNode', () => {
@@ -44,11 +48,11 @@ module.exports = (repo) => {
 
     it('create a node with links', (done) => {
       const l1 = [{
-        Name: 'some link',
+        Name: 'some other link',
         Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
         Size: 8
       }, {
-        Name: 'some other link',
+        Name: 'some link',
         Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
         Size: 10
       }]
@@ -73,7 +77,7 @@ module.exports = (repo) => {
           DAGNode.create(someData, l2, (err, node) => {
             expect(err).to.not.exist
             node2 = node
-            expect(node2.links).to.eql(l2)
+            expect(node2.links).to.eql([l2[1], l2[0]])
             cb()
           })
         }
@@ -81,6 +85,22 @@ module.exports = (repo) => {
         expect(err).to.not.exist
         expect(node1.toJSON()).to.eql(node2.toJSON())
         expect(node1.serialized).to.eql(node2.serialized)
+
+        // check sorting
+        expect(node1.links.map((l) => l.name)).to.be.eql([
+          'some link',
+          'some other link'
+        ])
+        done()
+      })
+    })
+
+    it('create with empty link name', (done) => {
+      DAGNode.create(new Buffer('hello'), [
+        new DAGLink('', 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+      ], (err, node) => {
+        expect(err).to.not.exist
+        expect(node.links[0].name).to.be.eql('')
         done()
       })
     })
@@ -134,7 +154,7 @@ module.exports = (repo) => {
               .to.eql(node2.multihash)
             expect(node1b.links[0].size)
               .to.eql(node2.size)
-            expect(node1b.links[0].name).to.not.exist
+            expect(node1b.links[0].name).to.be.eql('')
             cb()
           })
         }
@@ -170,7 +190,7 @@ module.exports = (repo) => {
               .to.eql(node2.multihash)
             expect(node1b.links[0].size)
               .to.eql(node2.size)
-            expect(node1b.links[0].name).to.not.exist
+            expect(node1b.links[0].name).to.be.eql('')
             cb()
           })
         }
@@ -206,7 +226,7 @@ module.exports = (repo) => {
               .to.eql(node2.multihash)
             expect(node1b.links[0].size)
               .to.eql(node2.size)
-            expect(node1b.links[0].name).to.not.exist
+            expect(node1b.links[0].name).to.be.eql('')
             cb()
           })
         }
@@ -391,7 +411,7 @@ module.exports = (repo) => {
       })
     })
 
-    it('read a go-ipfs marshalled node and assert it gets read correctly', (done) => {
+    it('deserialize go-ipfs block from ipldResolver', (done) => {
       const bs = new BlockService(repo)
 
       const cidStr = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
@@ -405,6 +425,91 @@ module.exports = (repo) => {
           expect(node.links.length).to.equal(6)
           done()
         })
+      })
+    })
+
+    it('deserialize go-ipfs block with unnamed links', (done) => {
+      const buf = testBlockUnnamedLinks
+
+      const expectedLinks = [
+        {
+          'name': '',
+          'multihash': 'QmSbCgdsX12C4KDw3PDmpBN9iCzS87a5DjgSCoW9esqzXk',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'Qma4GxWNhywSvWFzPKtEswPGqeZ9mLs2Kt76JuBq9g3fi2',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmQfyxyys7a1e3mpz9XsntSsTGc8VgpjPj5BF1a1CGdGNc',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmSh2wTTZT4N8fuSeCFw7wterzdqbE93j1XDhfN3vQHzDV',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmVXsSVjwxMsCwKRCUxEkGb4f4B98gXVy3ih3v4otvcURK',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmZjhH97MEYwQXzCqSQbdjGDhXWuwW4RyikR24pNqytWLj',
+          'size': 45623854
+        },
+        {
+          'name': '',
+          'multihash': 'QmRs6U5YirCqC7taTynz3x2GNaHJZ3jDvMVAzaiXppwmNJ',
+          'size': 32538395
+        }
+      ]
+
+      dagPB.util.deserialize(buf, (err, node) => {
+        expect(err).to.not.exist
+        const nodeJSON = node.toJSON()
+        expect(nodeJSON.links).to.eql(expectedLinks)
+        expect(nodeJSON.multihash).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
+        done()
+      })
+    })
+
+    it('deserialize go-ipfs block with named links', (done) => {
+      const buf = testBlockNamedLinks
+
+      const expectedLinks = [
+        {
+          'name': 'audio_only.m4a',
+          'multihash': 'QmaUAwAQJNtvUdJB42qNbTTgDpzPYD1qdsKNtctM5i7DGB',
+          'size': 23319629
+        },
+        {
+          'name': 'chat.txt',
+          'multihash': 'QmNVrxbB25cKTRuKg2DuhUmBVEK9NmCwWEHtsHPV6YutHw',
+          'size': 996
+        },
+        {
+          'name': 'playback.m3u',
+          'multihash': 'QmUcjKzDLXBPmB6BKHeKSh6ZoFZjss4XDhMRdLYRVuvVfu',
+          'size': 116
+        },
+        {
+          'name': 'zoom_0.mp4',
+          'multihash': 'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX',
+          'size': 306281879
+        }
+      ]
+
+      dagPB.util.deserialize(buf, (err, node) => {
+        expect(err).to.not.exist
+        const nodeJSON = node.toJSON()
+        expect(nodeJSON.links).to.eql(expectedLinks)
+        expect(nodeJSON.multihash).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
+        done()
       })
     })
 

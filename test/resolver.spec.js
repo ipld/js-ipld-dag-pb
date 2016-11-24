@@ -17,7 +17,7 @@ describe('IPLD Format resolver (local)', () => {
   let dataLinksNodeBlock
 
   const links = [{
-    name: undefined,
+    name: '',
     multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
     size: 10
   }, {
