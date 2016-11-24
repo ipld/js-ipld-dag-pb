@@ -1,36 +1,56 @@
 'use strict'
 
-const multihashing = require('multihashing-async')
 const CID = require('cids')
-const stable = require('stable')
 const protobuf = require('protocol-buffers')
 const proto = protobuf(require('./dag.proto'))
-
-const DAGNode = require('./dag-node')
 const DAGLink = require('./dag-link')
+const DAGNode = require('./dag-node')
 
 exports = module.exports
 
-// Hash is the global IPFS hash function. uses multihash SHA2_256, 256 bits
-exports.hash = (type, data, cb) => multihashing(data, type, cb)
-
-exports.linkSort = (a, b) => {
-  return (new Buffer(a.name || '', 'ascii').compare(new Buffer(b.name || '', 'ascii')))
+function cid (node, callback) {
+  callback(null, new CID(node.multihash))
 }
 
-exports.toProtoBuf = (node) => {
+function serialize (node, callback) {
+  let serialized
+
+  try {
+    const pb = toProtoBuf(node)
+    serialized = proto.PBNode.encode(pb)
+  } catch (err) {
+    return callback(err)
+  }
+
+  callback(null, serialized)
+}
+
+function deserialize (data, callback) {
+  const pbn = proto.PBNode.decode(data)
+
+  const links = pbn.Links.map((link) => {
+    return new DAGLink(link.Name, link.Tsize, link.Hash)
+  })
+
+  const buf = pbn.Data || new Buffer(0)
+
+  DAGNode.create(buf, links, callback)
+}
+
+function toProtoBuf (node) {
   const pbn = {}
 
   if (node.data && node.data.length > 0) {
     pbn.Data = node.data
   } else {
-    pbn.Data = null // new Buffer(0)
+    // NOTE: this has to be null in order to match go-ipfs serialization `null !== new Buffer(0)`
+    pbn.Data = null
   }
 
   if (node.links.length > 0) {
     pbn.Links = node.links.map((link) => {
       return {
-        Hash: link.hash,
+        Hash: link.multihash,
         Name: link.name,
         Tsize: link.size
       }
@@ -42,42 +62,6 @@ exports.toProtoBuf = (node) => {
   return pbn
 }
 
-exports.serialize = (dagNode, callback) => {
-  let serialized
-
-  try {
-    const pb = exports.toProtoBuf(dagNode)
-    serialized = proto.PBNode.encode(pb)
-  } catch (err) {
-    return callback(err)
-  }
-
-  callback(null, serialized)
-}
-
-exports.deserialize = (data, callback) => {
-  const pbn = proto.PBNode.decode(data)
-
-  const links = pbn.Links.map((link) => {
-    return new DAGLink(link.Name, link.Tsize, link.Hash)
-  })
-
-  stable.inplace(links, exports.linkSort)
-
-  const buf = pbn.Data || new Buffer(0)
-
-  const dagNode = new DAGNode(buf, links)
-
-  callback(null, dagNode)
-}
-
-exports.cid = (dagNode, callback) => {
-  dagNode.multihash((err, multihash) => {
-    if (err) {
-      return callback(err)
-    }
-    const cid = new CID(multihash)
-    callback(null, cid)
-  })
-}
-
+exports.serialize = serialize
+exports.deserialize = deserialize
+exports.cid = cid

@@ -14,7 +14,7 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/ipld-js-dag-pb.svg)](https://saucelabs.com/u/ipld-js-dag-pb)
 
-> JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf.
+> JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf. In addition to the IPLD Format methods, this module also provides an API for creating the nodes and manipulating them (adding and removing links, etc).
 
 ## Table of Contents
 
@@ -28,89 +28,237 @@
 ## Install
 
 ```bash
-> npm i ipld-dag-pb
+> npm install ipld-dag-pb --save
 ```
 
 ## Usage
 
-```js
+```JavaScript
 const dagPB = require('ipld-dag-pb')
 
-// then, to access each of the components
-dagPB.DAGNode
+dagPB.DAGNode.create  // create a DAGNode
+dagPB.DAGNode.clone   // clone a DAGNode
+dagPB.DAGNode.addLink // add a Link to a DAGNode, creating a new one
+dagPB.DAGNode.rmLinkq // remove a Link to a DAGNode, creating a new one
+dagPB.DAGLink.create  // create a DAGLink
+
+// IPLD Format specifics
 dagPB.resolver
+dagPB.util
+```
+
+### Examples
+
+#### Create a DAGNode
+
+```JavaScript
+DAGNode.create(new Buffer('some data'), (err, node) => {
+  if (err) {
+    throw error
+  }
+  // node is your DAGNode instance
+})
+```
+
+#### Add and remove a Link
+
+```JavaScript
+const link = {
+  name: 'I am a link',
+  multihash: 'QmHash..'
+  size: 42
+}
+
+DAGNode.addLink(node, link, (err, nodeA) => {
+  if (err) {
+    throw err
+  }
+  // node - DAGNode instance with the link
+  console.log('with link', nodeA.toJSON())
+
+  DAGNode.rmLink(nodeA, 'I am a link', (err, nodeB) => {
+    if (err) {
+      throw err
+    }
+
+  // node - DAGNode instance without the link, equal to just node
+  console.log('without link', nodeB.toJSON())
+  })
+})
 ```
 
 ## API
 
-### DAGNode Class
+### DAGNode functions
 
-Create a new DAGNode
+DAGNodes are immutable objects, in order to manipulate them you have to follow a function approach of applying function and getting new instances of the given DAGNode.
 
-```JavaScript
-var node = new dagPB.DAGNode([<data>, <[links]>])
-```
-
-#### `addNodeLink`
-
-> creates a link on node A to node B by using node B to get its multihash
-
-#### `addRawLink`
-
-> creates a link on node A to node B by using directly node B multihash
-
-#### `updateNodeLink`
-
-> updates a link on the node. *caution* this method returns a copy of the MerkleDAG node
-
-#### `removeNodeLink`
-
-> removes a link from the node by name
-
-#### `removeNodeLinkByHash`
-
-> removes a link from the node by the hash of the linked node
-
-
-#### `clone`
-
-> creates a clone of the MerkleDAG Node
-
-#### `size`
-
-> (property) size of the node, in bytes
-
-#### `links`
-
-> (property) an array of `DAGLink`s belonging to the node
-
-#### `multihash(callback)`
-
-> returns the multihash (default: sha2-256)
-
-#### `getPBNode`
-
-> used internally
-
-#### `makeLink`
-
-> used internally
-
-### DAGLink Class
-
-Create a new DAGLink
+You can incude it in your project with:
 
 ```JavaScript
-var link = new dagPB.DAGLink(<name>, <size>, <hash>)
+const dagPB = require('ipld-dag-pb')
+const DAGNode = dagPB.DAGNode
 ```
 
-### Local Resolver (to be used by the IPLD Resolver)
+#### DAGNode.create(data, links, hashAlg, callback)
 
-#### `resolver.resolve`
+- `data` - type: Buffer
+- `links`- type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
+- `hashAlg` - type: String
+- `callback` - type: function with signature `function (err, node) {}`
 
-#### `resolver.tree`
+Create a DAGNode.
 
-#### `resolver.patch`
+```JavaScript
+DAGNode.create('data', links, (err, dagNode) => {
+  // ...
+})
+```
+
+links can be a single or an array of DAGLinks instances or objects with the following pattern
+
+```JavaScript
+{
+  name: '<some name>',
+  hash: '<some multihash>', // can also be `multihash: <some multihash>`
+  size: <sizeInBytes>
+}
+```
+
+#### addLink(node, link, callback)
+
+- `node` - type: DAGNode
+- `link` - type: DAGLink or DAGLink in its json format
+- `callback` - type: function with signature `function (err, node) {}`
+
+Creates a link on node A to node B by using node B to get its multihash. Returns a *new* instance of DAGNode without modifying the old one.
+
+Creates a new DAGNode instance with the union of node.links plus the new link.
+
+`link` can be:
+- DAGLink instance
+- DAGNode instance
+- Object with the following properties:
+
+```JavaScript
+{
+  name: '<some string>', // optional
+  size: <size in bytes>,
+  multihash: <multihash> // can be a String multihash or multihash buffer
+}
+```
+
+
+#### rmLink(node, nameOrMultihash, callback)
+
+- `node` - type: DAGNode
+- `nameOrMultihash` - type: String or multihash buffer
+- `callback` - type: function with signature `function (err, node) {}`
+
+Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
+
+```JavaScript
+DAGNode.rmLink(node, 'Link1' (err, dagNode) => ...) 
+```
+
+#### clone(node, callback)
+
+- `node` - type: DAGNode
+- `callback` - type: function with signature `function (err, node) {}`
+
+Creates a clone of the DAGNode instance passed
+
+```JavaScript
+DAGNode.clone(node, (err, nodeClone) => {})
+```
+
+### DAGNode instance methods and properties
+
+You have the following methods and properties available in every DAGNode instance.
+
+#### `node.data`
+
+#### `node.links`
+
+An array of `DAGLinks`
+
+#### `node.size`
+
+Size of the node, in bytes
+
+#### `node.multihash`
+
+#### `node.serialized`
+
+#### `node.toJSON()`
+
+#### `node.toString()`
+
+
+### DAGLink functions
+
+Following the same pattern as [`DAGNode functions`]() above, DAGLink also offers a function for its creation. 
+
+You can incude it in your project with:
+
+```JavaScript
+const dagPB = require('ipld-dag-pb')
+const DAGLink = dagPB.DAGLink
+```
+
+#### DAGLink.create(name, size, multihash, callback)
+
+```JavaScript
+DAGLink.create(
+  'link-to-file',  // name of the link (can be empty)
+  10,              // size in bytes
+  'QmSomeHash...', // can be multihash buffer or string
+  (err, link) => {
+    if (err) {
+      throw err
+    }
+   // link is a DAGLink instance
+})
+```
+
+Note: DAGLinks are simpler objects and can be instantiated directly:
+
+```JavaScript
+const link = new DAGLink(name, size, multihash)
+```
+
+### DAGLink instance methods and properties
+
+#### `link.name`
+
+#### `link.size`
+
+#### `link.multihash`
+
+#### `link.toJSON()`
+
+#### `link.toString()`
+
+### [IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver
+
+> See: https://github.com/ipld/interface-ipld-format#local-resolver-methods
+
+
+#### `dagPB.resolver.resolve`
+
+#### `dagPB.resolver.tree`
+
+#### `dagPB.resolver.patch`
+
+### [IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util
+
+> See: https://github.com/ipld/interface-ipld-format#ipld-format-utils
+
+### `dagPB.util.cid`
+
+### `dagPB.util.serialize`
+
+### `dagPB.util.deserialize`
 
 ## License
 

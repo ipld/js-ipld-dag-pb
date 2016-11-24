@@ -42,8 +42,8 @@ exports.resolve = (block, path, callback) => {
       // for the resolver
       node.links.forEach((l, i) => {
         const link = l.toJSON()
-        values[i] = link.Hash
-        values[link.Name] = link.Hash
+        values[i] = link.multihash
+        values[link.name] = link.multihash
       })
 
       let value = values[split[1]]
@@ -89,14 +89,15 @@ exports.tree = (block, options, callback) => {
     const paths = []
     node.links.forEach((link) => {
       paths.push({
-        path: link.name,
-        value: bs58.encode(link.hash).toString()
+        path: link.name || '',
+        value: bs58.encode(link.multihash).toString()
       })
     })
 
     if (node.data && node.data.length > 0) {
       paths.push({ path: 'data', value: node.data })
     }
+
     callback(null, paths)
   })
 }
