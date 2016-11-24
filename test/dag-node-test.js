@@ -18,8 +18,10 @@ const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
 const CID = require('cids')
 const bs58 = require('bs58')
-const fs = require('fs')
-const path = require('path')
+const loadFixture = require('aegir/fixtures')
+
+const testBlockNamedLinks = loadFixture(__dirname, 'data/test-block-named-links')
+const testBlockUnnamedLinks = loadFixture(__dirname, 'data/test-block-unnamed-links')
 
 module.exports = (repo) => {
   describe('DAGNode', () => {
@@ -421,7 +423,7 @@ module.exports = (repo) => {
     })
 
     it('deserialize go-ipfs block with unnamed links', (done) => {
-      const buf = fs.readFileSync(path.join(__dirname, 'data/test-block-unnamed-links'))
+      const buf = testBlockUnnamedLinks
 
       const expectedLinks = [
         {
@@ -471,7 +473,7 @@ module.exports = (repo) => {
     })
 
     it('deserialize go-ipfs block with named links', (done) => {
-      const buf = fs.readFileSync(path.join(__dirname, 'data/test-block-named-links'))
+      const buf = testBlockNamedLinks
 
       const expectedLinks = [
         {
