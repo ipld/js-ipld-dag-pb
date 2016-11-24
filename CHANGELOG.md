@@ -1,3 +1,25 @@
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.8.0...v0.9.0) (2016-11-24)
+
+
+### Bug Fixes
+
+* apply code review ([2b1a356](https://github.com/ipld/js-ipld-dag-pb/commit/2b1a356))
+* DAGLink tests ([eec00da](https://github.com/ipld/js-ipld-dag-pb/commit/eec00da))
+* serialization of empty node ([ae71f26](https://github.com/ipld/js-ipld-dag-pb/commit/ae71f26))
+* that linting ([301d0b0](https://github.com/ipld/js-ipld-dag-pb/commit/301d0b0))
+
+
+### Features
+
+* **refactor:** new API proposal ([b56d797](https://github.com/ipld/js-ipld-dag-pb/commit/b56d797))
+* add a same create pattern api for DAGLink ([6a3531d](https://github.com/ipld/js-ipld-dag-pb/commit/6a3531d))
+* IPLD Resolver updated, all tests passing ([f53e0c8](https://github.com/ipld/js-ipld-dag-pb/commit/f53e0c8))
+* refactor, structure code, make DAGNode funcs inside the same folder, make tests pass again ([ea904a7](https://github.com/ipld/js-ipld-dag-pb/commit/ea904a7))
+* update DAGLink and DAGNode to have an immutable API ([4bdb48b](https://github.com/ipld/js-ipld-dag-pb/commit/4bdb48b))
+
+
+
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.1.3...v0.8.0) (2016-11-03)
 
