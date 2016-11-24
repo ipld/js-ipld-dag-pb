@@ -48,11 +48,11 @@ module.exports = (repo) => {
 
     it('create a node with links', (done) => {
       const l1 = [{
-        Name: 'some link',
+        Name: 'some other link',
         Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
         Size: 8
       }, {
-        Name: 'some other link',
+        Name: 'some link',
         Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
         Size: 10
       }]
@@ -77,7 +77,7 @@ module.exports = (repo) => {
           DAGNode.create(someData, l2, (err, node) => {
             expect(err).to.not.exist
             node2 = node
-            expect(node2.links).to.eql(l2)
+            expect(node2.links).to.eql([l2[1], l2[0]])
             cb()
           })
         }
@@ -85,6 +85,12 @@ module.exports = (repo) => {
         expect(err).to.not.exist
         expect(node1.toJSON()).to.eql(node2.toJSON())
         expect(node1.serialized).to.eql(node2.serialized)
+
+        // check sorting
+        expect(node1.links.map((l) => l.name)).to.be.eql([
+          'some link',
+          'some other link'
+        ])
         done()
       })
     })

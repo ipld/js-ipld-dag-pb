@@ -38,12 +38,11 @@ function create (data, dagLinks, hashAlg, callback) {
       l.hash || l.Hash || l.multihash
     )
   })
-
-  sortInplace(links, linkSort)
+  const sortedLinks = sortInplace(links, linkSort)
 
   serialize({
     data: data,
-    links: links
+    links: sortedLinks
   }, (err, serialized) => {
     if (err) {
       return callback(err)
@@ -52,7 +51,7 @@ function create (data, dagLinks, hashAlg, callback) {
       if (err) {
         return callback(err)
       }
-      const dagNode = new DAGNode(data, links, serialized, multihash)
+      const dagNode = new DAGNode(data, sortedLinks, serialized, multihash)
       callback(null, dagNode)
     })
   })

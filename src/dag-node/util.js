@@ -22,7 +22,10 @@ function cloneLinks (dagNode) {
 }
 
 function linkSort (a, b) {
-  return (new Buffer(a.name || '', 'ascii').compare(new Buffer(b.name || '', 'ascii')))
+  const aBuf = new Buffer(a.name || '', 'ascii')
+  const bBuf = new Buffer(b.name || '', 'ascii')
+
+  return aBuf.compare(bBuf)
 }
 
 /*
