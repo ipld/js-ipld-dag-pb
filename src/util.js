@@ -9,7 +9,10 @@ const DAGNode = require('./dag-node')
 exports = module.exports
 
 function cid (node, callback) {
-  callback(null, new CID(node.multihash))
+  if (node.multihash) {
+    return callback(null, new CID(node.multihash))
+  }
+  callback(new Error('not valid dagPB node'))
 }
 
 function serialize (node, callback) {
