@@ -1,3 +1,13 @@
+<a name="0.9.3"></a>
+## [0.9.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.2...v0.9.3) (2016-12-07)
+
+
+### Bug Fixes
+
+* detect when unvalid dagPB node ([068b1e2](https://github.com/ipld/js-ipld-dag-pb/commit/068b1e2))
+
+
+
 <a name="0.9.2"></a>
 ## [0.9.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.1...v0.9.2) (2016-12-01)
 
