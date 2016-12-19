@@ -1,7 +1,7 @@
 # js-ipld-dag-pb
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
-[![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
+[![](https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 [![Coverage Status](https://coveralls.io/repos/github/ipld/js-ipld-dag-pb/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld-dag-pb?branch=master)
 [![Travis CI](https://travis-ci.org/ipld/js-ipld-dag-pb.svg?branch=master)](https://travis-ci.org/ipld/js-ipld-dag-pb)
@@ -19,9 +19,41 @@
 ## Table of Contents
 
 - [Install](#install)
-- [Architecture](#architecture)
 - [Usage](#usage)
+  - [Examples](#examples)
+    - [Create a DAGNode](#create-a-dagnode)
+    - [Add and remove a Link](#add-and-remove-a-link)
 - [API](#api)
+  - [DAGNode functions](#dagnode-functions)
+    - [DAGNode.create(data, links, hashAlg, callback)](#dagnodecreatedata-links-hashalg-callback)
+    - [addLink(node, link, callback)](#addlinknode-link-callback)
+    - [rmLink(node, nameOrMultihash, callback)](#rmlinknode-nameormultihash-callback)
+    - [clone(node, callback)](#clonenode-callback)
+  - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
+    - [`node.data`](#nodedata)
+    - [`node.links`](#nodelinks)
+    - [`node.size`](#nodesize)
+    - [`node.multihash`](#nodemultihash)
+    - [`node.serialized`](#nodeserialized)
+    - [`node.toJSON()`](#nodetojson)
+    - [`node.toString()`](#nodetostring)
+  - [DAGLink functions](#daglink-functions)
+    - [DAGLink.create(name, size, multihash, callback)](#daglinkcreatename-size-multihash-callback)
+  - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
+    - [`link.name`](#linkname)
+    - [`link.size`](#linksize)
+    - [`link.multihash`](#linkmultihash)
+    - [`link.toJSON()`](#linktojson)
+    - [`link.toString()`](#linktostring)
+  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specificshttpsgithubcomipldinterface-ipld-format---local-nodeblock-scope-resolver)
+    - [`dagPB.resolver.resolve`](#dagpbresolverresolve)
+    - [`dagPB.resolver.tree`](#dagpbresolvertree)
+    - [`dagPB.resolver.patch`](#dagpbresolverpatch)
+  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util](#ipld-format-specificshttpsgithubcomipldinterface-ipld-format---util)
+  - [`dagPB.util.cid`](#dagpbutilcid)
+  - [`dagPB.util.serialize`](#dagpbutilserialize)
+  - [`dagPB.util.deserialize`](#dagpbutildeserialize)
+- [Maintainers](#maintainers)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -260,6 +292,18 @@ const link = new DAGLink(name, size, multihash)
 
 ### `dagPB.util.deserialize`
 
+## Maintainers
+
+[@diasdavid](https://github.com/diasdavid)
+
+## Contribute
+
+Please contribute! [Look at the issues](https://github.com/ipld/js-ipld-dag-pb/issues)!
+
+Check out our [contributing document](https://github.com/ipld/ipld/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to IPLD are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
+
 ## License
 
-MIT © IPFS
+[ISC](LICENSE) © 2016 Protocol Labs Inc.
