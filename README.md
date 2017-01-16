@@ -71,7 +71,7 @@ const dagPB = require('ipld-dag-pb')
 dagPB.DAGNode.create  // create a DAGNode
 dagPB.DAGNode.clone   // clone a DAGNode
 dagPB.DAGNode.addLink // add a Link to a DAGNode, creating a new one
-dagPB.DAGNode.rmLinkq // remove a Link to a DAGNode, creating a new one
+dagPB.DAGNode.rmLink  // remove a Link to a DAGNode, creating a new one
 dagPB.DAGLink.create  // create a DAGLink
 
 // IPLD Format specifics
@@ -84,11 +84,15 @@ dagPB.util
 #### Create a DAGNode
 
 ```JavaScript
-DAGNode.create(new Buffer('some data'), (err, node) => {
+DAGNode.create(new Buffer('some data'), (err, node1) => {
   if (err) {
     throw error
   }
-  // node is your DAGNode instance
+  // node1 is your DAGNode instance.
+})
+
+DAGNode.create('string data', (err, node2) => {
+  // node2 will have the same data as node1.
 })
 ```
 

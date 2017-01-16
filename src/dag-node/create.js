@@ -13,6 +13,8 @@ function create (data, dagLinks, hashAlg, callback) {
   if (typeof data === 'function') {
     callback = data
     data = undefined
+  } else if (typeof data === 'string') {
+    data = new Buffer(data)
   }
   if (typeof dagLinks === 'function') {
     callback = dagLinks
