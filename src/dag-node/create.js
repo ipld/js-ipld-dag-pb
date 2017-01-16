@@ -25,6 +25,10 @@ function create (data, dagLinks, hashAlg, callback) {
     hashAlg = undefined
   }
 
+  if (!Buffer.isBuffer(data)) {
+    return callback('Passed \'data\' is not a buffer or a string!')
+  }
+
   if (!hashAlg) {
     hashAlg = 'sha2-256'
   }

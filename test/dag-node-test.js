@@ -150,6 +150,18 @@ module.exports = (repo) => {
       })
     })
 
+    it('fail to create a node with other data types', (done) => {
+      DAGNode.create({}, (err, node) => {
+        expect(err).to.exist
+        expect(node).to.not.exist
+        DAGNode.create([], (err, node) => {
+          expect(err).to.exist
+          expect(node).to.not.exist
+          done()
+        })
+      })
+    })
+
     it('addLink by DAGNode', (done) => {
       let node1
       let node2
