@@ -41,7 +41,7 @@
   "dependencies": {
     "async": "^2.1.4",
     "buffer-loader": "0.0.1",
-    "cids": "^0.3.5",
+    "cids": "^0.4.0",
     "ipfs-block": "^0.5.0",
     "is-ipfs": "^0.2.1",
     "multihashes": "^0.3.0",
