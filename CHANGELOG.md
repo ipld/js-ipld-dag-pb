@@ -1,3 +1,13 @@
+<a name="0.9.5"></a>
+## [0.9.5](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.4...v0.9.5) (2017-02-09)
+
+
+### Bug Fixes
+
+* **package:** update is-ipfs to version 0.3.0 ([2620f9d](https://github.com/ipld/js-ipld-dag-pb/commit/2620f9d))
+
+
+
 <a name="0.9.4"></a>
 ## [0.9.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.3...v0.9.4) (2017-01-29)
 
