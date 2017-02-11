@@ -8,10 +8,10 @@ const IPFSRepo = require('ipfs-repo')
 const repoContext = require.context('buffer!./test-repo', true)
 const pull = require('pull-stream')
 
-const idb = window.indexedDB ||
-  window.mozIndexedDB ||
-  window.webkitIndexedDB ||
-  window.msIndexedDB
+const idb = self.indexedDB ||
+  self.mozIndexedDB ||
+  self.webkitIndexedDB ||
+  self.msIndexedDB
 
 idb.deleteDatabase('ipfs')
 idb.deleteDatabase('ipfs/blocks')
