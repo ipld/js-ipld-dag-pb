@@ -34,6 +34,29 @@ module.exports = (repo) => {
         expect(node.data.length).to.be.above(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.above(0).mark()
+        expect(node.toJSON().multihash).to.be.equal('Qmd7xRhW5f29QuBFtqu3oSD27iVy35NRB91XFjmKFhtgMr')
+
+        dagPB.util.serialize(node, (err, serialized) => {
+          expect(err).to.not.exist.mark()
+
+          dagPB.util.deserialize(serialized, (err, deserialized) => {
+            expect(err).to.not.exist.mark()
+            expect(node.data).to.eql(deserialized.data).mark()
+          })
+        })
+      })
+    })
+
+    it('create a node with string data', (done) => {
+      expect(7).checks(done)
+      const data = 'some data'
+
+      DAGNode.create(data, (err, node) => {
+        expect(err).to.not.exist.mark()
+        expect(node.data.length).to.be.above(0).mark()
+        expect(Buffer.isBuffer(node.data)).to.be.true.mark()
+        expect(node.size).to.be.above(0).mark()
+        expect(node.toJSON().multihash).to.be.equal('Qmd7xRhW5f29QuBFtqu3oSD27iVy35NRB91XFjmKFhtgMr')
 
         dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
@@ -123,6 +146,18 @@ module.exports = (repo) => {
             expect(err).to.not.exist.mark()
             expect(node.data).to.eql(deserialized.data).mark()
           })
+        })
+      })
+    })
+
+    it('fail to create a node with other data types', (done) => {
+      DAGNode.create({}, (err, node) => {
+        expect(err).to.exist
+        expect(node).to.not.exist
+        DAGNode.create([], (err, node) => {
+          expect(err).to.exist
+          expect(node).to.not.exist
+          done()
         })
       })
     })
