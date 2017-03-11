@@ -60,11 +60,7 @@ exports.resolve = (block, path, callback) => {
         value = { '/': value.name }
       }
 
-      split.shift()
-      split.shift()
-      split.shift()
-
-      remainderPath = split.join('/')
+      remainderPath = split.slice(3).join('/')
 
       callback(null, { value: value, remainderPath: remainderPath })
     } else if (split[0] === 'Data') {
@@ -93,6 +89,7 @@ exports.tree = (block, options, callback) => {
     }
 
     const paths = []
+
     paths.push('Links')
 
     node.links.forEach((link, i) => {
@@ -108,9 +105,9 @@ exports.tree = (block, options, callback) => {
 }
 
 /*
- * isCID: returns the CID if a given path in a block is a CID, false otherwise
+ * isLink: returns the Link if a given path in a block is a Link, false otherwise
  */
-exports.isCID = (block, path, callback) => {
+exports.isLink = (block, path, callback) => {
   exports.resolve(block, path, (err, result) => {
     if (err) {
       return callback(err)
@@ -120,8 +117,7 @@ exports.isCID = (block, path, callback) => {
       return callback(new Error('path out of scope'))
     }
 
-    if (typeof result.value === 'object' &&
-        result.value['/']) {
+    if (typeof result.value === 'object' && result.value['/']) {
       callback(null, result.value)
     } else {
       callback(null, false)

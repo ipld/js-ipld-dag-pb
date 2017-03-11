@@ -220,18 +220,18 @@ describe('IPLD Format resolver (local)', () => {
     })
   })
 
-  it('resolver.isCID for valid CID', (done) => {
-    resolver.isCID(dataLinksNodeBlock, 'Links/0/Hash', (err, cid) => {
+  it('resolver.isLink for valid CID', (done) => {
+    resolver.isLink(dataLinksNodeBlock, 'Links/0/Hash', (err, link) => {
       expect(err).to.not.exist
-      expect(CID.isCID(cid))
+      expect(CID.isCID(new CID(link['/']))).to.be.true
       done()
     })
   })
 
-  it('resolver.isCID for non valid CID', (done) => {
-    resolver.isCID(dataLinksNodeBlock, 'Links/0/Name', (err, cid) => {
+  it('resolver.isLink for non valid CID', (done) => {
+    resolver.isLink(dataLinksNodeBlock, 'Links/0/Name', (err, link) => {
       expect(err).to.not.exist
-      expect(cid).to.be.false
+      expect(link).to.be.false
       done()
     })
   })
