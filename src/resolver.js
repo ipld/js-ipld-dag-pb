@@ -93,15 +93,15 @@ exports.tree = (block, options, callback) => {
     }
 
     const paths = []
-    paths.push('/Links')
+    paths.push('Links')
 
     node.links.forEach((link, i) => {
-      paths.push(`/Links/${i}/Name`)
-      paths.push(`/Links/${i}/Tsize`)
-      paths.push(`/Links/${i}/Hash`)
+      paths.push(`Links/${i}/Name`)
+      paths.push(`Links/${i}/Tsize`)
+      paths.push(`Links/${i}/Hash`)
     })
 
-    paths.push('/Data')
+    paths.push('Data')
 
     callback(null, paths)
   })

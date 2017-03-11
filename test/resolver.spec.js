@@ -89,8 +89,8 @@ describe('IPLD Format resolver (local)', () => {
       resolver.tree(emptyNodeBlock, (err, paths) => {
         expect(err).to.not.exist
         expect(paths).to.eql([
-          '/Links',
-          '/Data'
+          'Links',
+          'Data'
         ])
         done()
       })
@@ -160,14 +160,14 @@ describe('IPLD Format resolver (local)', () => {
       resolver.tree(linksNodeBlock, (err, paths) => {
         expect(err).to.not.exist
         expect(paths).to.eql([
-          '/Links',
-          '/Links/0/Name',
-          '/Links/0/Tsize',
-          '/Links/0/Hash',
-          '/Links/1/Name',
-          '/Links/1/Tsize',
-          '/Links/1/Hash',
-          '/Data'
+          'Links',
+          'Links/0/Name',
+          'Links/0/Tsize',
+          'Links/0/Hash',
+          'Links/1/Name',
+          'Links/1/Tsize',
+          'Links/1/Hash',
+          'Data'
         ])
         done()
       })
@@ -206,14 +206,14 @@ describe('IPLD Format resolver (local)', () => {
       resolver.tree(dataLinksNodeBlock, (err, paths) => {
         expect(err).to.not.exist
         expect(paths).to.eql([
-          '/Links',
-          '/Links/0/Name',
-          '/Links/0/Tsize',
-          '/Links/0/Hash',
-          '/Links/1/Name',
-          '/Links/1/Tsize',
-          '/Links/1/Hash',
-          '/Data'
+          'Links',
+          'Links/0/Name',
+          'Links/0/Tsize',
+          'Links/0/Hash',
+          'Links/1/Name',
+          'Links/1/Tsize',
+          'Links/1/Hash',
+          'Data'
         ])
         done()
       })
