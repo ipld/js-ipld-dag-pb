@@ -1,3 +1,21 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.5...v0.10.0) (2017-03-13)
+
+
+### Bug Fixes
+
+* **deps:** move bs58 to regular dependecies ([e69c9bc](https://github.com/ipld/js-ipld-dag-pb/commit/e69c9bc))
+* remove starting slash ([ad47ffa](https://github.com/ipld/js-ipld-dag-pb/commit/ad47ffa))
+
+
+### Features
+
+* change window to self for webworker support ([a68d50e](https://github.com/ipld/js-ipld-dag-pb/commit/a68d50e))
+* **ww:** Full support for webworkers ([e073e08](https://github.com/ipld/js-ipld-dag-pb/commit/e073e08))
+* update isCID to isLink by spec ([df759c8](https://github.com/ipld/js-ipld-dag-pb/commit/df759c8))
+
+
+
 <a name="0.9.5"></a>
 ## [0.9.5](https://github.com/ipld/js-ipld-dag-pb/compare/v0.9.4...v0.9.5) (2017-02-09)
 
