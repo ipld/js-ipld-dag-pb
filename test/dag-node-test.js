@@ -20,8 +20,8 @@ const CID = require('cids')
 const bs58 = require('bs58')
 const loadFixture = require('aegir/fixtures')
 
-const testBlockNamedLinks = loadFixture(__dirname, 'data/test-block-named-links')
-const testBlockUnnamedLinks = loadFixture(__dirname, 'data/test-block-unnamed-links')
+const testBlockNamedLinks = loadFixture(__dirname, '/fixtures/test-block-named-links')
+const testBlockUnnamedLinks = loadFixture(__dirname, '/fixtures/test-block-unnamed-links')
 
 module.exports = (repo) => {
   describe('DAGNode', () => {
@@ -405,6 +405,7 @@ module.exports = (repo) => {
 
     it('marshal a node and store it with block-service', (done) => {
       const bs = new BlockService(repo)
+
       DAGNode.create(new Buffer('some data'), (err, node) => {
         expect(err).to.not.exist
         let cid

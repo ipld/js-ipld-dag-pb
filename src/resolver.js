@@ -1,10 +1,8 @@
 'use strict'
 
 const util = require('./util')
-const bs58 = require('bs58')
 
 exports = module.exports
-
 exports.multicodec = 'dag-pb'
 
 /*
@@ -21,15 +19,13 @@ exports.resolve = (block, path, callback) => {
 
     const split = path.split('/')
 
-    if (split[0] === 'links') {
+    if (split[0] === 'Links') {
       let remainderPath = ''
 
       // all links
       if (!split[1]) {
         return callback(null, {
-          value: node.links.map((l) => {
-            return l.toJSON()
-          }),
+          value: node.links.map((l) => l.toJSON()),
           remainderPath: ''
         })
       }
@@ -42,25 +38,32 @@ exports.resolve = (block, path, callback) => {
       // for the resolver
       node.links.forEach((l, i) => {
         const link = l.toJSON()
-        values[i] = link.multihash
+        values[i] = {
+          hash: link.multihash,
+          name: link.name,
+          size: link.size
+        }
+        // TODO by enabling something to resolve through link name, we are
+        // applying a transformation (a view) to the data, confirm if this
+        // is exactly what we want
         values[link.name] = link.multihash
       })
 
       let value = values[split[1]]
 
       // if remainderPath exists, value needs to be CID
-      if (split[2]) {
-        split.shift()
-        split.shift()
-        remainderPath = split.join('/')
-
-        value = {
-          '/': value
-        }
+      if (split[2] === 'Hash') {
+        value = { '/': value.hash }
+      } else if (split[2] === 'Tsize') {
+        value = { '/': value.size }
+      } else if (split[2] === 'Name') {
+        value = { '/': value.name }
       }
 
+      remainderPath = split.slice(3).join('/')
+
       callback(null, { value: value, remainderPath: remainderPath })
-    } else if (split[0] === 'data') {
+    } else if (split[0] === 'Data') {
       callback(null, { value: node.data, remainderPath: '' })
     } else {
       callback(new Error('path not available'))
@@ -78,26 +81,46 @@ exports.tree = (block, options, callback) => {
     options = {}
   }
 
-  if (!options) {
-    options = {}
-  }
+  options = options || {}
 
   util.deserialize(block.data, (err, node) => {
     if (err) {
       return callback(err)
     }
+
     const paths = []
-    node.links.forEach((link) => {
-      paths.push({
-        path: link.name || '',
-        value: bs58.encode(link.multihash).toString()
-      })
+
+    paths.push('Links')
+
+    node.links.forEach((link, i) => {
+      paths.push(`Links/${i}/Name`)
+      paths.push(`Links/${i}/Tsize`)
+      paths.push(`Links/${i}/Hash`)
     })
 
-    if (node.data && node.data.length > 0) {
-      paths.push({ path: 'data', value: node.data })
-    }
+    paths.push('Data')
 
     callback(null, paths)
+  })
+}
+
+/*
+ * isLink: returns the Link if a given path in a block is a Link, false otherwise
+ */
+exports.isLink = (block, path, callback) => {
+  exports.resolve(block, path, (err, result) => {
+    if (err) {
+      return callback(err)
+    }
+
+    if (result.remainderPath.length > 0) {
+      return callback(new Error('path out of scope'))
+    }
+
+    if (typeof result.value === 'object' && result.value['/']) {
+      callback(null, result.value)
+    } else {
+      callback(null, false)
+    }
   })
 }
