@@ -1,7 +1,10 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+const expect = chai.expect
+chai.use(dirtyChai)
 const mh = require('multihashes')
 const DAGLink = require('../src').DAGLink
 
@@ -30,7 +33,7 @@ module.exports = (repo) => {
       it('fail to create without multihash', () => {
         expect(() => {
           const link = new DAGLink('hello', 3)
-          expect(link).to.not.exist // eslint-disable-line
+          expect(link).to.not.exist()
         }).to.throw()
       })
     })

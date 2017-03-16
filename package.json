@@ -62,6 +62,7 @@
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "chai-checkmark": "^1.0.1",
+    "dirty-chai": "^1.2.2",
     "fs-pull-blob-store": "~0.4.1",
     "idb-pull-blob-store": "~0.5.1",
     "ipfs-block-service": "~0.8.3",
