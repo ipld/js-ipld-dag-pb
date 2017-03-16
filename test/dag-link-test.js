@@ -30,8 +30,8 @@ module.exports = (repo) => {
       it('fail to create without multihash', () => {
         expect(() => {
           const link = new DAGLink('hello', 3)
-          expect(link).to.not.exist
-        }).to.throw
+          expect(link).to.not.exist // eslint-disable-line
+        }).to.throw()
       })
     })
 

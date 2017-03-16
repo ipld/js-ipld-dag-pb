@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* global self */
 'use strict'
 
 const series = require('async/series')

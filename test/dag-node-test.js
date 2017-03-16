@@ -87,7 +87,7 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(someData, l1, (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1 = node
             cb()
           })
@@ -98,14 +98,14 @@ module.exports = (repo) => {
           })
 
           DAGNode.create(someData, l2, (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node2 = node
             expect(node2.links).to.eql([l2[1], l2[0]])
             cb()
           })
         }
       ], (err) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         expect(node1.toJSON()).to.eql(node2.toJSON())
         expect(node1.serialized).to.eql(node2.serialized)
 
@@ -122,7 +122,7 @@ module.exports = (repo) => {
       DAGNode.create(new Buffer('hello'), [
         new DAGLink('', 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
       ], (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         expect(node.links[0].name).to.be.eql('')
         done()
       })
@@ -152,11 +152,11 @@ module.exports = (repo) => {
 
     it('fail to create a node with other data types', (done) => {
       DAGNode.create({}, (err, node) => {
-        expect(err).to.exist
-        expect(node).to.not.exist
+        expect(err).to.exist // eslint-disable-line
+        expect(node).to.not.exist // eslint-disable-line
         DAGNode.create([], (err, node) => {
-          expect(err).to.exist
-          expect(node).to.not.exist
+          expect(err).to.exist // eslint-disable-line
+          expect(node).to.not.exist // eslint-disable-line
           done()
         })
       })
@@ -169,21 +169,21 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(new Buffer('1'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1 = node
             cb()
           })
         },
         (cb) => {
           DAGNode.create(new Buffer('2'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node2 = node
             cb()
           })
         },
         (cb) => {
           DAGNode.addLink(node1, node2, (err, node1b) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1b.links.length).to.equal(1)
             expect(node1b.links[0].multihash)
               .to.eql(node2.multihash)
@@ -203,14 +203,14 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(new Buffer('1'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1 = node
             cb()
           })
         },
         (cb) => {
           DAGNode.create(new Buffer('2'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node2 = node
             cb()
           })
@@ -219,7 +219,7 @@ module.exports = (repo) => {
           const link = toDAGLink(node2)
 
           DAGNode.addLink(node1, link, (err, node1b) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1b.links.length).to.equal(1)
             expect(node1b.links[0].multihash)
               .to.eql(node2.multihash)
@@ -239,14 +239,14 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(new Buffer('1'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1 = node
             cb()
           })
         },
         (cb) => {
           DAGNode.create(new Buffer('2'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node2 = node
             cb()
           })
@@ -255,7 +255,7 @@ module.exports = (repo) => {
           const link = toDAGLink(node2).toJSON()
 
           DAGNode.addLink(node1, link, (err, node1b) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1b.links.length).to.equal(1)
             expect(node1b.links[0].multihash)
               .to.eql(node2.multihash)
@@ -276,16 +276,16 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(new Buffer('1'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1a = node
             cb()
           })
         },
         (cb) => {
           DAGNode.create(new Buffer('2'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             DAGNode.addLink(node1a, node, (err, node) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist // eslint-disable-line
               node1b = node
               cb()
             })
@@ -293,9 +293,9 @@ module.exports = (repo) => {
         },
         (cb) => {
           DAGNode.create(new Buffer('3'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             DAGNode.addLink(node1b, node, (err, node) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist // eslint-disable-line
               node1c = node
               cb()
             })
@@ -318,14 +318,14 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(new Buffer('1'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1a = node
             cb()
           })
         },
         (cb) => {
           DAGNode.create(new Buffer('2'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node2 = node
             cb()
           })
@@ -335,14 +335,14 @@ module.exports = (repo) => {
           link.name = 'banana'
 
           DAGNode.addLink(node1a, link, (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1b = node
             cb()
           })
         },
         (cb) => {
           DAGNode.rmLink(node1b, 'banana', (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1a.toJSON()).to.eql(node.toJSON())
             cb()
           })
@@ -358,14 +358,14 @@ module.exports = (repo) => {
       series([
         (cb) => {
           DAGNode.create(new Buffer('1'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1a = node
             cb()
           })
         },
         (cb) => {
           DAGNode.create(new Buffer('2'), (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node2 = node
             cb()
           })
@@ -375,14 +375,14 @@ module.exports = (repo) => {
           link.name = 'banana'
 
           DAGNode.addLink(node1a, link, (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             node1b = node
             cb()
           })
         },
         (cb) => {
           DAGNode.rmLink(node1b, node2.multihash, (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1a.toJSON()).to.eql(node.toJSON())
             cb()
           })
@@ -392,10 +392,10 @@ module.exports = (repo) => {
 
     it('get node CID', (done) => {
       DAGNode.create(new Buffer('some data'), (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         util.cid(node, (err, cid) => {
-          expect(err).to.not.exist
-          expect(cid.multihash).to.exist
+          expect(err).to.not.exist // eslint-disable-line
+          expect(cid.multihash).to.exist // eslint-disable-line
           expect(cid.codec).to.equal('dag-pb')
           expect(cid.version).to.equal(0)
           done()
@@ -407,21 +407,21 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
 
       DAGNode.create(new Buffer('some data'), (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         let cid
         let block
 
         series([
           (cb) => {
             dagPB.util.serialize(node, (err, serialized) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist  // eslint-disable-line
               block = new Block(serialized)
               cb()
             })
           },
           (cb) => {
             util.cid(node, (err, _cid) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist // eslint-disable-line
               cid = _cid
               cb()
             })
@@ -434,10 +434,10 @@ module.exports = (repo) => {
           },
           (cb) => {
             bs.get(cid, (err, retrievedBlock) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist // eslint-disable-line
               expect(retrievedBlock.data).to.eql(block.data)
               retrievedBlock.key((err, key) => {
-                expect(err).to.not.exist
+                expect(err).to.not.exist // eslint-disable-line
                 expect(key).to.eql(cid.multihash)
                 cb()
               })
@@ -454,10 +454,10 @@ module.exports = (repo) => {
       const cid = new CID(cidStr)
 
       bs.get(cid, (err, block) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         dagPB.util.deserialize(block.data, (err, node) => {
-          expect(err).to.not.exist
-          expect(node.data).to.exist
+          expect(err).to.not.exist // eslint-disable-line
+          expect(node.data).to.exist // eslint-disable-line
           expect(node.links.length).to.equal(6)
           done()
         })
@@ -506,7 +506,7 @@ module.exports = (repo) => {
       ]
 
       dagPB.util.deserialize(buf, (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
         expect(nodeJSON.multihash).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
@@ -541,7 +541,7 @@ module.exports = (repo) => {
       ]
 
       dagPB.util.deserialize(buf, (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
         expect(nodeJSON.multihash).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
@@ -551,11 +551,11 @@ module.exports = (repo) => {
 
     it('dagNode.toJSON with empty Node', (done) => {
       DAGNode.create(new Buffer(0), (err, node) => {
-        expect(err).to.not.exist
-        expect(node.toJSON().data).to.deep.equal(new Buffer(0))
-        expect(node.toJSON().links).to.deep.equal([])
-        expect(node.toJSON().multihash).to.exist
-        expect(node.toJSON().size).to.exist
+        expect(err).to.not.exist // eslint-disable-line
+        expect(node.toJSON().data).to.eql(new Buffer(0))
+        expect(node.toJSON().links).to.eql([])
+        expect(node.toJSON().multihash).to.exist // eslint-disable-line
+        expect(node.toJSON().size).to.exist // eslint-disable-line
         done()
       })
     })
@@ -563,11 +563,11 @@ module.exports = (repo) => {
     it('dagNode.toJSON with data no links', (done) => {
       const data = new Buffer('La cucaracha')
       DAGNode.create(data, (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         expect(node.toJSON().data).to.eql(data)
-        expect(node.toJSON().links).to.deep.equal([])
-        expect(node.toJSON().multihash).to.exist
-        expect(node.toJSON().size).to.exist
+        expect(node.toJSON().links).to.eql([])
+        expect(node.toJSON().multihash).to.exist // eslint-disable-line
+        expect(node.toJSON().size).to.exist // eslint-disable-line
         done()
       })
     })
@@ -589,14 +589,14 @@ module.exports = (repo) => {
       const link2 = new DAGLink(l2.Name, l2.Size, new Buffer(bs58.decode(l2.Hash)))
 
       DAGNode.create(new Buffer('hiya'), [link1, link2], (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         done()
       })
     })
 
     it('toString', (done) => {
       DAGNode.create(new Buffer('hello world'), (err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist // eslint-disable-line
         const expected = 'DAGNode <QmU1Sq1B7RPQD2XcQNLB58qJUyJffVJqihcxmmN1STPMxf - data: "hello world", links: 0, size: 13>'
         expect(node.toString()).to.equal(expected)
         done()
