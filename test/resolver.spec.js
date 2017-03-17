@@ -7,13 +7,14 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
+const parallel = require('async/parallel')
+const CID = require('cids')
+const Block = require('ipfs-block')
+const waterfall = require('async/waterfall')
+
 const dagPB = require('../src')
 const DAGNode = dagPB.DAGNode
 const resolver = dagPB.resolver
-const parallel = require('async/parallel')
-const CID = require('cids')
-
-const Block = require('ipfs-block')
 
 describe('IPLD Format resolver (local)', () => {
   let emptyNodeBlock
@@ -29,31 +30,25 @@ describe('IPLD Format resolver (local)', () => {
     multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
     size: 8
   }]
+  const create = (data, links, callback) => waterfall([
+    (cb) => DAGNode.create(data, links, cb),
+    (n, cb) => {
+      cb(null, new Block(n.serialized, new CID(n.multihash)))
+    }
+  ], callback)
 
   before((done) => {
     parallel([
-      (cb) => {
-        DAGNode.create(new Buffer(0), (err, node) => {
-          expect(err).to.not.exist()
-          emptyNodeBlock = new Block(node.serialized)
-          cb()
-        })
-      },
-      (cb) => {
-        DAGNode.create(new Buffer(0), links, (err, node) => {
-          expect(err).to.not.exist()
-          linksNodeBlock = new Block(node.serialized)
-          cb()
-        })
-      },
-      (cb) => {
-        DAGNode.create(new Buffer('aaah the data'), links, (err, node) => {
-          expect(err).to.not.exist()
-          dataLinksNodeBlock = new Block(node.serialized)
-          cb()
-        })
-      }
-    ], done)
+      (cb) => create(new Buffer(0), [], cb),
+      (cb) => create(new Buffer(0), links, cb),
+      (cb) => create(new Buffer('aaah the data'), links, cb)
+    ], (err, res) => {
+      expect(err).to.not.exist()
+      emptyNodeBlock = res[0]
+      linksNodeBlock = res[1]
+      dataLinksNodeBlock = res[2]
+      done()
+    })
   })
 
   it('multicodec is dag-pb', () => {

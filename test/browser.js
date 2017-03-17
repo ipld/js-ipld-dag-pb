@@ -1,57 +1,41 @@
 /* eslint-env mocha */
 /* global self */
+
 'use strict'
 
 const series = require('async/series')
-const Store = require('idb-pull-blob-store')
-const _ = require('lodash')
 const IPFSRepo = require('ipfs-repo')
-const repoContext = require.context('buffer!./test-repo', true)
-const pull = require('pull-stream')
+
+const basePath = 'ipfs' + Math.random()
 
 const idb = self.indexedDB ||
   self.mozIndexedDB ||
   self.webkitIndexedDB ||
   self.msIndexedDB
 
-idb.deleteDatabase('ipfs')
-idb.deleteDatabase('ipfs/blocks')
+idb.deleteDatabase(basePath)
+idb.deleteDatabase(basePath + '/blocks')
 
-describe('Browser tests', () => {
-  const path = 'ipfs' + Math.random()
+describe('Browser', () => {
+  const repo = new IPFSRepo(basePath)
 
   before((done) => {
-    const repoData = []
-
-    repoContext.keys().forEach((key) => {
-      repoData.push({
-        key: key.replace('./', ''),
-        value: repoContext(key)
-      })
-    })
-
-    const mainBlob = new Store(path)
-    const blocksBlob = new Store(path + '/blocks')
-
-    series(repoData.map((file) => (cb) => {
-      if (_.startsWith(file.key, 'datastore/')) {
-        return cb()
-      }
-
-      const blocks = _.startsWith(file.key, 'blocks/')
-      const blob = blocks ? blocksBlob : mainBlob
-      const key = blocks ? file.key.replace(/^blocks\//, '') : file.key
-
-      pull(
-        pull(
-          pull.values([file.value]),
-          blob.write(key, cb)
-        )
-      )
-    }), done)
+    series([
+      (cb) => repo.init({}, cb),
+      (cb) => repo.open(cb)
+    ], done)
   })
 
-  const repo = new IPFSRepo(path, {stores: Store})
+  after((done) => {
+    series([
+      (cb) => repo.close(cb),
+      (cb) => {
+        idb.deleteDatabase(basePath)
+        idb.deleteDatabase(basePath + '/blocks')
+        cb()
+      }
+    ], done)
+  })
 
   require('./dag-node-test')(repo)
   require('./dag-link-test')(repo)
