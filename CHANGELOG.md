@@ -1,3 +1,13 @@
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.10.1...v0.11.0) (2017-03-21)
+
+
+### Features
+
+* upgrade to new ipfs-block and blockservice ([1dd4dd2](https://github.com/ipld/js-ipld-dag-pb/commit/1dd4dd2))
+
+
+
 <a name="0.10.1"></a>
 ## [0.10.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.10.0...v0.10.1) (2017-03-16)
 
