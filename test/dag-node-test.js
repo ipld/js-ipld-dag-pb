@@ -15,6 +15,8 @@ const DAGNode = dagPB.DAGNode
 const toDAGLink = require('../src/dag-node/util').toDAGLink
 const util = dagPB.util
 const series = require('async/series')
+const waterfall = require('async/waterfall')
+const isNode = require('detect-node')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
@@ -26,6 +28,8 @@ const testBlockNamedLinks = loadFixture(__dirname, '/fixtures/test-block-named-l
 const testBlockUnnamedLinks = loadFixture(__dirname, '/fixtures/test-block-unnamed-links')
 
 module.exports = (repo) => {
+  const bs = new BlockService(repo)
+
   describe('DAGNode', () => {
     it('create a node', (done) => {
       expect(7).checks(done)
@@ -131,6 +135,7 @@ module.exports = (repo) => {
     })
 
     it('create an empty node', (done) => {
+      // this node is not in the repo as we don't copy node data to the browser
       expect(7).checks(done)
       const fromGoIPFS = 'QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n'
 
@@ -406,51 +411,29 @@ module.exports = (repo) => {
     })
 
     it('marshal a node and store it with block-service', (done) => {
-      const bs = new BlockService(repo)
-
       DAGNode.create(new Buffer('some data'), (err, node) => {
         expect(err).to.not.exist()
-        let cid
         let block
 
-        series([
-          (cb) => {
-            dagPB.util.serialize(node, (err, serialized) => {
-              expect(err).to.not.exist()
-              block = new Block(serialized)
-              cb()
-            })
+        waterfall([
+          (cb) => dagPB.util.serialize(node, cb),
+          (s, cb) => {
+            block = new Block(s, new CID(node.multihash))
+            bs.put(block, cb)
           },
-          (cb) => {
-            util.cid(node, (err, _cid) => {
-              expect(err).to.not.exist()
-              cid = _cid
-              cb()
-            })
-          },
-          (cb) => {
-            bs.put({
-              block: block,
-              cid: cid
-            }, cb)
-          },
-          (cb) => {
-            bs.get(cid, (err, retrievedBlock) => {
-              expect(err).to.not.exist()
-              expect(retrievedBlock.data).to.eql(block.data)
-              retrievedBlock.key((err, key) => {
-                expect(err).to.not.exist()
-                expect(key).to.eql(cid.multihash)
-                cb()
-              })
-            })
+          (cb) => bs.get(block.cid, cb),
+          (retrievedBlock, cb) => {
+            expect(retrievedBlock).to.eql(block)
+            cb()
           }
         ], done)
       })
     })
 
     it('deserialize go-ipfs block from ipldResolver', (done) => {
-      const bs = new BlockService(repo)
+      if (!isNode) {
+        return done()
+      }
 
       const cidStr = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
       const cid = new CID(cidStr)

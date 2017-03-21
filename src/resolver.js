@@ -1,5 +1,7 @@
 'use strict'
 
+const waterfall = require('async/waterfall')
+
 const util = require('./util')
 
 exports = module.exports
@@ -10,65 +12,62 @@ exports.multicodec = 'dag-pb'
  * throw if not possible. `block` is an IPFS Block instance (contains data+key)
  */
 exports.resolve = (block, path, callback) => {
-  util.deserialize(block.data, gotNode)
+  waterfall([
+    (cb) => util.deserialize(block.data, cb),
+    (node, cb) => {
+      const split = path.split('/')
 
-  function gotNode (err, node) {
-    if (err) {
-      return callback(err)
-    }
+      if (split[0] === 'Links') {
+        let remainderPath = ''
 
-    const split = path.split('/')
-
-    if (split[0] === 'Links') {
-      let remainderPath = ''
-
-      // all links
-      if (!split[1]) {
-        return callback(null, {
-          value: node.links.map((l) => l.toJSON()),
-          remainderPath: ''
-        })
-      }
-
-      // select one link
-
-      const values = {}
-
-      // populate both index number and name to enable both cases
-      // for the resolver
-      node.links.forEach((l, i) => {
-        const link = l.toJSON()
-        values[i] = {
-          hash: link.multihash,
-          name: link.name,
-          size: link.size
+        // all links
+        if (!split[1]) {
+          return cb(null, {
+            value: node.links.map((l) => l.toJSON()),
+            remainderPath: ''
+          })
         }
-        // TODO by enabling something to resolve through link name, we are
-        // applying a transformation (a view) to the data, confirm if this
-        // is exactly what we want
-        values[link.name] = link.multihash
-      })
 
-      let value = values[split[1]]
+        // select one link
 
-      // if remainderPath exists, value needs to be CID
-      if (split[2] === 'Hash') {
-        value = { '/': value.hash }
-      } else if (split[2] === 'Tsize') {
-        value = { '/': value.size }
-      } else if (split[2] === 'Name') {
-        value = { '/': value.name }
+        const values = {}
+
+        // populate both index number and name to enable both cases
+        // for the resolver
+        node.links.forEach((l, i) => {
+          const link = l.toJSON()
+          values[i] = {
+            hash: link.multihash,
+            name: link.name,
+            size: link.size
+          }
+          // TODO by enabling something to resolve through link name, we are
+          // applying a transformation (a view) to the data, confirm if this
+          // is exactly what we want
+          values[link.name] = link.multihash
+        })
+
+        let value = values[split[1]]
+
+        // if remainderPath exists, value needs to be CID
+        if (split[2] === 'Hash') {
+          value = { '/': value.hash }
+        } else if (split[2] === 'Tsize') {
+          value = { '/': value.size }
+        } else if (split[2] === 'Name') {
+          value = { '/': value.name }
+        }
+
+        remainderPath = split.slice(3).join('/')
+
+        cb(null, { value: value, remainderPath: remainderPath })
+      } else if (split[0] === 'Data') {
+        cb(null, { value: node.data, remainderPath: '' })
+      } else {
+        cb(new Error('path not available'))
       }
-
-      remainderPath = split.slice(3).join('/')
-
-      callback(null, { value: value, remainderPath: remainderPath })
-    } else if (split[0] === 'Data') {
-      callback(null, { value: node.data, remainderPath: '' })
-    } else {
-      callback(new Error('path not available'))
     }
-  }
+  ], callback)
 }
 
 /*
