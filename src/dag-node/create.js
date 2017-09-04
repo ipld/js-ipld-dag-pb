@@ -14,7 +14,7 @@ function create (data, dagLinks, hashAlg, callback) {
     callback = data
     data = undefined
   } else if (typeof data === 'string') {
-    data = new Buffer(data)
+    data = Buffer.from(data)
   }
   if (typeof dagLinks === 'function') {
     callback = dagLinks
@@ -26,7 +26,7 @@ function create (data, dagLinks, hashAlg, callback) {
   }
 
   if (!Buffer.isBuffer(data)) {
-    return callback('Passed \'data\' is not a buffer or a string!')
+    return callback(new Error('Passed \'data\' is not a buffer or a string!'))
   }
 
   if (!hashAlg) {

@@ -12,7 +12,7 @@ class DAGNode {
       multihash = mh.fromB58String(multihash)
     }
 
-    this._data = data || new Buffer(0)
+    this._data = data || Buffer.alloc(0)
     this._links = links || []
     this._serialized = serialized
     this._multihash = multihash
