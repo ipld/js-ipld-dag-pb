@@ -1,3 +1,14 @@
+<a name="0.11.1"></a>
+## [0.11.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.0...v0.11.1) (2017-09-05)
+
+
+### Bug Fixes
+
+* **package:** update cids to version 0.5.0 ([b1d4b0f](https://github.com/ipld/js-ipld-dag-pb/commit/b1d4b0f))
+* switch to protobufjs ([#39](https://github.com/ipld/js-ipld-dag-pb/issues/39)) ([5130844](https://github.com/ipld/js-ipld-dag-pb/commit/5130844))
+
+
+
 <a name="0.11.0"></a>
 # [0.11.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.10.1...v0.11.0) (2017-03-21)
 
