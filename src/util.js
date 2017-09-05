@@ -1,8 +1,7 @@
 'use strict'
 
 const CID = require('cids')
-const protobuf = require('protocol-buffers')
-const proto = protobuf(require('./dag.proto'))
+const proto = require('./dag.proto.js')
 const DAGLink = require('./dag-link')
 const DAGNode = require('./dag-node')
 
@@ -19,23 +18,24 @@ function serialize (node, callback) {
   let serialized
 
   try {
-    const pb = toProtoBuf(node)
-    serialized = proto.PBNode.encode(pb)
+    const msg = proto.PBNode.create(toProtoBuf(node))
+    serialized = proto.PBNode.encode(msg).finish()
   } catch (err) {
     return callback(err)
   }
 
-  callback(null, serialized)
+  callback(null, Buffer.from(serialized))
 }
 
 function deserialize (data, callback) {
   const pbn = proto.PBNode.decode(data)
 
   const links = pbn.Links.map((link) => {
-    return new DAGLink(link.Name, link.Tsize, link.Hash)
+    const size = typeof link.Tsize.toNumber === 'function' ? link.Tsize.toNumber() : link.Tsize
+    return new DAGLink(link.Name, size, Buffer.from(link.Hash))
   })
 
-  const buf = pbn.Data || new Buffer(0)
+  const buf = pbn.Data == null ? Buffer.alloc(0) : Buffer.from(pbn.Data)
 
   DAGNode.create(buf, links, callback)
 }

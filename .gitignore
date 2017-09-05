@@ -38,3 +38,6 @@ test/repo-just-for-test*
 
 # Vim .swp files
 **.swp
+
+package-lock.json
+yarn.lock
