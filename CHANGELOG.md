@@ -1,3 +1,19 @@
+<a name="0.11.2"></a>
+## [0.11.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.0...v0.11.2) (2017-09-07)
+
+
+### Bug Fixes
+
+* **package:** update cids to version 0.5.0 ([b1d4b0f](https://github.com/ipld/js-ipld-dag-pb/commit/b1d4b0f))
+* switch to protobufjs ([#39](https://github.com/ipld/js-ipld-dag-pb/issues/39)) ([5130844](https://github.com/ipld/js-ipld-dag-pb/commit/5130844))
+
+
+### Features
+
+* replace protocol-buffers with protons ([#42](https://github.com/ipld/js-ipld-dag-pb/issues/42)) ([603e11f](https://github.com/ipld/js-ipld-dag-pb/commit/603e11f))
+
+
+
 <a name="0.11.1"></a>
 ## [0.11.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.0...v0.11.1) (2017-09-05)
 
