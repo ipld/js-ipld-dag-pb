@@ -494,9 +494,7 @@ module.exports = (repo) => {
         expect(err).to.not.exist()
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
-        // multihash is different (original: QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX)
-        // because the libraries order data and links differently, but this doesn't affect functionality
-        expect(nodeJSON.multihash).to.eql('QmNiSwLd6tmtmm3KQJbVmMhQbyZNU8TSSzDG31JTkcSLeN')
+        expect(nodeJSON.multihash).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
         done()
       })
     })
@@ -531,9 +529,7 @@ module.exports = (repo) => {
         expect(err).to.not.exist()
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
-        // multihash is different (original: QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M
-        // because the libraries order data and links differently, but this doesn't affect functionality
-        expect(nodeJSON.multihash).to.eql('QmS6uEruJPmcvoQVE8cC85t1HhCbwPN3jaj9RCkcNjSiLz')
+        expect(nodeJSON.multihash).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
         done()
       })
     })
