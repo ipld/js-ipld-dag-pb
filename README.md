@@ -12,8 +12,6 @@
 ![](https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D4.0.0-orange.svg?style=flat-square)
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/ipld-js-dag-pb.svg)](https://saucelabs.com/u/ipld-js-dag-pb)
-
 > JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf. In addition to the IPLD Format methods, this module also provides an API for creating the nodes and manipulating them (adding and removing links, etc).
 
 ## Table of Contents
