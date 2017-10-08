@@ -18,6 +18,13 @@ function cid (node, callback) {
 function serialize (node, callback) {
   let serialized
 
+  // If the node is not an instance of a DAGNode, the link.hash might be a Base58 encoded string; decode it
+  if (node.constructor.name !== 'DAGNode' && node.links) {
+    node.links = node.links.map((link) => {
+      return DAGLink.util.isDagLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
+    })
+  }
+
   try {
     serialized = proto.PBNode.encode(toProtoBuf(node))
   } catch (err) {

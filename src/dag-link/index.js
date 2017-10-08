@@ -59,3 +59,4 @@ class DAGLink {
 
 exports = module.exports = DAGLink
 exports.create = require('./create')
+exports.util = require('./util')
