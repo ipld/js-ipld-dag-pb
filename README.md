@@ -89,7 +89,7 @@ DAGNode.create(new Buffer('some data'), (err, node1) => {
   // node1 is your DAGNode instance.
 })
 
-DAGNode.create('string data', (err, node2) => {
+DAGNode.create('some data', (err, node2) => {
   // node2 will have the same data as node1.
 })
 ```
