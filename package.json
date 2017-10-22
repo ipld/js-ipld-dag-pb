@@ -52,7 +52,7 @@
     "is-ipfs": "~0.3.0",
     "multihashes": "~0.4.9",
     "multihashing-async": "~0.4.6",
-    "protons": "^1.0.0",
+    "protons": "thisconnect/protons#dep/remove/brfs",
     "pull-stream": "^3.6.0",
     "pull-traverse": "^1.0.3",
     "stable": "^0.1.6"
