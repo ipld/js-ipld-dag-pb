@@ -99,7 +99,7 @@ DAGNode.create('string data', (err, node2) => {
 ```JavaScript
 const link = {
   name: 'I am a link',
-  multihash: 'QmHash..'
+  multihash: 'QmHash..',
   size: 42
 }
 
