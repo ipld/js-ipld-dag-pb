@@ -39,9 +39,9 @@ describe('IPLD Format resolver (local)', () => {
 
   before((done) => {
     parallel([
-      (cb) => create(new Buffer(0), [], cb),
-      (cb) => create(new Buffer(0), links, cb),
-      (cb) => create(new Buffer('aaah the data'), links, cb)
+      (cb) => create(Buffer.alloc(0), [], cb),
+      (cb) => create(Buffer.alloc(0), links, cb),
+      (cb) => create(Buffer.from('aaah the data'), links, cb)
     ], (err, res) => {
       expect(err).to.not.exist()
       emptyNodeBlock = res[0]
@@ -69,7 +69,7 @@ describe('IPLD Format resolver (local)', () => {
       it('data path', (done) => {
         resolver.resolve(emptyNodeBlock, 'Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(new Buffer(0))
+          expect(result.value).to.eql(Buffer.alloc(0))
           expect(result.remainderPath).to.eql('')
           done()
         })
@@ -187,7 +187,7 @@ describe('IPLD Format resolver (local)', () => {
       it('data path', (done) => {
         resolver.resolve(dataLinksNodeBlock, 'Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(new Buffer('aaah the data'))
+          expect(result.value).to.eql(Buffer.from('aaah the data'))
           expect(result.remainderPath).to.eql('')
           done()
         })
