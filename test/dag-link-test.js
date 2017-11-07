@@ -24,7 +24,7 @@ module.exports = (repo) => {
       })
 
       it('create with multihash as a multihash Buffer', () => {
-        const link = new DAGLink('hello', 3, new Buffer('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43', 'hex'))
+        const link = new DAGLink('hello', 3, Buffer.from('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43', 'hex'))
 
         expect(mh.toB58String(link.multihash))
           .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
@@ -51,10 +51,7 @@ module.exports = (repo) => {
     it('toString', () => {
       const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
 
-      expect(link.toString())
-        .to.equal(
-        'DAGLink <QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U - name: "hello", size: 3>'
-      )
+      expect(link.toString()).to.equal('DAGLink <QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U - name: "hello", size: 3>')
     })
   })
 }
