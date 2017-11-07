@@ -51,10 +51,7 @@ module.exports = (repo) => {
     it('toString', () => {
       const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
 
-      expect(link.toString())
-        .to.equal(
-            'DAGLink <QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U - name: "hello", size: 3>'
-        )
+      expect(link.toString()).to.equal('DAGLink <QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U - name: "hello", size: 3>')
     })
   })
 }
