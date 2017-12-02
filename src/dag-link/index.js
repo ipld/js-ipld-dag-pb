@@ -7,7 +7,9 @@ const assert = require('assert')
 class DAGLink {
   constructor (name, size, multihash) {
     assert(multihash, 'A link requires a multihash to point to')
-    assert(size, 'A link requires a size')
+    // assert(size, 'A link requires a size')
+    //  note - links should include size, but this assert is disabled
+    //  for now to maintain consistency with go-ipfs pinset
 
     this._name = name
     this._size = size
