@@ -1,3 +1,13 @@
+<a name="0.11.4"></a>
+## [0.11.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.3...v0.11.4) (2017-12-02)
+
+
+### Features
+
+* If link hashes to serializer are base58 encoded, then decode them [Fi… ([#43](https://github.com/ipld/js-ipld-dag-pb/issues/43)) ([9f66bca](https://github.com/ipld/js-ipld-dag-pb/commit/9f66bca)), closes [#28](https://github.com/ipld/js-ipld-dag-pb/issues/28)
+
+
+
 <a name="0.11.3"></a>
 ## [0.11.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.2...v0.11.3) (2017-11-07)
 
