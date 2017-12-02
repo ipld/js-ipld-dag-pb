@@ -587,5 +587,40 @@ module.exports = (repo) => {
         done()
       })
     })
+
+    it('deserializing a node and an object should yield the same result', (done) => {
+      expect(10).checks(done)
+      const obj = {
+        data: Buffer.from('Hello World'),
+        links: [{
+          multihash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
+          name: 'payload',
+          size: 819
+        }]
+      }
+
+      DAGNode.create(obj.data, obj.links, (err, node) => {
+        expect(err).to.not.exist.mark()
+        expect(node.data.length).to.be.above(0).mark()
+        expect(Buffer.isBuffer(node.data)).to.be.true.mark()
+        expect(node.size).to.be.above(0).mark()
+        expect(node.toJSON().multihash).to.be.equal('QmR2W8uRZuVfUk8YtuAH3ezJwJzMuVbuehL2NAc4TmAz93')
+
+        dagPB.util.serialize(node, (err, serialized) => {
+          expect(err).to.not.exist.mark()
+          dagPB.util.serialize(obj, (err, serializedObject) => {
+            expect(err).to.not.exist.mark()
+            dagPB.util.deserialize(serialized, (err, deserialized) => {
+              expect(err).to.not.exist.mark()
+              dagPB.util.deserialize(serializedObject, (err, deserializedObject) => {
+                expect(err).to.not.exist.mark()
+                expect(deserialized.toJSON()).to.deep.equal(deserializedObject.toJSON()).mark()
+                done()
+              })
+            })
+          })
+        })
+      })
+    }).timeout(6000)
   })
 }

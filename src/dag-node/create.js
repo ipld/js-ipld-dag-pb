@@ -33,16 +33,8 @@ function create (data, dagLinks, hashAlg, callback) {
     hashAlg = 'sha2-256'
   }
 
-  const links = dagLinks.map((l) => {
-    if (l.constructor && l.constructor.name === 'DAGLink') {
-      return l
-    }
-
-    return new DAGLink(
-      l.name ? l.name : l.Name,
-      l.size ? l.size : l.Size,
-      l.hash || l.Hash || l.multihash
-    )
+  const links = dagLinks.map((link) => {
+    return DAGLink.util.isDagLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
   })
   const sortedLinks = sort(links, linkSort)
 
