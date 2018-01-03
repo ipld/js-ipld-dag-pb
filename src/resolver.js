@@ -1,6 +1,7 @@
 'use strict'
 
 const waterfall = require('async/waterfall')
+const CID = require('cids')
 
 const util = require('./util')
 
@@ -117,9 +118,17 @@ exports.isLink = (block, path, callback) => {
     }
 
     if (typeof result.value === 'object' && result.value['/']) {
-      callback(null, result.value)
-    } else {
-      callback(null, false)
+      let valid
+      try {
+        valid = CID.isCID(new CID(result.value['/']))
+      } catch (err) {
+        valid = false
+      }
+      if (valid) {
+        return callback(null, result.value)
+      }
     }
+
+    callback(null, false)
   })
 }
