@@ -228,10 +228,16 @@ describe('IPLD Format resolver (local)', () => {
   })
 
   it('resolver.isLink for non valid CID', (done) => {
-    resolver.isLink(dataLinksNodeBlock, 'Links/0/Tsize', (err, link) => {
+    // blank value case
+    resolver.isLink(dataLinksNodeBlock, 'Links/0/Name', (err, link) => {
       expect(err).to.not.exist()
       expect(link).to.equal(false)
-      done()
+      // non-blank value case
+      resolver.isLink(dataLinksNodeBlock, 'Links/0/Tsize', (err, link) => {
+        expect(err).to.not.exist()
+        expect(link).to.equal(false)
+        done()
+      })
     })
   })
 })
