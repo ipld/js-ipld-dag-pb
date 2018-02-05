@@ -9,7 +9,6 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const parallel = require('async/parallel')
 const CID = require('cids')
-const Block = require('ipfs-block')
 const waterfall = require('async/waterfall')
 
 const dagPB = require('../src')
@@ -17,9 +16,9 @@ const DAGNode = dagPB.DAGNode
 const resolver = dagPB.resolver
 
 describe('IPLD Format resolver (local)', () => {
-  let emptyNodeBlock
-  let linksNodeBlock
-  let dataLinksNodeBlock
+  let emptyNodeBlob
+  let linksNodeBlob
+  let dataLinksNodeBlob
 
   const links = [{
     name: '',
@@ -33,7 +32,7 @@ describe('IPLD Format resolver (local)', () => {
   const create = (data, links, callback) => waterfall([
     (cb) => DAGNode.create(data, links, cb),
     (n, cb) => {
-      cb(null, new Block(n.serialized, new CID(n.multihash)))
+      cb(null, n.serialized)
     }
   ], callback)
 
@@ -44,9 +43,9 @@ describe('IPLD Format resolver (local)', () => {
       (cb) => create(Buffer.from('aaah the data'), links, cb)
     ], (err, res) => {
       expect(err).to.not.exist()
-      emptyNodeBlock = res[0]
-      linksNodeBlock = res[1]
-      dataLinksNodeBlock = res[2]
+      emptyNodeBlob = res[0]
+      linksNodeBlob = res[1]
+      dataLinksNodeBlob = res[2]
       done()
     })
   })
@@ -58,7 +57,7 @@ describe('IPLD Format resolver (local)', () => {
   describe('empty node', () => {
     describe('resolver.resolve', () => {
       it('links path', (done) => {
-        resolver.resolve(emptyNodeBlock, 'Links', (err, result) => {
+        resolver.resolve(emptyNodeBlob, 'Links', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql([])
           expect(result.remainderPath).to.eql('')
@@ -67,7 +66,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('data path', (done) => {
-        resolver.resolve(emptyNodeBlock, 'Data', (err, result) => {
+        resolver.resolve(emptyNodeBlob, 'Data', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql(Buffer.alloc(0))
           expect(result.remainderPath).to.eql('')
@@ -76,7 +75,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('non existent path', (done) => {
-        resolver.resolve(emptyNodeBlock, 'pathThatDoesNotExist', (err, result) => {
+        resolver.resolve(emptyNodeBlob, 'pathThatDoesNotExist', (err, result) => {
           expect(err).to.exist()
           done()
         })
@@ -84,7 +83,7 @@ describe('IPLD Format resolver (local)', () => {
     })
 
     it('resolver.tree', (done) => {
-      resolver.tree(emptyNodeBlock, (err, paths) => {
+      resolver.tree(emptyNodeBlob, (err, paths) => {
         expect(err).to.not.exist()
         expect(paths).to.eql([
           'Links',
@@ -98,7 +97,7 @@ describe('IPLD Format resolver (local)', () => {
   describe('links node', () => {
     describe('resolver.resolve', () => {
       it('links path', (done) => {
-        resolver.resolve(linksNodeBlock, 'Links', (err, result) => {
+        resolver.resolve(linksNodeBlob, 'Links', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql(links)
           expect(result.remainderPath).to.eql('')
@@ -107,7 +106,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('links position path Hash', (done) => {
-        resolver.resolve(linksNodeBlock, 'Links/1/Hash', (err, result) => {
+        resolver.resolve(linksNodeBlob, 'Links/1/Hash', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value['/']).to.eql(links[1].multihash)
           expect(result.remainderPath).to.eql('')
@@ -116,7 +115,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('links position path Name', (done) => {
-        resolver.resolve(linksNodeBlock, 'Links/1/Name', (err, result) => {
+        resolver.resolve(linksNodeBlob, 'Links/1/Name', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value['/']).to.eql(links[1].name)
           expect(result.remainderPath).to.eql('')
@@ -125,7 +124,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('links position path Tsize', (done) => {
-        resolver.resolve(linksNodeBlock, 'Links/1/Tsize', (err, result) => {
+        resolver.resolve(linksNodeBlob, 'Links/1/Tsize', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value['/']).to.eql(links[1].size)
           expect(result.remainderPath).to.eql('')
@@ -134,7 +133,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('yield remainderPath if impossible to resolve through (a)', (done) => {
-        resolver.resolve(linksNodeBlock, 'Links/1/Hash/Data', (err, result) => {
+        resolver.resolve(linksNodeBlob, 'Links/1/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value['/']).to.exist()
           expect(result.value['/']).to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
@@ -144,7 +143,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('yield remainderPath if impossible to resolve through (b)', (done) => {
-        resolver.resolve(linksNodeBlock, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
+        resolver.resolve(linksNodeBlob, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value['/'])
             .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
@@ -156,7 +155,7 @@ describe('IPLD Format resolver (local)', () => {
     })
 
     it('resolver.tree', (done) => {
-      resolver.tree(linksNodeBlock, (err, paths) => {
+      resolver.tree(linksNodeBlob, (err, paths) => {
         expect(err).to.not.exist()
         expect(paths).to.eql([
           'Links',
@@ -176,7 +175,7 @@ describe('IPLD Format resolver (local)', () => {
   describe('links and data node', () => {
     describe('resolver.resolve', (done) => {
       it('links path', (done) => {
-        resolver.resolve(dataLinksNodeBlock, 'Links', (err, result) => {
+        resolver.resolve(dataLinksNodeBlob, 'Links', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql(links)
           expect(result.remainderPath).to.eql('')
@@ -185,7 +184,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('data path', (done) => {
-        resolver.resolve(dataLinksNodeBlock, 'Data', (err, result) => {
+        resolver.resolve(dataLinksNodeBlob, 'Data', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql(Buffer.from('aaah the data'))
           expect(result.remainderPath).to.eql('')
@@ -194,7 +193,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('non existent path', (done) => {
-        resolver.resolve(dataLinksNodeBlock, 'pathThatDoesNotExist', (err, result) => {
+        resolver.resolve(dataLinksNodeBlob, 'pathThatDoesNotExist', (err, result) => {
           expect(err).to.exist()
           done()
         })
@@ -202,7 +201,7 @@ describe('IPLD Format resolver (local)', () => {
     })
 
     it('resolver.tree', (done) => {
-      resolver.tree(dataLinksNodeBlock, (err, paths) => {
+      resolver.tree(dataLinksNodeBlob, (err, paths) => {
         expect(err).to.not.exist()
         expect(paths).to.eql([
           'Links',
@@ -220,7 +219,7 @@ describe('IPLD Format resolver (local)', () => {
   })
 
   it('resolver.isLink for valid CID', (done) => {
-    resolver.isLink(dataLinksNodeBlock, 'Links/0/Hash', (err, link) => {
+    resolver.isLink(dataLinksNodeBlob, 'Links/0/Hash', (err, link) => {
       expect(err).to.not.exist()
       expect(CID.isCID(new CID(link['/']))).to.equal(true)
       done()
@@ -229,11 +228,11 @@ describe('IPLD Format resolver (local)', () => {
 
   it('resolver.isLink for non valid CID', (done) => {
     // blank value case
-    resolver.isLink(dataLinksNodeBlock, 'Links/0/Name', (err, link) => {
+    resolver.isLink(dataLinksNodeBlob, 'Links/0/Name', (err, link) => {
       expect(err).to.not.exist()
       expect(link).to.equal(false)
       // non-blank value case
-      resolver.isLink(dataLinksNodeBlock, 'Links/0/Tsize', (err, link) => {
+      resolver.isLink(dataLinksNodeBlob, 'Links/0/Tsize', (err, link) => {
         expect(err).to.not.exist()
         expect(link).to.equal(false)
         done()
