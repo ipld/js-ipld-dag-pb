@@ -9,12 +9,12 @@ exports = module.exports
 exports.multicodec = 'dag-pb'
 
 /*
- * resolve: receives a path and a block and returns the value on path,
- * throw if not possible. `block` is an IPFS Block instance (contains data+key)
+ * resolve: receives a path and a binary blob and returns the value on path,
+ * throw if not possible. `binaryBlob` is the ProtocolBuffer encoded data.
  */
-exports.resolve = (block, path, callback) => {
+exports.resolve = (binaryBlob, path, callback) => {
   waterfall([
-    (cb) => util.deserialize(block.data, cb),
+    (cb) => util.deserialize(binaryBlob, cb),
     (node, cb) => {
       const split = path.split('/')
 
@@ -75,7 +75,7 @@ exports.resolve = (block, path, callback) => {
  * tree: returns a flattened array with paths: values of the project. options
  * is an object that can carry several options (i.e. nestness)
  */
-exports.tree = (block, options, callback) => {
+exports.tree = (binaryBlob, options, callback) => {
   if (typeof options === 'function') {
     callback = options
     options = {}
@@ -83,7 +83,7 @@ exports.tree = (block, options, callback) => {
 
   options = options || {}
 
-  util.deserialize(block.data, (err, node) => {
+  util.deserialize(binaryBlob, (err, node) => {
     if (err) {
       return callback(err)
     }
@@ -105,10 +105,11 @@ exports.tree = (block, options, callback) => {
 }
 
 /*
- * isLink: returns the Link if a given path in a block is a Link, false otherwise
+ * isLink: returns the Link if a given path in a binary blob is a Link,
+ * false otherwise
  */
-exports.isLink = (block, path, callback) => {
-  exports.resolve(block, path, (err, result) => {
+exports.isLink = (binaryBlob, path, callback) => {
+  exports.resolve(binaryBlob, path, (err, result) => {
     if (err) {
       return callback(err)
     }
