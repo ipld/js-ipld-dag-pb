@@ -1,3 +1,8 @@
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.12.0...v0.13.0) (2018-02-12)
+
+
+
 <a name="0.12.0"></a>
 # [0.12.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.4...v0.12.0) (2018-02-12)
 
