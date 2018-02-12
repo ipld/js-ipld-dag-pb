@@ -1,3 +1,28 @@
+<a name="0.12.0"></a>
+# [0.12.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.4...v0.12.0) (2018-02-12)
+
+
+### Bug Fixes
+
+* Fix false positives in isLink and update test ([#51](https://github.com/ipld/js-ipld-dag-pb/issues/51)) ([73b21c7](https://github.com/ipld/js-ipld-dag-pb/commit/73b21c7))
+* use binary blobs directly ([50edc45](https://github.com/ipld/js-ipld-dag-pb/commit/50edc45))
+
+
+### BREAKING CHANGES
+
+* Everyone calling the functions of `resolve` need to
+pass in the binary data instead of an IPFS block.
+
+So if your input is an IPFS block, the code changes from
+
+    resolver.resolve(block, path, (err, result) => {…}
+
+to
+
+    resolver.resolve(block.data, path, (err, result) => {…}
+
+
+
 <a name="0.11.4"></a>
 ## [0.11.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.11.3...v0.11.4) (2017-12-02)
 
