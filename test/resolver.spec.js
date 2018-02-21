@@ -80,6 +80,16 @@ describe('IPLD Format resolver (local)', () => {
           done()
         })
       })
+
+      it('empty path', (done) => {
+        resolver.resolve(emptyNodeBlob, '', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.value.data).to.eql(Buffer.alloc(0))
+          expect(result.value.links).to.eql([])
+          expect(result.remainderPath).to.eql('')
+          done()
+        })
+      })
     })
 
     it('resolver.tree', (done) => {
@@ -195,6 +205,16 @@ describe('IPLD Format resolver (local)', () => {
       it('non existent path', (done) => {
         resolver.resolve(dataLinksNodeBlob, 'pathThatDoesNotExist', (err, result) => {
           expect(err).to.exist()
+          done()
+        })
+      })
+
+      it('empty path', (done) => {
+        resolver.resolve(dataLinksNodeBlob, '', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.value.data).to.eql(Buffer.from('aaah the data'))
+          expect(result.value.links.map((link) => link.toJSON())).to.eql(links)
+          expect(result.remainderPath).to.eql('')
           done()
         })
       })
