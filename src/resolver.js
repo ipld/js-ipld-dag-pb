@@ -16,6 +16,14 @@ exports.resolve = (binaryBlob, path, callback) => {
   waterfall([
     (cb) => util.deserialize(binaryBlob, cb),
     (node, cb) => {
+      // Return the deserialized block if no path is given
+      if (!path) {
+        return callback(null, {
+          value: node,
+          remainderPath: ''
+        })
+      }
+
       const split = path.split('/')
 
       if (split[0] === 'Links') {
