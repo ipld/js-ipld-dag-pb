@@ -1,3 +1,13 @@
+<a name="0.13.1"></a>
+## [0.13.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.13.0...v0.13.1) (2018-02-26)
+
+
+### Bug Fixes
+
+* return deserialized node if no path is given ([bcba192](https://github.com/ipld/js-ipld-dag-pb/commit/bcba192))
+
+
+
 <a name="0.13.0"></a>
 # [0.13.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.12.0...v0.13.0) (2018-02-12)
 
