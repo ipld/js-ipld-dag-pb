@@ -6,15 +6,16 @@ const cloneData = dagNodeUtil.cloneData
 const toDAGLink = dagNodeUtil.toDAGLink
 const DAGLink = require('./../dag-link')
 const create = require('./create')
+const DAGNode = require('./index')
 
 function addLink (node, link, callback) {
   const links = cloneLinks(node)
   const data = cloneData(node)
 
-  if ((link.constructor && link.constructor.name === 'DAGLink')) {
+  if ((link.constructor && link instanceof DAGLink)) {
     // It's a DAGLink instance
     // no need to do anything
-  } else if (link.constructor && link.constructor.name === 'DAGNode') {
+  } else if (link.constructor && link instanceof DAGNode) {
     // It's a DAGNode instance
     // convert to link
     link = toDAGLink(link)
