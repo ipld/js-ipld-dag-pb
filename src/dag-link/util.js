@@ -3,7 +3,7 @@
 const DAGLink = require('./index')
 
 function isDagLink (link) {
-  return link && link.constructor && link instanceof DAGLink
+  return link && link.constructor && link.constructor.name === 'DAGLink'
 }
 
 function createDagLinkFromB58EncodedHash (link) {
