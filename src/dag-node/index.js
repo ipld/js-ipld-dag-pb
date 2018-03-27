@@ -2,6 +2,7 @@
 
 const mh = require('multihashes')
 const assert = require('assert')
+const withIs = require('class-is')
 
 class DAGNode {
   constructor (data, links, serialized, multihash) {
@@ -77,7 +78,7 @@ class DAGNode {
   }
 }
 
-exports = module.exports = DAGNode
+exports = module.exports = withIs(DAGNode, { className: 'DAGNode', symbolName: '@ipld/js-ipld-dag-pb/dagnode' })
 exports.create = require('./create')
 exports.clone = require('./clone')
 exports.addLink = require('./addLink')
