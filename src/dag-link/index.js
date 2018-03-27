@@ -2,6 +2,7 @@
 
 const mh = require('multihashes')
 const assert = require('assert')
+const withIs = require('class-is')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
@@ -59,6 +60,6 @@ class DAGLink {
   }
 }
 
-exports = module.exports = DAGLink
+exports = module.exports = withIs(DAGLink, { className: 'DAGLink', symbolName: '@ipld/js-ipld-dag-pb/daglink' })
 exports.create = require('./create')
 exports.util = require('./util')
