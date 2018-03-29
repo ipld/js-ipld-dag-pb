@@ -21,7 +21,7 @@ function serialize (node, callback) {
   // If the node is not an instance of a DAGNode, the link.hash might be a Base58 encoded string; decode it
   if (!DAGNode.isDAGNode(node) && node.links) {
     node.links = node.links.map((link) => {
-      return DAGLink.util.isDagLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
+      return DAGLink.isDAGLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
     })
   }
 

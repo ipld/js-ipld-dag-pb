@@ -7,7 +7,7 @@ const serialize = dagPBUtil.serialize
 const dagNodeUtil = require('./util.js')
 const linkSort = dagNodeUtil.linkSort
 const DAGNode = require('./index.js')
-const DAGLink = require('./../dag-link')
+const DAGLink = require('../dag-link')
 
 function create (data, dagLinks, hashAlg, callback) {
   if (typeof data === 'function') {
@@ -34,7 +34,7 @@ function create (data, dagLinks, hashAlg, callback) {
   }
 
   const links = dagLinks.map((link) => {
-    return DAGLink.util.isDagLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
+    return DAGLink.isDAGLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
   })
   const sortedLinks = sort(links, linkSort)
 
