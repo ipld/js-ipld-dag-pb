@@ -1,3 +1,18 @@
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.13.1...v0.14.0) (2018-04-09)
+
+
+### Bug Fixes
+
+* replace constructor.name with instanceof ([881d572](https://github.com/ipld/js-ipld-dag-pb/commit/881d572))
+
+
+### Features
+
+* use class-is module for type checks ([621c12c](https://github.com/ipld/js-ipld-dag-pb/commit/621c12c))
+
+
+
 <a name="0.13.1"></a>
 ## [0.13.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.13.0...v0.13.1) (2018-02-26)
 
