@@ -24,8 +24,8 @@ const CID = require('cids')
 const bs58 = require('bs58')
 const loadFixture = require('aegir/fixtures')
 
-const testBlockNamedLinks = loadFixture(__dirname, '/fixtures/test-block-named-links')
-const testBlockUnnamedLinks = loadFixture(__dirname, '/fixtures/test-block-unnamed-links')
+const testBlockNamedLinks = loadFixture('test/fixtures/test-block-named-links')
+const testBlockUnnamedLinks = loadFixture('test/fixtures/test-block-unnamed-links')
 
 module.exports = (repo) => {
   const bs = new BlockService(repo)
