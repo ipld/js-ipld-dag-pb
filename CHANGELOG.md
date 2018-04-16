@@ -1,3 +1,13 @@
+<a name="0.14.3"></a>
+## [0.14.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.2...v0.14.3) (2018-04-16)
+
+
+### Bug Fixes
+
+* lock stable dep ([4174338](https://github.com/ipld/js-ipld-dag-pb/commit/4174338)), closes [#65](https://github.com/ipld/js-ipld-dag-pb/issues/65)
+
+
+
 <a name="0.14.2"></a>
 ## [0.14.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.1...v0.14.2) (2018-04-11)
 
