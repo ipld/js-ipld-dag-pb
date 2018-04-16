@@ -65,7 +65,7 @@
     "protons": "^1.0.1",
     "pull-stream": "^3.6.7",
     "pull-traverse": "^1.0.3",
-    "stable": "~0.1.6"
+    "stable": "0.1.6"
   },
   "devDependencies": {
     "aegir": "^13.0.6",
