@@ -1,3 +1,13 @@
+<a name="0.14.4"></a>
+## [0.14.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.3...v0.14.4) (2018-04-25)
+
+
+### Bug Fixes
+
+* Initialise the DAGLink name to empty string if a falsey value is passed ([575a03f](https://github.com/ipld/js-ipld-dag-pb/commit/575a03f))
+
+
+
 <a name="0.14.3"></a>
 ## [0.14.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.2...v0.14.3) (2018-04-16)
 
