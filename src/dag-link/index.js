@@ -12,7 +12,7 @@ class DAGLink {
     //  note - links should include size, but this assert is disabled
     //  for now to maintain consistency with go-ipfs pinset
 
-    this._name = name
+    this._name = name || ''
     this._size = size
 
     if (typeof multihash === 'string') {
