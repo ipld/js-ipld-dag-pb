@@ -134,6 +134,29 @@ module.exports = (repo) => {
       })
     })
 
+    it('create with undefined link name', (done) => {
+      waterfall([
+        (cb) => DAGNode.create(Buffer.from('hello'), [
+          new DAGLink(undefined, 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+        ], cb),
+        (node, cb) => {
+          expect(node.links[0].name).to.be.eql('')
+
+          waterfall([
+            (cb) => dagPB.util.serialize(node, cb),
+            (buffer, cb) => dagPB.util.deserialize(buffer, cb),
+            (deserialized, cb) => {
+              Object.getOwnPropertyNames(node).forEach(key => {
+                expect(node[key]).to.deep.equal(deserialized[key])
+              })
+
+              cb()
+            }
+          ], cb)
+        }
+      ], done)
+    })
+
     it('create an empty node', (done) => {
       // this node is not in the repo as we don't copy node data to the browser
       expect(7).checks(done)
