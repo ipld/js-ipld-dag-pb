@@ -2,6 +2,7 @@
   "name": "ipld-dag-pb",
   "version": "0.14.4",
   "description": "JavaScript Implementation of the MerkleDAG Node in Protobuf.",
+  "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
   "scripts": {
     "test": "aegir test",
@@ -19,7 +20,6 @@
     "lint",
     "test"
   ],
-  "author": "Vijayee Kulkaa <vijayee.kulkaa@hushmail.com>",
   "contributors": [
     "Adam Stone <AdamStone@users.noreply.github.com>",
     "Arpit Agarwal <atvanguard@users.noreply.github.com>",
