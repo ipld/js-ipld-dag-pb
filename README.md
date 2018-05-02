@@ -14,6 +14,10 @@
 
 > JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf. In addition to the IPLD Format methods, this module also provides an API for creating the nodes and manipulating them (adding and removing links, etc).
 
+## Lead Maintainer
+
+[Volker Mische](https://github.com/vmx)
+
 ## Table of Contents
 
 - [Install](#install)
@@ -51,7 +55,6 @@
   - [`dagPB.util.cid`](#dagpbutilcid)
   - [`dagPB.util.serialize`](#dagpbutilserialize)
   - [`dagPB.util.deserialize`](#dagpbutildeserialize)
-- [Maintainers](#maintainers)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -293,10 +296,6 @@ const link = new DAGLink(name, size, multihash)
 ### `dagPB.util.serialize`
 
 ### `dagPB.util.deserialize`
-
-## Maintainers
-
-[@diasdavid](https://github.com/diasdavid)
 
 ## Contribute
 
