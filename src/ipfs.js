@@ -46,7 +46,7 @@ exports.resolver = Object.assign({}, require('./resolver'), {
         return callback(err)
       }
 
-      const paths = node.links.map(l => l.name).filter(n => !!n)
+      const paths = node.links.map(l => l.name).filter(Boolean)
       callback(null, paths)
     })
   }
