@@ -54,6 +54,10 @@ describe('IPLD Format resolver (local)', () => {
     expect(resolver.multicodec).to.equal('dag-pb')
   })
 
+  it('defaultHashAlg is sha2-256', () => {
+    expect(resolver.defaultHashAlg).to.equal('sha2-256')
+  })
+
   describe('empty node', () => {
     describe('resolver.resolve', () => {
       it('links path', (done) => {
