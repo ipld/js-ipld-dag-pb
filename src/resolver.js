@@ -7,6 +7,7 @@ const util = require('./util')
 
 exports = module.exports
 exports.multicodec = 'dag-pb'
+exports.defaultHashAlg = 'sha2-256'
 
 /*
  * resolve: receives a path and a binary blob and returns the value on path,
