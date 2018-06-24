@@ -27,13 +27,16 @@ exports = module.exports
  * @returns {void}
  */
 function cid (dagNode, options, callback) {
-  if (options instanceof Function) {
+  if (typeof options === 'function') {
     callback = options
     options = {}
   }
   options = options || {}
   const hashAlg = options.hashAlg || resolver.defaultHashAlg
-  const version = options.version || hashAlg === 'sha2-256' ? 0 : 1
+  let version = options.version
+  if (typeof version === 'undefined') {
+    version = hashAlg === 'sha2-256' ? 0 : 1
+  }
   waterfall([
     (cb) => serialize(dagNode, cb),
     (serialized, cb) => multihashing(serialized, hashAlg, cb),
