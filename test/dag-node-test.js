@@ -424,14 +424,17 @@ module.exports = (repo) => {
     it('get node CID', (done) => {
       DAGNode.create(Buffer.from('some data'), (err, node) => {
         expect(err).to.not.exist()
-        util.cid(node, (err, cid) => {
+        util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist()
-          expect(cid.multihash).to.exist()
-          expect(cid.codec).to.equal('dag-pb')
-          expect(cid.version).to.equal(0)
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha2-256')
-          done()
+          util.cid(serialized, (err, cid) => {
+            expect(err).to.not.exist()
+            expect(cid.multihash).to.exist()
+            expect(cid.codec).to.equal('dag-pb')
+            expect(cid.version).to.equal(0)
+            const mh = multihash.decode(cid.multihash)
+            expect(mh.name).to.equal('sha2-256')
+            done()
+          })
         })
       })
     })
@@ -439,14 +442,17 @@ module.exports = (repo) => {
     it('get node CID with hashAlg', (done) => {
       DAGNode.create(Buffer.from('some data'), (err, node) => {
         expect(err).to.not.exist()
-        util.cid(node, { hashAlg: 'sha2-512' }, (err, cid) => {
+        util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist()
-          expect(cid.multihash).to.exist()
-          expect(cid.codec).to.equal('dag-pb')
-          expect(cid.version).to.equal(1)
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha2-512')
-          done()
+          util.cid(serialized, { hashAlg: 'sha2-512' }, (err, cid) => {
+            expect(err).to.not.exist()
+            expect(cid.multihash).to.exist()
+            expect(cid.codec).to.equal('dag-pb')
+            expect(cid.version).to.equal(1)
+            const mh = multihash.decode(cid.multihash)
+            expect(mh.name).to.equal('sha2-512')
+            done()
+          })
         })
       })
     })
