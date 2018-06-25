@@ -3,16 +3,45 @@
 const CID = require('cids')
 const protons = require('protons')
 const proto = protons(require('./dag.proto.js'))
+const resolver = require('./resolver')
 const DAGLink = require('./dag-link')
 const DAGNode = require('./dag-node')
+const multihashing = require('multihashing-async')
+const waterfall = require('async/waterfall')
 
 exports = module.exports
 
-function cid (node, callback) {
-  if (node.multihash) {
-    return callback(null, new CID(node.multihash))
+/**
+ * @callback CidCallback
+ * @param {?Error} error - Error if getting the CID failed
+ * @param {?CID} cid - CID if call was successful
+ */
+/**
+ * Get the CID of the DAG-Node.
+ *
+ * @param {Object} dagNode - Internal representation
+ * @param {Object} [options] - Options to create the CID
+ * @param {number} [options.version] - CID version number. Defaults to zero if hashAlg == 'sha2-256'; otherwise, 1.
+ * @param {string} [options.hashAlg] - Defaults to hashAlg for the resolver
+ * @param {CidCallback} callback - Callback that handles the return value
+ * @returns {void}
+ */
+function cid (dagNode, options, callback) {
+  if (typeof options === 'function') {
+    callback = options
+    options = {}
   }
-  callback(new Error('not valid dagPB node'))
+  options = options || {}
+  const hashAlg = options.hashAlg || resolver.defaultHashAlg
+  let version = options.version
+  if (typeof version === 'undefined') {
+    version = hashAlg === 'sha2-256' ? 0 : 1
+  }
+  waterfall([
+    (cb) => serialize(dagNode, cb),
+    (serialized, cb) => multihashing(serialized, hashAlg, cb),
+    (mh, cb) => cb(null, new CID(version, resolver.multicodec, mh))
+  ], callback)
 }
 
 function serialize (node, callback) {

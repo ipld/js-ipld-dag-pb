@@ -17,6 +17,7 @@ const util = dagPB.util
 const series = require('async/series')
 const waterfall = require('async/waterfall')
 const isNode = require('detect-node')
+const multihash = require('multihashes')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
@@ -428,6 +429,23 @@ module.exports = (repo) => {
           expect(cid.multihash).to.exist()
           expect(cid.codec).to.equal('dag-pb')
           expect(cid.version).to.equal(0)
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha2-256')
+          done()
+        })
+      })
+    })
+
+    it('get node CID with hashAlg', (done) => {
+      DAGNode.create(Buffer.from('some data'), (err, node) => {
+        expect(err).to.not.exist()
+        util.cid(node, { hashAlg: 'sha2-512' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid.multihash).to.exist()
+          expect(cid.codec).to.equal('dag-pb')
+          expect(cid.version).to.equal(1)
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha2-512')
           done()
         })
       })
