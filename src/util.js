@@ -1,5 +1,6 @@
 'use strict'
 
+const assert = require('assert')
 const CID = require('cids')
 const protons = require('protons')
 const proto = protons(require('./dag.proto.js'))
@@ -17,16 +18,17 @@ exports = module.exports
  * @param {?CID} cid - CID if call was successful
  */
 /**
- * Get the CID of the DAG-Node.
+ * Get the CID of the serialized ProtoBuf node.
  *
- * @param {Object} dagNode - Internal representation
+ * @param {Buffer} blob - Serialized ProtoBuf node
  * @param {Object} [options] - Options to create the CID
  * @param {number} [options.version] - CID version number. Defaults to zero if hashAlg == 'sha2-256'; otherwise, 1.
  * @param {string} [options.hashAlg] - Defaults to hashAlg for the resolver
  * @param {CidCallback} callback - Callback that handles the return value
  * @returns {void}
  */
-function cid (dagNode, options, callback) {
+function cid (blob, options, callback) {
+  assert(Buffer.isBuffer(blob), 'blob must be a Buffer')
   if (typeof options === 'function') {
     callback = options
     options = {}
@@ -38,8 +40,7 @@ function cid (dagNode, options, callback) {
     version = hashAlg === 'sha2-256' ? 0 : 1
   }
   waterfall([
-    (cb) => serialize(dagNode, cb),
-    (serialized, cb) => multihashing(serialized, hashAlg, cb),
+    (cb) => multihashing(blob, hashAlg, cb),
     (mh, cb) => cb(null, new CID(version, resolver.multicodec, mh))
   ], callback)
 }
