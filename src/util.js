@@ -18,9 +18,9 @@ exports = module.exports
  * @param {?CID} cid - CID if call was successful
  */
 /**
- * Get the CID of the DAG-Node.
+ * Get the CID of the serialized ProtoBuf node.
  *
- * @param {Buffer} blob - Serialized binary data
+ * @param {Buffer} blob - Serialized ProtoBuf node
  * @param {Object} [options] - Options to create the CID
  * @param {number} [options.version] - CID version number. Defaults to zero if hashAlg == 'sha2-256'; otherwise, 1.
  * @param {string} [options.hashAlg] - Defaults to hashAlg for the resolver
