@@ -1,3 +1,26 @@
+<a name="0.14.5"></a>
+## [0.14.5](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.4...v0.14.5) (2018-06-29)
+
+
+### Bug Fixes
+
+* pass serialized blob to util.cid ([#75](https://github.com/ipld/js-ipld-dag-pb/issues/75)) ([2ae9542](https://github.com/ipld/js-ipld-dag-pb/commit/2ae9542))
+* unlock and update stable dep ([40a5e65](https://github.com/ipld/js-ipld-dag-pb/commit/40a5e65))
+
+
+### Features
+
+* add defaultHashAlg ([424d2a1](https://github.com/ipld/js-ipld-dag-pb/commit/424d2a1))
+* add util.cid options ([#74](https://github.com/ipld/js-ipld-dag-pb/issues/74)) ([1d89fa7](https://github.com/ipld/js-ipld-dag-pb/commit/1d89fa7))
+
+
+### BREAKING CHANGES
+
+* the first argument is now the serialized output NOT the dag node.
+See https://github.com/ipld/interface-ipld-format/issues/32
+
+
+
 <a name="0.14.4"></a>
 ## [0.14.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.3...v0.14.4) (2018-04-25)
 
