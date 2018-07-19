@@ -57,6 +57,8 @@ exports.resolve = (binaryBlob, path, callback) => {
           values[link.name] = link.multihash
         })
 
+        console.log(values)
+
         let value = values[split[1]]
 
         // if remainderPath exists, value needs to be CID
@@ -74,7 +76,33 @@ exports.resolve = (binaryBlob, path, callback) => {
       } else if (split[0] === 'Data') {
         cb(null, { value: node.data, remainderPath: '' })
       } else {
-        cb(new Error('path not available'))
+        const values = {}
+
+        // populate both index number and name to enable both cases
+        // for the resolver
+        node.links.forEach((l, i) => {
+          const link = l.toJSON()
+          values[i] = {
+            hash: link.multihash,
+            name: link.name,
+            size: link.size
+          }
+          // TODO by enabling something to resolve through link name, we are
+          // applying a transformation (a view) to the data, confirm if this
+          // is exactly what we want
+          values[link.name] = link.multihash
+        })
+
+        const val = values[split[0]]
+
+        if (val) {
+          return cb(null, {
+            value: { '/': val.hash },
+            remainderPath: split.slice(3).join('/')
+          })
+        } else {
+          cb(new Error('path not available'))
+        }
       }
     }
   ], callback)
