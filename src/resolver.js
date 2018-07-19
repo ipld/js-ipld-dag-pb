@@ -46,18 +46,15 @@ exports.resolve = (binaryBlob, path, callback) => {
         // for the resolver
         node.links.forEach((l, i) => {
           const link = l.toJSON()
-          values[i] = {
+          // TODO by enabling something to resolve through link name, we are
+          // applying a transformation (a view) to the data, confirm if this
+          // is exactly what we want
+          values[i] = values[link.name] = {
             hash: link.multihash,
             name: link.name,
             size: link.size
           }
-          // TODO by enabling something to resolve through link name, we are
-          // applying a transformation (a view) to the data, confirm if this
-          // is exactly what we want
-          values[link.name] = link.multihash
         })
-
-        console.log(values)
 
         let value = values[split[1]]
 
@@ -82,27 +79,26 @@ exports.resolve = (binaryBlob, path, callback) => {
         // for the resolver
         node.links.forEach((l, i) => {
           const link = l.toJSON()
-          values[i] = {
+          // TODO by enabling something to resolve through link name, we are
+          // applying a transformation (a view) to the data, confirm if this
+          // is exactly what we want
+          values[i] = values[link.name] = {
             hash: link.multihash,
             name: link.name,
             size: link.size
           }
-          // TODO by enabling something to resolve through link name, we are
-          // applying a transformation (a view) to the data, confirm if this
-          // is exactly what we want
-          values[link.name] = link.multihash
         })
 
-        const val = values[split[0]]
+        const value = values[split[0]]
 
-        if (val) {
+        if (value) {
           return cb(null, {
-            value: { '/': val.hash },
-            remainderPath: split.slice(3).join('/')
+            value: { '/': value.hash },
+            remainderPath: split.slice(1).join('/')
           })
-        } else {
-          cb(new Error('path not available'))
         }
+
+        cb(new Error('path not available'))
       }
     }
   ], callback)

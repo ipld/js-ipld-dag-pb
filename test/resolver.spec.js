@@ -146,6 +146,15 @@ describe('IPLD Format resolver (local)', () => {
         })
       })
 
+      it('links by name', (done) => {
+        resolver.resolve(linksNodeBlob, 'named link', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.value['/']).to.eql(links[1].multihash)
+          expect(result.remainderPath).to.eql('')
+          done()
+        })
+      })
+
       it('yield remainderPath if impossible to resolve through (a)', (done) => {
         resolver.resolve(linksNodeBlob, 'Links/1/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
