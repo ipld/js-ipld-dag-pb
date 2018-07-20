@@ -155,6 +155,14 @@ describe('IPLD Format resolver (local)', () => {
         })
       })
 
+      it('missing link by name', (done) => {
+        resolver.resolve(linksNodeBlob, 'missing link', (err, result) => {
+          expect(err).to.exist()
+          expect(err.message).to.equal('path not available')
+          done()
+        })
+      })
+
       it('yield remainderPath if impossible to resolve through (a)', (done) => {
         resolver.resolve(linksNodeBlob, 'Links/1/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
@@ -167,6 +175,27 @@ describe('IPLD Format resolver (local)', () => {
 
       it('yield remainderPath if impossible to resolve through (b)', (done) => {
         resolver.resolve(linksNodeBlob, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.value['/'])
+            .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
+
+          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
+          done()
+        })
+      })
+
+      it('yield remainderPath if impossible to resolve through named link (a)', (done) => {
+        resolver.resolve(linksNodeBlob, 'named link/Data', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.value['/']).to.exist()
+          expect(result.value['/']).to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
+          expect(result.remainderPath).to.equal('Data')
+          done()
+        })
+      })
+
+      it('yield remainderPath if impossible to resolve through named link (b)', (done) => {
+        resolver.resolve(linksNodeBlob, 'named link/Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value['/'])
             .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
