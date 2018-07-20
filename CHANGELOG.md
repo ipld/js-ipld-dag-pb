@@ -1,3 +1,13 @@
+<a name="0.14.6"></a>
+## [0.14.6](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.5...v0.14.6) (2018-07-20)
+
+
+### Bug Fixes
+
+* add support for resolving links by name ([#78](https://github.com/ipld/js-ipld-dag-pb/issues/78)) ([3f6f094](https://github.com/ipld/js-ipld-dag-pb/commit/3f6f094))
+
+
+
 <a name="0.14.5"></a>
 ## [0.14.5](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.4...v0.14.5) (2018-06-29)
 
