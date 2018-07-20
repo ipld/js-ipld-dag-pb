@@ -46,15 +46,11 @@ exports.resolve = (binaryBlob, path, callback) => {
         // for the resolver
         node.links.forEach((l, i) => {
           const link = l.toJSON()
-          values[i] = {
+          values[i] = values[link.name] = {
             hash: link.multihash,
             name: link.name,
             size: link.size
           }
-          // TODO by enabling something to resolve through link name, we are
-          // applying a transformation (a view) to the data, confirm if this
-          // is exactly what we want
-          values[link.name] = link.multihash
         })
 
         let value = values[split[1]]
@@ -74,6 +70,30 @@ exports.resolve = (binaryBlob, path, callback) => {
       } else if (split[0] === 'Data') {
         cb(null, { value: node.data, remainderPath: '' })
       } else {
+        // If split[0] is not 'Data' or 'Links' then we might be trying to refer
+        // to a named link from the Links array. This is because go-ipfs and
+        // js-ipfs have historically supported the ability to do
+        // `ipfs dag get CID/a` where a is a named link in a dag-pb.
+        const values = {}
+
+        node.links.forEach((l, i) => {
+          const link = l.toJSON()
+          values[link.name] = {
+            hash: link.multihash,
+            name: link.name,
+            size: link.size
+          }
+        })
+
+        const value = values[split[0]]
+
+        if (value) {
+          return cb(null, {
+            value: { '/': value.hash },
+            remainderPath: split.slice(1).join('/')
+          })
+        }
+
         cb(new Error('path not available'))
       }
     }
