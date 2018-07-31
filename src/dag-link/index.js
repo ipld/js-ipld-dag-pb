@@ -1,6 +1,6 @@
 'use strict'
 
-const mh = require('multihashes')
+const CID = require('cids')
 const assert = require('assert')
 const withIs = require('class-is')
 
@@ -16,22 +16,24 @@ class DAGLink {
     this._size = size
 
     if (typeof multihash === 'string') {
-      this._multihash = mh.fromB58String(multihash)
+      const cid = new CID(multihash)
+      this._multihash = cid.buffer
     } else if (Buffer.isBuffer(multihash)) {
       this._multihash = multihash
     }
   }
 
   toString () {
-    const mhStr = mh.toB58String(this.multihash)
-    return `DAGLink <${mhStr} - name: "${this.name}", size: ${this.size}>`
+    const cid = new CID(this.multihash)
+    return `DAGLink <${cid.toBaseEncodedString()} - name: "${this.name}", size: ${this.size}>`
   }
 
   toJSON () {
+    const cid = new CID(this.multihash)
     return {
       name: this.name,
       size: this.size,
-      multihash: mh.toB58String(this._multihash)
+      multihash: cid.toBaseEncodedString()
     }
   }
 
