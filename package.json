@@ -60,7 +60,7 @@
     "buffer-loader": "~0.0.1",
     "cids": "~0.5.3",
     "class-is": "^1.1.0",
-    "is-ipfs": "~0.3.2",
+    "is-ipfs": "~0.4.2",
     "multihashes": "~0.4.13",
     "multihashing-async": "~0.5.1",
     "protons": "^1.0.1",
@@ -69,7 +69,7 @@
     "stable": "~0.1.8"
   },
   "devDependencies": {
-    "aegir": "^14.0.0",
+    "aegir": "^15.1.0",
     "chai": "^4.1.2",
     "chai-checkmark": "^1.0.1",
     "detect-node": "^2.0.3",
