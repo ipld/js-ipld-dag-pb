@@ -1,40 +1,35 @@
 'use strict'
 
-const mh = require('multihashes')
 const assert = require('assert')
 const withIs = require('class-is')
+const CID = require('cids')
 
 class DAGNode {
   constructor (data, links, serialized, multihash) {
     assert(serialized, 'DAGNode needs its serialized format')
     assert(multihash, 'DAGNode needs its multihash')
 
-    if (typeof multihash === 'string') {
-      multihash = mh.fromB58String(multihash)
-    }
-
+    this._cid = new CID(multihash)
     this._data = data || Buffer.alloc(0)
     this._links = links || []
     this._serialized = serialized
-    this._multihash = multihash
-
-    this._size = this.links.reduce((sum, l) => sum + l.size, this.serialized.length)
-
-    this._json = {
-      data: this.data,
-      links: this.links.map((l) => l.toJSON()),
-      multihash: mh.toB58String(this.multihash),
-      size: this.size
-    }
   }
 
   toJSON () {
+    if (!this._json) {
+      this._json = Object.freeze({
+        data: this.data,
+        links: this.links.map((l) => l.toJSON()),
+        multihash: this._cid.toBaseEncodedString(),
+        size: this.size
+      })
+    }
+
     return this._json
   }
 
   toString () {
-    const mhStr = mh.toB58String(this.multihash)
-    return `DAGNode <${mhStr} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size}>`
+    return `DAGNode <${this._cid.toBaseEncodedString()} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size}>`
   }
 
   get data () {
@@ -62,6 +57,10 @@ class DAGNode {
   }
 
   get size () {
+    if (this._size === undefined) {
+      this._size = this.links.reduce((sum, l) => sum + l.size, this.serialized.length)
+    }
+
     return this._size
   }
 
@@ -70,7 +69,7 @@ class DAGNode {
   }
 
   get multihash () {
-    return this._multihash
+    return this._cid.buffer
   }
 
   set multihash (multihash) {

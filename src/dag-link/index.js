@@ -14,27 +14,23 @@ class DAGLink {
 
     this._name = name || ''
     this._size = size
-
-    if (typeof multihash === 'string') {
-      const cid = new CID(multihash)
-      this._multihash = cid.buffer
-    } else if (Buffer.isBuffer(multihash)) {
-      this._multihash = multihash
-    }
+    this._cid = new CID(multihash)
   }
 
   toString () {
-    const cid = new CID(this.multihash)
-    return `DAGLink <${cid.toBaseEncodedString()} - name: "${this.name}", size: ${this.size}>`
+    return `DAGLink <${this._cid.toBaseEncodedString()} - name: "${this.name}", size: ${this.size}>`
   }
 
   toJSON () {
-    const cid = new CID(this.multihash)
-    return {
-      name: this.name,
-      size: this.size,
-      multihash: cid.toBaseEncodedString()
+    if (!this._json) {
+      this._json = Object.freeze({
+        name: this.name,
+        size: this.size,
+        multihash: this._cid.toBaseEncodedString()
+      })
     }
+
+    return this._json
   }
 
   get name () {
@@ -54,7 +50,7 @@ class DAGLink {
   }
 
   get multihash () {
-    return this._multihash
+    return this._cid.buffer
   }
 
   set multihash (multihash) {
