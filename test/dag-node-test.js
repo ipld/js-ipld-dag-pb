@@ -362,7 +362,7 @@ module.exports = (repo) => {
           })
         },
         (cb) => {
-          const link = toDAGLink(node2).toJSON()
+          const link = Object.assign({}, toDAGLink(node2).toJSON())
           link.name = 'banana'
 
           DAGNode.addLink(node1a, link, (err, node) => {
@@ -402,7 +402,7 @@ module.exports = (repo) => {
           })
         },
         (cb) => {
-          const link = toDAGLink(node2).toJSON()
+          const link = Object.assign({}, toDAGLink(node2).toJSON())
           link.name = 'banana'
 
           DAGNode.addLink(node1a, link, (err, node) => {

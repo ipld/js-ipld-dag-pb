@@ -61,7 +61,6 @@
     "cids": "~0.5.3",
     "class-is": "^1.1.0",
     "is-ipfs": "~0.4.2",
-    "multihashes": "~0.4.13",
     "multihashing-async": "~0.5.1",
     "protons": "^1.0.1",
     "pull-stream": "^3.6.8",
@@ -78,6 +77,7 @@
     "ipfs-block-service": "~0.14.0",
     "ipfs-repo": "~0.22.1",
     "lodash": "^4.17.10",
+    "multihashes": "~0.4.13",
     "ncp": "^2.0.0",
     "rimraf": "^2.6.2"
   }

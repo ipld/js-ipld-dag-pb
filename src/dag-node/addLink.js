@@ -21,9 +21,8 @@ function addLink (node, link, callback) {
     link = toDAGLink(link)
   } else {
     // It's a Object with name, multihash/link and size
-    link.multihash = link.multihash || link.hash
     try {
-      link = new DAGLink(link.name, link.size, link.multihash)
+      link = new DAGLink(link.name, link.size, link.multihash || link.hash)
     } catch (err) {
       return callback(err)
     }
