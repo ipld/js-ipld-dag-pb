@@ -30,7 +30,7 @@ class DAGLink {
       })
     }
 
-    return this._json
+    return Object.assign({}, this._json)
   }
 
   get name () {
