@@ -1,3 +1,13 @@
+<a name="0.14.8"></a>
+## [0.14.8](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.7...v0.14.8) (2018-08-13)
+
+
+### Bug Fixes
+
+* allow mutating returned .toJSON value ([d8239ad](https://github.com/ipld/js-ipld-dag-pb/commit/d8239ad)), closes [ipld/js-ipld-dag-pb#81](https://github.com/ipld/js-ipld-dag-pb/issues/81)
+
+
+
 <a name="0.14.7"></a>
 ## [0.14.7](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.6...v0.14.7) (2018-08-13)
 
