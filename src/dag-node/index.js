@@ -25,7 +25,7 @@ class DAGNode {
       })
     }
 
-    return this._json
+    return Object.assign({}, this._json)
   }
 
   toString () {
