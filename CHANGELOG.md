@@ -1,3 +1,18 @@
+<a name="0.14.7"></a>
+## [0.14.7](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.6...v0.14.7) (2018-08-13)
+
+
+### Bug Fixes
+
+* support cids in DagLink ([4c701aa](https://github.com/ipld/js-ipld-dag-pb/commit/4c701aa))
+
+
+### Performance Improvements
+
+* make this._json calculation lazy ([d138c95](https://github.com/ipld/js-ipld-dag-pb/commit/d138c95))
+
+
+
 <a name="0.14.6"></a>
 ## [0.14.6](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.5...v0.14.6) (2018-07-20)
 
