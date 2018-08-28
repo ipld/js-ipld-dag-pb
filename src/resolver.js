@@ -59,9 +59,9 @@ exports.resolve = (binaryBlob, path, callback) => {
         if (split[2] === 'Hash') {
           value = { '/': value.hash }
         } else if (split[2] === 'Tsize') {
-          value = { '/': value.size }
+          value = value.size
         } else if (split[2] === 'Name') {
-          value = { '/': value.name }
+          value = value.name
         }
 
         remainderPath = split.slice(3).join('/')
