@@ -131,7 +131,7 @@ describe('IPLD Format resolver (local)', () => {
       it('links position path Name', (done) => {
         resolver.resolve(linksNodeBlob, 'Links/1/Name', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].name)
+          expect(result.value).to.eql(links[1].name)
           expect(result.remainderPath).to.eql('')
           done()
         })
@@ -140,7 +140,7 @@ describe('IPLD Format resolver (local)', () => {
       it('links position path Tsize', (done) => {
         resolver.resolve(linksNodeBlob, 'Links/1/Tsize', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].size)
+          expect(result.value).to.eql(links[1].size)
           expect(result.remainderPath).to.eql('')
           done()
         })
