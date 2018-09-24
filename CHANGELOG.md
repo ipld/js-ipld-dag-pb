@@ -1,3 +1,13 @@
+<a name="0.14.9"></a>
+## [0.14.9](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.8...v0.14.9) (2018-09-24)
+
+
+### Bug Fixes
+
+* resolve link Name or Tsize ([981cb9f](https://github.com/ipld/js-ipld-dag-pb/commit/981cb9f)), closes [#85](https://github.com/ipld/js-ipld-dag-pb/issues/85)
+
+
+
 <a name="0.14.8"></a>
 ## [0.14.8](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.7...v0.14.8) (2018-08-13)
 
