@@ -663,5 +663,27 @@ module.exports = (repo) => {
         })
       })
     }).timeout(6000)
+
+    it('exposes a CID', (done) => {
+      DAGNode.create(Buffer.from('hello world'), (err, node) => {
+        expect(err).to.not.exist()
+        expect(node.cid.toBaseEncodedString()).to.equal('QmU1Sq1B7RPQD2XcQNLB58qJUyJffVJqihcxmmN1STPMxf')
+        done()
+      })
+    })
+
+    it('has an immutable CID', (done) => {
+      DAGNode.create(Buffer.from('hello world'), (err, node) => {
+        expect(err).to.not.exist()
+
+        try {
+          node.cid = 'foo'
+          throw new Error('Should not be able to update CID')
+        } catch (error) {
+          expect(error.message).to.include("'cid' is immutable")
+          done()
+        }
+      })
+    })
   })
 }

@@ -53,5 +53,22 @@ module.exports = (repo) => {
 
       expect(link.toString()).to.equal('DAGLink <QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U - name: "hello", size: 3>')
     })
+
+    it('exposes a CID', () => {
+      const cid = 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
+      const link = new DAGLink('hello', 3, cid)
+      expect(link.cid.toBaseEncodedString()).to.equal(cid)
+    })
+
+    it('has an immutable CID', () => {
+      const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+
+      try {
+        link.cid = 'foo'
+        throw new Error('Should not be able to update CID')
+      } catch (error) {
+        expect(error.message).to.include("'cid' is immutable")
+      }
+    })
   })
 }
