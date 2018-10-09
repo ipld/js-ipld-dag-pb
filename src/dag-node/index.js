@@ -75,6 +75,14 @@ class DAGNode {
   set multihash (multihash) {
     throw new Error("Can't set property: 'multihash' is immutable")
   }
+
+  get cid () {
+    return this._cid
+  }
+
+  set cid (cid) {
+    throw new Error("Can't set property: 'cid' is immutable")
+  }
 }
 
 exports = module.exports = withIs(DAGNode, { className: 'DAGNode', symbolName: '@ipld/js-ipld-dag-pb/dagnode' })
