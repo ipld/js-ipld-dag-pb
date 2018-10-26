@@ -1,3 +1,13 @@
+<a name="0.14.11"></a>
+## [0.14.11](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.10...v0.14.11) (2018-10-26)
+
+
+### Features
+
+* expose cid property on DAGLinks and DAGNodes ([af3b44d](https://github.com/ipld/js-ipld-dag-pb/commit/af3b44d)), closes [/github.com/ipld/js-ipld-dag-pb/pull/81#issuecomment-410681495](https://github.com//github.com/ipld/js-ipld-dag-pb/pull/81/issues/issuecomment-410681495)
+
+
+
 <a name="0.14.10"></a>
 ## [0.14.10](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.9...v0.14.10) (2018-09-24)
 
