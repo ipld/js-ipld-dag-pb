@@ -72,7 +72,25 @@ function deserialize (data, callback) {
 
   const buf = pbn.Data == null ? Buffer.alloc(0) : Buffer.from(pbn.Data)
 
-  DAGNode.create(buf, links, callback)
+  // Work out the CID that was used to load this node
+  // Will be inaccurate if the hash-alg was not the default sha2-256
+  // Should be able to go away when https://github.com/ipld/js-ipld/issues/173 is resolved
+  serialize({
+    data: buf,
+    links
+  }, (err, serialized) => {
+    if (err) {
+      return callback(err)
+    }
+
+    multihashing(serialized, 'sha2-256', (err, multihash) => {
+      if (err) {
+        return callback(err)
+      }
+
+      callback(null, new DAGNode(buf, links, serialized, multihash))
+    })
+  })
 }
 
 function toProtoBuf (node) {
