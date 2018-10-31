@@ -41,7 +41,6 @@ module.exports = (repo) => {
         expect(node.data.length).to.be.above(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.above(0).mark()
-        expect(node.toJSON().multihash).to.be.equal('Qmd7xRhW5f29QuBFtqu3oSD27iVy35NRB91XFjmKFhtgMr')
 
         dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
@@ -63,7 +62,6 @@ module.exports = (repo) => {
         expect(node.data.length).to.be.above(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.above(0).mark()
-        expect(node.toJSON().multihash).to.be.equal('Qmd7xRhW5f29QuBFtqu3oSD27iVy35NRB91XFjmKFhtgMr')
 
         dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
@@ -114,7 +112,6 @@ module.exports = (repo) => {
       ], (err) => {
         expect(err).to.not.exist()
         expect(node1.toJSON()).to.eql(node2.toJSON())
-        expect(node1.serialized).to.eql(node2.serialized)
 
         // check sorting
         expect(node1.links.map((l) => l.name)).to.be.eql([
@@ -161,13 +158,11 @@ module.exports = (repo) => {
     it('create an empty node', (done) => {
       // this node is not in the repo as we don't copy node data to the browser
       expect(7).checks(done)
-      const fromGoIPFS = 'QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n'
 
       DAGNode.create(Buffer.alloc(0), (err, node) => {
         expect(err).to.not.exist.mark()
         expect(node.data.length).to.be.equal(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.toJSON().multihash).to.eql(fromGoIPFS)
         expect(node.size).to.be.equal(0).mark()
 
         dagPB.util.serialize(node, (err, serialized) => {
@@ -216,8 +211,6 @@ module.exports = (repo) => {
           DAGNode.addLink(node1, node2, (err, node1b) => {
             expect(err).to.not.exist()
             expect(node1b.links.length).to.equal(1)
-            expect(node1b.links[0].multihash)
-              .to.eql(node2.multihash)
             expect(node1b.links[0].size)
               .to.eql(node2.size)
             expect(node1b.links[0].name).to.be.eql('')
@@ -231,7 +224,7 @@ module.exports = (repo) => {
       let node1
       let node2
 
-      series([
+      waterfall([
         (cb) => {
           DAGNode.create(Buffer.from('1'), (err, node) => {
             expect(err).to.not.exist()
@@ -246,14 +239,11 @@ module.exports = (repo) => {
             cb()
           })
         },
-        (cb) => {
-          const link = toDAGLink(node2)
-
+        (cb) => toDAGLink(node2, cb),
+        (link, cb) => {
           DAGNode.addLink(node1, link, (err, node1b) => {
             expect(err).to.not.exist()
             expect(node1b.links.length).to.equal(1)
-            expect(node1b.links[0].multihash)
-              .to.eql(node2.multihash)
             expect(node1b.links[0].size)
               .to.eql(node2.size)
             expect(node1b.links[0].name).to.be.eql('')
@@ -267,7 +257,7 @@ module.exports = (repo) => {
       let node1
       let node2
 
-      series([
+      waterfall([
         (cb) => {
           DAGNode.create(Buffer.from('1'), (err, node) => {
             expect(err).to.not.exist()
@@ -282,14 +272,11 @@ module.exports = (repo) => {
             cb()
           })
         },
-        (cb) => {
-          const link = toDAGLink(node2).toJSON()
-
+        (cb) => toDAGLink(node2, cb),
+        (link, cb) => {
           DAGNode.addLink(node1, link, (err, node1b) => {
             expect(err).to.not.exist()
             expect(node1b.links.length).to.equal(1)
-            expect(node1b.links[0].multihash)
-              .to.eql(node2.multihash)
             expect(node1b.links[0].size)
               .to.eql(node2.size)
             expect(node1b.links[0].name).to.be.eql('')
@@ -346,7 +333,7 @@ module.exports = (repo) => {
       let node1b
       let node2
 
-      series([
+      waterfall([
         (cb) => {
           DAGNode.create(Buffer.from('1'), (err, node) => {
             expect(err).to.not.exist()
@@ -361,10 +348,10 @@ module.exports = (repo) => {
             cb()
           })
         },
-        (cb) => {
-          const link = toDAGLink(node2).toJSON()
-          link.name = 'banana'
-
+        (cb) => toDAGLink(node2, {
+          name: 'banana'
+        }, cb),
+        (link, cb) => {
           DAGNode.addLink(node1a, link, (err, node) => {
             expect(err).to.not.exist()
             node1b = node
@@ -386,7 +373,7 @@ module.exports = (repo) => {
       let node1b
       let node2
 
-      series([
+      waterfall([
         (cb) => {
           DAGNode.create(Buffer.from('1'), (err, node) => {
             expect(err).to.not.exist()
@@ -401,10 +388,10 @@ module.exports = (repo) => {
             cb()
           })
         },
-        (cb) => {
-          const link = toDAGLink(node2).toJSON()
-          link.name = 'banana'
-
+        (cb) => toDAGLink(node2, {
+          name: 'banana'
+        }, cb),
+        (link, cb) => {
           DAGNode.addLink(node1a, link, (err, node) => {
             expect(err).to.not.exist()
             node1b = node
@@ -412,7 +399,7 @@ module.exports = (repo) => {
           })
         },
         (cb) => {
-          DAGNode.rmLink(node1b, node2.multihash, (err, node) => {
+          DAGNode.rmLink(node1b, node1b.links[0].cid, (err, node) => {
             expect(err).to.not.exist()
             expect(node1a.toJSON()).to.eql(node.toJSON())
             cb()
@@ -458,8 +445,14 @@ module.exports = (repo) => {
 
         waterfall([
           (cb) => dagPB.util.serialize(node, cb),
-          (s, cb) => {
-            block = new Block(s, new CID(node.multihash))
+          (s, cb) => dagPB.util.cid(s, (err, cid) => {
+            cb(err, {
+              buffer: s,
+              cid: cid
+            })
+          }),
+          ({ buffer, cid }, cb) => {
+            block = new Block(buffer, cid)
             bs.put(block, cb)
           },
           (cb) => bs.get(block.cid, cb),
@@ -496,37 +489,37 @@ module.exports = (repo) => {
       const expectedLinks = [
         {
           name: '',
-          multihash: 'QmSbCgdsX12C4KDw3PDmpBN9iCzS87a5DjgSCoW9esqzXk',
+          cid: 'QmSbCgdsX12C4KDw3PDmpBN9iCzS87a5DjgSCoW9esqzXk',
           size: 45623854
         },
         {
           name: '',
-          multihash: 'Qma4GxWNhywSvWFzPKtEswPGqeZ9mLs2Kt76JuBq9g3fi2',
+          cid: 'Qma4GxWNhywSvWFzPKtEswPGqeZ9mLs2Kt76JuBq9g3fi2',
           size: 45623854
         },
         {
           name: '',
-          multihash: 'QmQfyxyys7a1e3mpz9XsntSsTGc8VgpjPj5BF1a1CGdGNc',
+          cid: 'QmQfyxyys7a1e3mpz9XsntSsTGc8VgpjPj5BF1a1CGdGNc',
           size: 45623854
         },
         {
           name: '',
-          multihash: 'QmSh2wTTZT4N8fuSeCFw7wterzdqbE93j1XDhfN3vQHzDV',
+          cid: 'QmSh2wTTZT4N8fuSeCFw7wterzdqbE93j1XDhfN3vQHzDV',
           size: 45623854
         },
         {
           name: '',
-          multihash: 'QmVXsSVjwxMsCwKRCUxEkGb4f4B98gXVy3ih3v4otvcURK',
+          cid: 'QmVXsSVjwxMsCwKRCUxEkGb4f4B98gXVy3ih3v4otvcURK',
           size: 45623854
         },
         {
           name: '',
-          multihash: 'QmZjhH97MEYwQXzCqSQbdjGDhXWuwW4RyikR24pNqytWLj',
+          cid: 'QmZjhH97MEYwQXzCqSQbdjGDhXWuwW4RyikR24pNqytWLj',
           size: 45623854
         },
         {
           name: '',
-          multihash: 'QmRs6U5YirCqC7taTynz3x2GNaHJZ3jDvMVAzaiXppwmNJ',
+          cid: 'QmRs6U5YirCqC7taTynz3x2GNaHJZ3jDvMVAzaiXppwmNJ',
           size: 32538395
         }
       ]
@@ -535,8 +528,12 @@ module.exports = (repo) => {
         expect(err).to.not.exist()
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
-        expect(nodeJSON.multihash).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
-        done()
+
+        dagPB.util.cid(node, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid.toBaseEncodedString()).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
+          done()
+        })
       })
     })
 
@@ -546,22 +543,22 @@ module.exports = (repo) => {
       const expectedLinks = [
         {
           name: 'audio_only.m4a',
-          multihash: 'QmaUAwAQJNtvUdJB42qNbTTgDpzPYD1qdsKNtctM5i7DGB',
+          cid: 'QmaUAwAQJNtvUdJB42qNbTTgDpzPYD1qdsKNtctM5i7DGB',
           size: 23319629
         },
         {
           name: 'chat.txt',
-          multihash: 'QmNVrxbB25cKTRuKg2DuhUmBVEK9NmCwWEHtsHPV6YutHw',
+          cid: 'QmNVrxbB25cKTRuKg2DuhUmBVEK9NmCwWEHtsHPV6YutHw',
           size: 996
         },
         {
           name: 'playback.m3u',
-          multihash: 'QmUcjKzDLXBPmB6BKHeKSh6ZoFZjss4XDhMRdLYRVuvVfu',
+          cid: 'QmUcjKzDLXBPmB6BKHeKSh6ZoFZjss4XDhMRdLYRVuvVfu',
           size: 116
         },
         {
           name: 'zoom_0.mp4',
-          multihash: 'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX',
+          cid: 'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX',
           size: 306281879
         }
       ]
@@ -570,8 +567,12 @@ module.exports = (repo) => {
         expect(err).to.not.exist()
         const nodeJSON = node.toJSON()
         expect(nodeJSON.links).to.eql(expectedLinks)
-        expect(nodeJSON.multihash).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
-        done()
+
+        dagPB.util.cid(node, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid.toBaseEncodedString()).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
+          done()
+        })
       })
     })
 
@@ -580,7 +581,6 @@ module.exports = (repo) => {
         expect(err).to.not.exist()
         expect(node.toJSON().data).to.eql(Buffer.alloc(0))
         expect(node.toJSON().links).to.eql([])
-        expect(node.toJSON().multihash).to.exist()
         expect(node.toJSON().size).to.exist()
         done()
       })
@@ -592,7 +592,6 @@ module.exports = (repo) => {
         expect(err).to.not.exist()
         expect(node.toJSON().data).to.eql(data)
         expect(node.toJSON().links).to.eql([])
-        expect(node.toJSON().multihash).to.exist()
         expect(node.toJSON().size).to.exist()
         done()
       })
@@ -623,7 +622,7 @@ module.exports = (repo) => {
     it('toString', (done) => {
       DAGNode.create(Buffer.from('hello world'), (err, node) => {
         expect(err).to.not.exist()
-        const expected = 'DAGNode <QmU1Sq1B7RPQD2XcQNLB58qJUyJffVJqihcxmmN1STPMxf - data: "hello world", links: 0, size: 13>'
+        const expected = 'DAGNode <data: "aGVsbG8gd29ybGQ=", links: 0, size: 13>'
         expect(node.toString()).to.equal(expected)
         done()
       })
@@ -645,7 +644,6 @@ module.exports = (repo) => {
         expect(node.data.length).to.be.above(0).mark()
         expect(Buffer.isBuffer(node.data)).to.be.true.mark()
         expect(node.size).to.be.above(0).mark()
-        expect(node.toJSON().multihash).to.be.equal('QmR2W8uRZuVfUk8YtuAH3ezJwJzMuVbuehL2NAc4TmAz93')
 
         dagPB.util.serialize(node, (err, serialized) => {
           expect(err).to.not.exist.mark()
@@ -663,27 +661,5 @@ module.exports = (repo) => {
         })
       })
     }).timeout(6000)
-
-    it('exposes a CID', (done) => {
-      DAGNode.create(Buffer.from('hello world'), (err, node) => {
-        expect(err).to.not.exist()
-        expect(node.cid.toBaseEncodedString()).to.equal('QmU1Sq1B7RPQD2XcQNLB58qJUyJffVJqihcxmmN1STPMxf')
-        done()
-      })
-    })
-
-    it('has an immutable CID', (done) => {
-      DAGNode.create(Buffer.from('hello world'), (err, node) => {
-        expect(err).to.not.exist()
-
-        try {
-          node.cid = 'foo'
-          throw new Error('Should not be able to update CID')
-        } catch (error) {
-          expect(error.message).to.include("'cid' is immutable")
-          done()
-        }
-      })
-    })
   })
 }

@@ -14,6 +14,7 @@ const waterfall = require('async/waterfall')
 const dagPB = require('../src')
 const DAGNode = dagPB.DAGNode
 const resolver = dagPB.resolver
+const utils = require('../src/util')
 
 describe('IPLD Format resolver (local)', () => {
   let emptyNodeBlob
@@ -22,18 +23,16 @@ describe('IPLD Format resolver (local)', () => {
 
   const links = [{
     name: '',
-    multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
+    cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
     size: 10
   }, {
     name: 'named link',
-    multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
+    cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
     size: 8
   }]
   const create = (data, links, callback) => waterfall([
     (cb) => DAGNode.create(data, links, cb),
-    (n, cb) => {
-      cb(null, n.serialized)
-    }
+    (n, cb) => utils.serialize(n, cb)
   ], callback)
 
   before((done) => {
@@ -122,7 +121,7 @@ describe('IPLD Format resolver (local)', () => {
       it('links position path Hash', (done) => {
         resolver.resolve(linksNodeBlob, 'Links/1/Hash', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].multihash)
+          expect(result.value['/']).to.eql(links[1].cid)
           expect(result.remainderPath).to.eql('')
           done()
         })
@@ -149,7 +148,7 @@ describe('IPLD Format resolver (local)', () => {
       it('links by name', (done) => {
         resolver.resolve(linksNodeBlob, 'named link', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].multihash)
+          expect(result.value['/']).to.eql(links[1].cid)
           expect(result.remainderPath).to.eql('')
           done()
         })
