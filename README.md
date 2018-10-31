@@ -178,7 +178,7 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
 {
   name: '<some string>', // optional
   size: <size in bytes>,
-  cid: <cid> // can be a String CID or CID buffer
+  cid: <cid> // can be a String CID, CID buffer or CID object
 }
 ```
 
@@ -186,7 +186,7 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
 #### rmLink(node, nameOrCid, callback)
 
 - `node` - type: DAGNode
-- `nameOrCid` - type: String or CID buffer
+- `nameOrCid` - type: String, CID object or CID buffer
 - `callback` - type: function with signature `function (err, node) {}`
 
 Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
@@ -242,7 +242,7 @@ const DAGLink = dagPB.DAGLink
 DAGLink.create(
   'link-to-file',  // name of the link (can be empty)
   10,              // size in bytes
-  'QmSomeHash...', // can be cid buffer or string
+  'QmSomeHash...', // can be CID object, CID buffer or string
   (err, link) => {
     if (err) {
       throw err
