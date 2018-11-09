@@ -272,9 +272,10 @@ module.exports = (repo) => {
             cb()
           })
         },
-        (cb) => toDAGLink(node2.toJSON(), cb),
+        (cb) => toDAGLink(node2, cb),
         (link, cb) => {
-          DAGNode.addLink(node1, link, (err, node1b) => {
+          const linkObject = link.toJSON()
+          DAGNode.addLink(node1, linkObject, (err, node1b) => {
             expect(err).to.not.exist()
             expect(node1b.links.length).to.equal(1)
             expect(node1b.links[0].size)
