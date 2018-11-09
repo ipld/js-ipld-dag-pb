@@ -26,7 +26,7 @@
     - [Add and remove a Link](#add-and-remove-a-link)
 - [API](#api)
   - [DAGNode functions](#dagnode-functions)
-    - [DAGNode.create(data, links, hashAlg, callback)](#dagnodecreatedata-links-hashalg-callback)
+    - [DAGNode.create(data, links, callback)](#dagnodecreatedata-links-callback)
     - [addLink(node, link, callback)](#addlinknode-link-callback)
     - [rmLink(node, nameOrCid, callback)](#rmlinknode-nameorcid-callback)
     - [clone(node, callback)](#clonenode-callback)
@@ -134,11 +134,10 @@ const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 ```
 
-#### DAGNode.create(data, links, hashAlg, callback)
+#### DAGNode.create(data, links, callback)
 
 - `data` - type: Buffer
 - `links`- type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
-- `hashAlg` - type: String
 - `callback` - type: function with signature `function (err, node) {}`
 
 Create a DAGNode.
@@ -181,7 +180,6 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
   cid: <cid> // can be a String CID, CID buffer or CID object
 }
 ```
-
 
 #### rmLink(node, nameOrCid, callback)
 
