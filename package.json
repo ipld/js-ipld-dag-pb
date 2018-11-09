@@ -1,6 +1,6 @@
 {
   "name": "ipld-dag-pb",
-  "version": "0.14.11",
+  "version": "0.15.0",
   "description": "JavaScript Implementation of the MerkleDAG Node in Protobuf.",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -25,6 +25,7 @@
   "contributors": [
     "Adam Stone <AdamStone@users.noreply.github.com>",
     "Alan Shaw <alan@tableflip.io>",
+    "Alex Potsides <alex@achingbrain.net>",
     "Arpit Agarwal <atvanguard@users.noreply.github.com>",
     "David Dias <daviddias.p@gmail.com>",
     "Diogo Silva <fsdiogo@gmail.com>",
@@ -41,7 +42,6 @@
     "Vijayee Kulkaa <vijayee.kulkaa@hushmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
     "Yahya <ya7yaz@gmail.com>",
-    "achingbrain <alex@achingbrain.net>",
     "dmitriy ryajov <dryajov@dmitriys-MacBook-Pro.local>",
     "dryajov <dryajov@gmail.com>",
     "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
