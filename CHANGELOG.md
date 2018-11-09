@@ -1,3 +1,33 @@
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.11...v0.15.0) (2018-11-09)
+
+
+### Performance Improvements
+
+* fixes [#97](https://github.com/ipld/js-ipld-dag-pb/issues/97) by not sorting DAGNode links unnecessarily ([e5d5d34](https://github.com/ipld/js-ipld-dag-pb/commit/e5d5d34))
+
+
+* BREAKING CHANGE: Remove .cid, .multihash and .serialized properties (#99) ([39cfef1](https://github.com/ipld/js-ipld-dag-pb/commit/39cfef1)), closes [#99](https://github.com/ipld/js-ipld-dag-pb/issues/99) [/github.com/ipld/js-ipld/issues/173#issuecomment-434408680](https://github.com//github.com/ipld/js-ipld/issues/173/issues/issuecomment-434408680)
+
+
+### BREAKING CHANGES
+
+* These properties are removed from the DAGNode class.
+
+* `.multihash` is removed because they aren't multihashes any more
+* `.cid` is removed to bring dag-pb in line with other ipld types
+* `.serialized` is removed because storing data buffers and the
+  serialized form uses too much memory - we can use the utils.serialize
+  method to create the serialized form when we need it, which in this
+  module is just during the tests
+
+`.multihash` has also changed to `.cid` in the output of
+`DAGLink.toJSON` and `DAGNode.toJSON` because since CIDv1 they are
+not just multihashes any more; the multihash is contained within
+the CID.
+
+
+
 <a name="0.14.11"></a>
 ## [0.14.11](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.10...v0.14.11) (2018-10-26)
 
