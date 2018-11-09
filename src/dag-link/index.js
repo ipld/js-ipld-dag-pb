@@ -6,15 +6,15 @@ const withIs = require('class-is')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
-  constructor (name, size, multihash) {
-    assert(multihash, 'A link requires a multihash to point to')
+  constructor (name, size, cid) {
+    assert(cid, 'A link requires a cid to point to')
     // assert(size, 'A link requires a size')
     //  note - links should include size, but this assert is disabled
     //  for now to maintain consistency with go-ipfs pinset
 
     this._name = name || ''
     this._size = size
-    this._cid = new CID(multihash)
+    this._cid = new CID(cid)
   }
 
   toString () {
@@ -26,7 +26,7 @@ class DAGLink {
       this._json = Object.freeze({
         name: this.name,
         size: this.size,
-        multihash: this._cid.toBaseEncodedString()
+        cid: this._cid.toBaseEncodedString()
       })
     }
 
@@ -47,14 +47,6 @@ class DAGLink {
 
   set size (size) {
     throw new Error("Can't set property: 'size' is immutable")
-  }
-
-  get multihash () {
-    return this._cid.buffer
-  }
-
-  set multihash (multihash) {
-    throw new Error("Can't set property: 'multihash' is immutable")
   }
 
   get cid () {

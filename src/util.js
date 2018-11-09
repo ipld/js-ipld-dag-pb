@@ -38,7 +38,13 @@ function cid (dagNode, options, callback) {
     version = hashAlg === 'sha2-256' ? 0 : 1
   }
   waterfall([
-    (cb) => serialize(dagNode, cb),
+    (cb) => {
+      if (Buffer.isBuffer(dagNode)) {
+        return cb(null, dagNode)
+      }
+
+      serialize(dagNode, cb)
+    },
     (serialized, cb) => multihashing(serialized, hashAlg, cb),
     (mh, cb) => cb(null, new CID(version, resolver.multicodec, mh))
   ], callback)
@@ -46,16 +52,22 @@ function cid (dagNode, options, callback) {
 
 function serialize (node, callback) {
   let serialized
+  let {
+    data,
+    links = []
+  } = node
 
   // If the node is not an instance of a DAGNode, the link.hash might be a Base58 encoded string; decode it
-  if (!DAGNode.isDAGNode(node) && node.links) {
-    node.links = node.links.map((link) => {
+  if (!DAGNode.isDAGNode(node) && links) {
+    links = links.map((link) => {
       return DAGLink.isDAGLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
     })
   }
 
   try {
-    serialized = proto.PBNode.encode(toProtoBuf(node))
+    serialized = proto.PBNode.encode(toProtoBuf({
+      data, links
+    }))
   } catch (err) {
     return callback(err)
   }
@@ -63,34 +75,16 @@ function serialize (node, callback) {
   callback(null, serialized)
 }
 
-function deserialize (data, callback) {
-  const pbn = proto.PBNode.decode(data)
+function deserialize (buffer, callback) {
+  const pbn = proto.PBNode.decode(buffer)
 
   const links = pbn.Links.map((link) => {
     return new DAGLink(link.Name, link.Tsize, link.Hash)
   })
 
-  const buf = pbn.Data == null ? Buffer.alloc(0) : Buffer.from(pbn.Data)
+  const data = pbn.Data == null ? Buffer.alloc(0) : Buffer.from(pbn.Data)
 
-  // Work out the CID that was used to load this node
-  // Will be inaccurate if the hash-alg was not the default sha2-256
-  // Should be able to go away when https://github.com/ipld/js-ipld/issues/173 is resolved
-  serialize({
-    data: buf,
-    links
-  }, (err, serialized) => {
-    if (err) {
-      return callback(err)
-    }
-
-    multihashing(serialized, 'sha2-256', (err, multihash) => {
-      if (err) {
-        return callback(err)
-      }
-
-      callback(null, new DAGNode(buf, links, serialized, multihash))
-    })
-  })
+  setImmediate(() => callback(null, new DAGNode(data, links, buffer.length)))
 }
 
 function toProtoBuf (node) {
@@ -104,13 +98,12 @@ function toProtoBuf (node) {
   }
 
   if (node.links && node.links.length > 0) {
-    pbn.Links = node.links.map((link) => {
-      return {
-        Hash: link.multihash,
+    pbn.Links = node.links
+      .map((link) => ({
+        Hash: link.cid.buffer,
         Name: link.name,
         Tsize: link.size
-      }
-    })
+      }))
   } else {
     pbn.Links = null
   }

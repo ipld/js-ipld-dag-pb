@@ -2,17 +2,16 @@
 
 const assert = require('assert')
 const withIs = require('class-is')
-const CID = require('cids')
 
 class DAGNode {
-  constructor (data, links, serialized, multihash) {
-    assert(serialized, 'DAGNode needs its serialized format')
-    assert(multihash, 'DAGNode needs its multihash')
+  constructor (data, links, serializedSize) {
+    if (serializedSize !== 0) {
+      assert(serializedSize, 'A DAGNode requires it\'s serialized size')
+    }
 
-    this._cid = new CID(multihash)
     this._data = data || Buffer.alloc(0)
     this._links = links || []
-    this._serialized = serialized
+    this._serializedSize = serializedSize
   }
 
   toJSON () {
@@ -20,7 +19,6 @@ class DAGNode {
       this._json = Object.freeze({
         data: this.data,
         links: this.links.map((l) => l.toJSON()),
-        multihash: this._cid.toBaseEncodedString(),
         size: this.size
       })
     }
@@ -29,7 +27,7 @@ class DAGNode {
   }
 
   toString () {
-    return `DAGNode <${this._cid.toBaseEncodedString()} - data: "${this.data.toString()}", links: ${this.links.length}, size: ${this.size}>`
+    return `DAGNode <data: "${this.data.toString('base64')}", links: ${this.links.length}, size: ${this.size}>`
   }
 
   get data () {
@@ -48,17 +46,9 @@ class DAGNode {
     throw new Error("Can't set property: 'links' is immutable")
   }
 
-  get serialized () {
-    return this._serialized
-  }
-
-  set serialized (serialized) {
-    throw new Error("Can't set property: 'serialized' is immutable")
-  }
-
   get size () {
     if (this._size === undefined) {
-      this._size = this.links.reduce((sum, l) => sum + l.size, this.serialized.length)
+      this._size = this.links.reduce((sum, l) => sum + l.size, this._serializedSize)
     }
 
     return this._size
@@ -66,22 +56,6 @@ class DAGNode {
 
   set size (size) {
     throw new Error("Can't set property: 'size' is immutable")
-  }
-
-  get multihash () {
-    return this._cid.buffer
-  }
-
-  set multihash (multihash) {
-    throw new Error("Can't set property: 'multihash' is immutable")
-  }
-
-  get cid () {
-    return this._cid
-  }
-
-  set cid (cid) {
-    throw new Error("Can't set property: 'cid' is immutable")
   }
 }
 

@@ -1,6 +1,9 @@
 'use strict'
 
 const DAGLink = require('./../dag-link')
+const {
+  cid
+} = require('../util')
 
 exports = module.exports
 
@@ -31,8 +34,19 @@ function linkSort (a, b) {
 /*
  * toDAGLink converts a DAGNode to a DAGLink
  */
-function toDAGLink (node) {
-  return new DAGLink('', node.size, node.multihash)
+function toDAGLink (node, options, callback) {
+  if (typeof options === 'function') {
+    callback = options
+    options = {}
+  }
+
+  cid(node, options, (error, cid) => {
+    if (error) {
+      return callback(error)
+    }
+
+    callback(null, new DAGLink(options.name || '', node.size, cid))
+  })
 }
 
 exports.cloneData = cloneData

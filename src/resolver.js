@@ -47,7 +47,7 @@ exports.resolve = (binaryBlob, path, callback) => {
         node.links.forEach((l, i) => {
           const link = l.toJSON()
           values[i] = values[link.name] = {
-            hash: link.multihash,
+            cid: link.cid,
             name: link.name,
             size: link.size
           }
@@ -57,7 +57,7 @@ exports.resolve = (binaryBlob, path, callback) => {
 
         // if remainderPath exists, value needs to be CID
         if (split[2] === 'Hash') {
-          value = { '/': value.hash }
+          value = { '/': value.cid }
         } else if (split[2] === 'Tsize') {
           value = value.size
         } else if (split[2] === 'Name') {
@@ -79,7 +79,7 @@ exports.resolve = (binaryBlob, path, callback) => {
         node.links.forEach((l, i) => {
           const link = l.toJSON()
           values[link.name] = {
-            hash: link.multihash,
+            cid: link.cid,
             name: link.name,
             size: link.size
           }
@@ -89,7 +89,7 @@ exports.resolve = (binaryBlob, path, callback) => {
 
         if (value) {
           return cb(null, {
-            value: { '/': value.hash },
+            value: { '/': value.cid },
             remainderPath: split.slice(1).join('/')
           })
         }

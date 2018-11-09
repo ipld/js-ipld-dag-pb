@@ -26,24 +26,22 @@
     - [Add and remove a Link](#add-and-remove-a-link)
 - [API](#api)
   - [DAGNode functions](#dagnode-functions)
-    - [DAGNode.create(data, links, hashAlg, callback)](#dagnodecreatedata-links-hashalg-callback)
+    - [DAGNode.create(data, links, callback)](#dagnodecreatedata-links-callback)
     - [addLink(node, link, callback)](#addlinknode-link-callback)
-    - [rmLink(node, nameOrMultihash, callback)](#rmlinknode-nameormultihash-callback)
+    - [rmLink(node, nameOrCid, callback)](#rmlinknode-nameorcid-callback)
     - [clone(node, callback)](#clonenode-callback)
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
     - [`node.data`](#nodedata)
     - [`node.links`](#nodelinks)
     - [`node.size`](#nodesize)
-    - [`node.multihash`](#nodemultihash)
-    - [`node.serialized`](#nodeserialized)
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
   - [DAGLink functions](#daglink-functions)
-    - [DAGLink.create(name, size, multihash, callback)](#daglinkcreatename-size-multihash-callback)
+    - [DAGLink.create(name, size, cid, callback)](#daglinkcreatename-size-cid-callback)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
     - [`link.name`](#linkname)
     - [`link.size`](#linksize)
-    - [`link.multihash`](#linkmultihash)
+    - [`link.cid`](#linkcid)
     - [`link.toJSON()`](#linktojson)
     - [`link.toString()`](#linktostring)
   - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specificshttpsgithubcomipldinterface-ipld-format---local-nodeblock-scope-resolver)
@@ -101,7 +99,7 @@ DAGNode.create('some data', (err, node2) => {
 ```JavaScript
 const link = {
   name: 'I am a link',
-  multihash: 'QmHash..',
+  cid: 'QmHash..',
   size: 42
 }
 
@@ -136,11 +134,10 @@ const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 ```
 
-#### DAGNode.create(data, links, hashAlg, callback)
+#### DAGNode.create(data, links, callback)
 
 - `data` - type: Buffer
 - `links`- type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
-- `hashAlg` - type: String
 - `callback` - type: function with signature `function (err, node) {}`
 
 Create a DAGNode.
@@ -156,7 +153,7 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 ```JavaScript
 {
   name: '<some name>',
-  hash: '<some multihash>', // can also be `multihash: <some multihash>`
+  cid: '<some cid>',
   size: <sizeInBytes>
 }
 ```
@@ -167,7 +164,7 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 - `link` - type: DAGLink or DAGLink in its json format
 - `callback` - type: function with signature `function (err, node) {}`
 
-Creates a link on node A to node B by using node B to get its multihash. Returns a *new* instance of DAGNode without modifying the old one.
+Creates a link on node A to node B by using node B to get its CID. Returns a *new* instance of DAGNode without modifying the old one.
 
 Creates a new DAGNode instance with the union of node.links plus the new link.
 
@@ -180,21 +177,20 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
 {
   name: '<some string>', // optional
   size: <size in bytes>,
-  multihash: <multihash> // can be a String multihash or multihash buffer
+  cid: <cid> // can be a String CID, CID buffer or CID object
 }
 ```
 
-
-#### rmLink(node, nameOrMultihash, callback)
+#### rmLink(node, nameOrCid, callback)
 
 - `node` - type: DAGNode
-- `nameOrMultihash` - type: String or multihash buffer
+- `nameOrCid` - type: String, CID object or CID buffer
 - `callback` - type: function with signature `function (err, node) {}`
 
 Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
 
 ```JavaScript
-DAGNode.rmLink(node, 'Link1' (err, dagNode) => ...) 
+DAGNode.rmLink(node, 'Link1' (err, dagNode) => ...)
 ```
 
 #### clone(node, callback)
@@ -222,10 +218,6 @@ An array of `DAGLinks`
 
 Size of the node, in bytes
 
-#### `node.multihash`
-
-#### `node.serialized`
-
 #### `node.toJSON()`
 
 #### `node.toString()`
@@ -233,7 +225,7 @@ Size of the node, in bytes
 
 ### DAGLink functions
 
-Following the same pattern as [`DAGNode functions`]() above, DAGLink also offers a function for its creation. 
+Following the same pattern as [`DAGNode functions`]() above, DAGLink also offers a function for its creation.
 
 You can incude it in your project with:
 
@@ -242,13 +234,13 @@ const dagPB = require('ipld-dag-pb')
 const DAGLink = dagPB.DAGLink
 ```
 
-#### DAGLink.create(name, size, multihash, callback)
+#### DAGLink.create(name, size, cid, callback)
 
 ```JavaScript
 DAGLink.create(
   'link-to-file',  // name of the link (can be empty)
   10,              // size in bytes
-  'QmSomeHash...', // can be multihash buffer or string
+  'QmSomeHash...', // can be CID object, CID buffer or string
   (err, link) => {
     if (err) {
       throw err
@@ -260,7 +252,7 @@ DAGLink.create(
 Note: DAGLinks are simpler objects and can be instantiated directly:
 
 ```JavaScript
-const link = new DAGLink(name, size, multihash)
+const link = new DAGLink(name, size, cid)
 ```
 
 ### DAGLink instance methods and properties
@@ -269,7 +261,7 @@ const link = new DAGLink(name, size, multihash)
 
 #### `link.size`
 
-#### `link.multihash`
+#### `link.cid`
 
 #### `link.toJSON()`
 
