@@ -44,7 +44,8 @@ module.exports = (repo) => {
       expect(link.toJSON()).to.eql({
         name: 'hello',
         size: 3,
-        cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
+        cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
+        multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
       })
     })
 
@@ -68,6 +69,23 @@ module.exports = (repo) => {
         throw new Error('Should not be able to update CID')
       } catch (error) {
         expect(error.message).to.include("'cid' is immutable")
+      }
+    })
+
+    it('exposes a multihash', () => {
+      const cid = new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+      const link = new DAGLink('hello', 3, cid)
+      expect(link.multihash).to.deep.equal(cid.buffer)
+    })
+
+    it('has an immutable multihash', () => {
+      const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+
+      try {
+        link.multihash = 'foo'
+        throw new Error('Should not be able to update multihash')
+      } catch (error) {
+        expect(error.message).to.include("'multihash' is immutable")
       }
     })
   })

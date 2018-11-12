@@ -42,6 +42,7 @@
     - [`link.name`](#linkname)
     - [`link.size`](#linksize)
     - [`link.cid`](#linkcid)
+    - [`link.multihash`](#linkmultihash)
     - [`link.toJSON()`](#linktojson)
     - [`link.toString()`](#linktostring)
   - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specificshttpsgithubcomipldinterface-ipld-format---local-nodeblock-scope-resolver)
@@ -262,6 +263,12 @@ const link = new DAGLink(name, size, cid)
 #### `link.size`
 
 #### `link.cid`
+
+A [CID](https://www.npmjs.com/package/cids) object representing the content identifier of the linked DAGNode.
+
+#### `link.multihash`
+
+**Deprecated** Please use `link.cid` instead.
 
 #### `link.toJSON()`
 

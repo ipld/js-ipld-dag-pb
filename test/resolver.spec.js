@@ -24,10 +24,12 @@ describe('IPLD Format resolver (local)', () => {
   const links = [{
     name: '',
     cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
+    multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
     size: 10
   }, {
     name: 'named link',
     cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
+    multihash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
     size: 8
   }]
   const create = (data, links, callback) => waterfall([

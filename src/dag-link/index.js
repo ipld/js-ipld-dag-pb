@@ -26,7 +26,8 @@ class DAGLink {
       this._json = Object.freeze({
         name: this.name,
         size: this.size,
-        cid: this._cid.toBaseEncodedString()
+        cid: this._cid.toBaseEncodedString(),
+        multihash: this._cid.toBaseEncodedString()
       })
     }
 
@@ -55,6 +56,14 @@ class DAGLink {
 
   set cid (cid) {
     throw new Error("Can't set property: 'cid' is immutable")
+  }
+
+  get multihash () {
+    return this._cid.buffer
+  }
+
+  set multihash (cid) {
+    throw new Error("Can't set property: 'multihash' is immutable")
   }
 }
 
