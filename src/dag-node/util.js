@@ -1,9 +1,7 @@
 'use strict'
 
 const DAGLink = require('./../dag-link')
-const {
-  cid
-} = require('../util')
+const { cid, serialize } = require('../ipld-format.js')
 
 exports = module.exports
 
@@ -34,19 +32,10 @@ function linkSort (a, b) {
 /*
  * toDAGLink converts a DAGNode to a DAGLink
  */
-function toDAGLink (node, options, callback) {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
-  }
-
-  cid(node, options, (error, cid) => {
-    if (error) {
-      return callback(error)
-    }
-
-    callback(null, new DAGLink(options.name || '', node.size, cid))
-  })
+const toDAGLink = async (node, options = {}) => {
+  const serialized = await serialize(node)
+  const nodeCid = await cid(serialized)
+  return new DAGLink(options.name || '', serialized.length, nodeCid)
 }
 
 exports.cloneData = cloneData

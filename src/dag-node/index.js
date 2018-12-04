@@ -10,20 +10,16 @@ class DAGNode {
     }
 
     this._data = data || Buffer.alloc(0)
-    this._links = links || []
+    this.links = links
     this._serializedSize = serializedSize
   }
 
   toJSON () {
-    if (!this._json) {
-      this._json = Object.freeze({
-        data: this.data,
-        links: this.links.map((l) => l.toJSON()),
-        size: this.size
-      })
+    return {
+      data: this.data,
+      links: this.links.map((l) => l.toJSON()),
+      size: this.size
     }
-
-    return Object.assign({}, this._json)
   }
 
   toString () {
@@ -36,14 +32,6 @@ class DAGNode {
 
   set data (data) {
     throw new Error("Can't set property: 'data' is immutable")
-  }
-
-  get links () {
-    return this._links
-  }
-
-  set links (links) {
-    throw new Error("Can't set property: 'links' is immutable")
   }
 
   get size () {

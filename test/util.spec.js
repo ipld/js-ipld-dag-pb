@@ -2,6 +2,7 @@
 
 'use strict'
 
+const CID = require('cids')
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
@@ -13,85 +14,52 @@ const {
 const {
   serialize,
   deserialize
-} = require('../src/util')
+} = require('../src/ipld-format')
 
-describe('util', () => {
-  it('should serialize an empty node', (done) => {
-    serialize({}, (error, result) => {
-      expect(error).to.not.exist()
-      expect(result).to.be.an.instanceof(Buffer)
-      expect(result).to.be.empty()
-      done()
-    })
+describe('IPLD Format implementation', () => {
+  it('should serialize an empty node', async () => {
+    const result = await serialize({})
+    expect(result).to.be.an.instanceof(Uint8Array)
+    expect(result).to.be.empty()
   })
 
-  it('should serialize a node with data', (done) => {
+  it('should serialize a node with data', async () => {
     const data = Buffer.from([0, 1, 2, 3])
-    serialize({
-      data
-    }, (error, result) => {
-      expect(error).to.not.exist()
-      expect(result).to.be.an.instanceof(Buffer)
+    const result = await serialize({ data })
+    expect(result).to.be.an.instanceof(Uint8Array)
 
-      deserialize(result, (error, node) => {
-        expect(error).to.not.exist()
-        expect(node.data).to.deep.equal(data)
-
-        done()
-      })
-    })
+    const node = await deserialize(result)
+    expect(node.data).to.deep.equal(data)
   })
 
-  it('should serialize a node with links', (done) => {
+  it('should serialize a node with links', async () => {
     const links = [
       new DAGLink('', 0, 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
     ]
-    serialize({
-      links
-    }, (error, result) => {
-      expect(error).to.not.exist()
-      expect(result).to.be.an.instanceof(Buffer)
+    const result = await serialize({ links })
+    expect(result).to.be.an.instanceof(Uint8Array)
 
-      deserialize(result, (error, node) => {
-        expect(error).to.not.exist()
-        expect(node.links).to.deep.equal(links)
-
-        done()
-      })
-    })
+    const node = await deserialize(result)
+    expect(node.links).to.deep.equal(links)
   })
 
-  it('should serialize a node with links as plain objects', (done) => {
+  it('should serialize a node with links as plain objects', async () => {
     const links = [{
       name: '',
       size: 0,
-      hash: 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe'
+      cid: new CID('QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
     }]
-    serialize({
-      links
-    }, (error, result) => {
-      expect(error).to.not.exist()
-      expect(result).to.be.an.instanceof(Buffer)
+    const result = await serialize({ links })
+    expect(result).to.be.an.instanceof(Uint8Array)
 
-      deserialize(result, (error, node) => {
-        expect(error).to.not.exist()
-        expect(node.links).to.deep.equal([
-          new DAGLink('', 0, 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
-        ])
-
-        done()
-      })
-    })
+    const node = await deserialize(result)
+    expect(node.links).to.deep.equal([
+      new DAGLink('', 0, 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
+    ])
   })
 
-  it('should ignore invalid properties when serializing', (done) => {
-    serialize({
-      foo: 'bar'
-    }, (error, result) => {
-      expect(error).to.not.exist()
-      expect(result).to.be.an.instanceof(Buffer)
-      expect(result).to.be.empty()
-      done()
-    })
+  it('should ignore invalid properties when serializing', async () => {
+    const result = await serialize({ foo: 'bar' })
+    expect(result).to.be.empty()
   })
 })

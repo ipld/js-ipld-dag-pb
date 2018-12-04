@@ -22,15 +22,11 @@ class DAGLink {
   }
 
   toJSON () {
-    if (!this._json) {
-      this._json = Object.freeze({
-        name: this.name,
-        size: this.size,
-        cid: this._cid.toBaseEncodedString()
-      })
+    return {
+      name: this.name,
+      size: this.size,
+      cid: this._cid.toBaseEncodedString()
     }
-
-    return Object.assign({}, this._json)
   }
 
   get name () {

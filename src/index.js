@@ -9,3 +9,17 @@ exports.DAGLink = require('./dag-link')
  */
 exports.resolver = require('./resolver')
 exports.util = require('./util')
+
+const {
+  cid,
+  defaultHashAlg,
+  deserialize,
+  format,
+  serialize
+} = require('./ipld-format')
+
+exports.cid = cid
+exports.defaultHashAlg = defaultHashAlg
+exports.deserialize = deserialize
+exports.format = format
+exports.serialize = serialize

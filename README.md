@@ -288,6 +288,10 @@ const link = new DAGLink(name, size, cid)
 
 ### `dagPB.util.deserialize`
 
+### Development
+
+The Protocol Buffers reader and writer is pre-generated with [PBF](https://github.com/mapbox/pbf). If the schema ever changes, you need to recreate it via `npx pbf src/dag.proto > src/dag.proto.js`.
+
 ## Contribute
 
 Please contribute! [Look at the issues](https://github.com/ipld/js-ipld-dag-pb/issues)!
