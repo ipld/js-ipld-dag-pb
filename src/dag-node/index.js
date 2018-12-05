@@ -2,6 +2,7 @@
 
 const assert = require('assert')
 const withIs = require('class-is')
+const addNamedLink = require('./addNamedLink')
 
 /**
  * Makes all properties with a leading underscore non-enumerable.
@@ -63,6 +64,13 @@ class DAGNode {
     // Make sure we have a nice public API that can be used by an IPLD resolver
     hidePrivateFields(this)
     addEnumerableGetters(this, ['data', 'Data', 'links', 'Links'])
+
+    // Add getters for existing links by the name of the link
+    // This is how paths are traversed in IPFS. Links with names won't
+    // override existing fields like `data` or `links`.
+    links.forEach((link, position) => {
+      addNamedLink(this, link.name, position)
+    })
   }
 
   toJSON () {

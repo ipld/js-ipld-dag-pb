@@ -2,6 +2,7 @@
 
 const sort = require('stable')
 const { linkSort, toDAGLink } = require('./util')
+const addNamedLink = require('./addNamedLink')
 // const cloneLinks = dagNodeUtil.cloneLinks
 // const cloneData = dagNodeUtil.cloneData
 const DAGLink = require('../dag-link')
@@ -47,6 +48,14 @@ const addLink = async (node, link) => {
   const dagLink = await asDAGLink(link)
   node._links.push(dagLink)
   node._links = sort(node._links, linkSort)
+
+  const name = dagLink.name
+  if (name !== '') {
+    const position = node._links.findIndex((link) => link.name === name)
+    if (position !== -1) {
+      addNamedLink(node, name, position)
+    }
+  }
 }
 
 module.exports = addLink

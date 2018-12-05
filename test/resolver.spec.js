@@ -124,24 +124,14 @@ describe('IPLD Format resolver (local)', async () => {
       it('links position path Tsize', () => {
         expect(linksNode.Links[1].Tsize).to.eql(links[1].size)
       })
-/* TODO vmx 2018-12-05
-      it('links by name', (done) => {
-        resolver.resolve(linksNodeBlob, 'named link', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].cid)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+
+      it('links by name', () => {
+        expect(linksNode['named link'].cid).to.eql(links[1].cid)
       })
 
-      it('missing link by name', (done) => {
-        resolver.resolve(linksNodeBlob, 'missing link', (err, result) => {
-          expect(err).to.exist()
-          expect(err.message).to.equal('path not available')
-          done()
-        })
+      it('missing link by name', () => {
+        expect(linksNode['missing link']).to.be.undefined()
       })
-*/
     })
 
     it('resolver.tree', () => {
@@ -166,7 +156,8 @@ describe('IPLD Format resolver (local)', async () => {
         'Links/1',
         'Links/1/Name',
         'Links/1/Tsize',
-        'Links/1/Hash'
+        'Links/1/Hash',
+        'named link'
       ])
     })
   })
@@ -208,7 +199,8 @@ describe('IPLD Format resolver (local)', async () => {
         'Links/1',
         'Links/1/Name',
         'Links/1/Tsize',
-        'Links/1/Hash'
+        'Links/1/Hash',
+        'named link'
       ])
     })
   })

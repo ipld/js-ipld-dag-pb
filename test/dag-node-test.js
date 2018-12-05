@@ -160,6 +160,18 @@ module.exports = (repo) => {
       expect(node1.links[0].name).to.be.eql('')
     })
 
+    it('addLink by with name', async () => {
+      const node1 = await DAGNode.create(Buffer.from('1'))
+      const node2 = await DAGNode.create(Buffer.from('2'))
+      const link = await toDAGLink(node2, { name: 'banana' })
+      expect(Object.keys(node1)).to.not.include('banana')
+      await DAGNode.addLink(node1, link)
+      expect(node1.links.length).to.equal(1)
+      expect(node1.links[0].size).to.eql(node2.size)
+      expect(node1.links[0].name).to.eql('banana')
+      expect(Object.keys(node1)).to.include('banana')
+    })
+
     it('addLink - add several links', async () => {
       const node = await DAGNode.create(Buffer.from('1'))
       expect(node.links.length).to.equal(0)
@@ -183,7 +195,9 @@ module.exports = (repo) => {
 
       await DAGNode.addLink(node, link)
       expect(node.links.length).to.eql(1)
+      expect(Object.keys(node)).to.include('banana')
       DAGNode.rmLink(node, 'banana')
+      expect(Object.keys(node)).to.not.include('banana')
       expect(node.links.length).to.eql(0)
       expect(node.toJSON()).to.eql(withoutLink)
     })
@@ -198,7 +212,9 @@ module.exports = (repo) => {
 
       await DAGNode.addLink(node, link)
       expect(node.links.length).to.eql(1)
+      expect(Object.keys(node)).to.include('banana')
       DAGNode.rmLink(node, node.links[0].cid)
+      expect(Object.keys(node)).to.not.include('banana')
       expect(node.links.length).to.eql(0)
       expect(node.toJSON()).to.eql(withoutLink)
     })
