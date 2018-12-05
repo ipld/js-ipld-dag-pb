@@ -6,9 +6,9 @@ const CID = require('cids')
 // and node. Why isn't the link just added to the existing node
 const rmLink = (dagNode, nameOrCid) => {
   if (typeof nameOrCid === 'string') {
-    dagNode.links = dagNode.links.filter((link) => link.name !== nameOrCid)
+    dagNode._links = dagNode._links.filter((link) => link.name !== nameOrCid)
   } else if (Buffer.isBuffer(nameOrCid) || CID.isCID(nameOrCid)) {
-    dagNode.links = dagNode.links.filter((link) => !link.cid.equals(nameOrCid))
+    dagNode._links = dagNode._links.filter((link) => !link.cid.equals(nameOrCid))
   } else {
     throw new Error('second arg needs to be a name or CID')
   }

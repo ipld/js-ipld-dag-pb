@@ -62,24 +62,24 @@ module.exports = (repo) => {
 
     it('create a node with links', async () => {
       const l1 = [{
-        Name: 'some other link',
-        Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
-        Size: 8
+        name: 'some other link',
+        cid: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'),
+        size: 8
       }, {
-        Name: 'some link',
-        Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
-        Size: 10
+        name: 'some link',
+        cid: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'),
+        size: 10
       }]
 
       const someData = Buffer.from('some data')
 
       const node1 = await DAGNode.create(someData, l1)
       const l2 = l1.map((l) => {
-        return new DAGLink(l.Name, l.Size, l.Hash)
+        return new DAGLink(l.name, l.size, l.cid)
       })
 
       const node2 = await DAGNode.create(someData, l2)
-      expect(node2.links).to.eql([l2[1], l2[0]])
+      expect(node2.links).to.eql([l1[1], l1[0]])
       expect(node1.toJSON()).to.eql(node2.toJSON())
 
       // check sorting

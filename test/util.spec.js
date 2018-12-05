@@ -40,7 +40,11 @@ describe('IPLD Format implementation', () => {
     expect(result).to.be.an.instanceof(Uint8Array)
 
     const node = await deserialize(result)
-    expect(node.links).to.deep.equal(links)
+    expect(node.links).to.deep.equal([{
+      name: '',
+      size: 0,
+      cid: new CID('QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
+    }])
   })
 
   it('should serialize a node with links as plain objects', async () => {
@@ -53,9 +57,7 @@ describe('IPLD Format implementation', () => {
     expect(result).to.be.an.instanceof(Uint8Array)
 
     const node = await deserialize(result)
-    expect(node.links).to.deep.equal([
-      new DAGLink('', 0, 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
-    ])
+    expect(node.links).to.deep.equal(links)
   })
 
   it('should ignore invalid properties when serializing', async () => {

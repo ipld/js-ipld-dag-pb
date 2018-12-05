@@ -45,8 +45,8 @@ const asDAGLink = async (link) => {
 // and node. Why isn't the link just added to the existing node
 const addLink = async (node, link) => {
   const dagLink = await asDAGLink(link)
-  node.links.push(dagLink)
-  node.links = sort(node.links, linkSort)
+  node._links.push(dagLink)
+  node._links = sort(node._links, linkSort)
 }
 
 module.exports = addLink
