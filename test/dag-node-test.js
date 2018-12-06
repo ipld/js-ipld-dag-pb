@@ -19,7 +19,6 @@ const waterfall = require('async/waterfall')
 const isNode = require('detect-node')
 const multicodec = require('multicodec')
 const multihash = require('multihashes')
-const str2ab = require('array-buffer-from-string')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
