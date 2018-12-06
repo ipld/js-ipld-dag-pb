@@ -13,9 +13,8 @@ const waterfall = require('async/waterfall')
 const isPlainObject = require('is-plain-object')
 
 const dagPB = require('../src')
+const ipldFormat = require('../src/ipld-format')
 const DAGNode = dagPB.DAGNode
-const resolver = dagPB.resolver
-const utils = require('../src/util')
 
 const buildTree = (object) => {
   const result = []
@@ -74,11 +73,15 @@ describe('IPLD Format resolver (local)', async () => {
   })
 
   it('multicodec is dag-pb', () => {
-    expect(resolver.multicodec).to.equal('dag-pb')
+    // TODO vmx 2018-12-06: Use the multicodec table so that it's a constant
+    // and not a magic number
+    expect(ipldFormat.format).to.equal(0x70)
   })
 
   it('defaultHashAlg is sha2-256', () => {
-    expect(resolver.defaultHashAlg).to.equal('sha2-256')
+    // TODO vmx 2018-12-06: Use the multicodec table so that it's a constant
+    // and not a magic number
+    expect(ipldFormat.defaultHashAlg).to.equal(0x12)
   })
 
   describe('empty node', () => {
