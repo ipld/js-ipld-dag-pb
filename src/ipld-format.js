@@ -1,7 +1,5 @@
 'use strict'
 
-// const protons = require('protons')
-// const proto = protons(require('./dag.proto.js'))
 const CID = require('cids')
 const mergeOptions = require('merge-options')
 const Pbf = require('pbf')
@@ -24,11 +22,6 @@ const fromPbRep = (pbNode /*: PBNode */) /*: Object */ => {
     // TODO vmx 2018-12-03: This is a hack, CID should also take an
     // ArrayBuffer/Uint8Array as input
     const hash = Buffer.from(link.Hash)
-    // return {
-    //   cid: new CID(hash),
-    //   name: link.Name,
-    //   size: link.Tsize
-    // }
     return new DAGLink(link.Name, link.Tsize, hash)
   })
 
@@ -79,12 +72,11 @@ const toPbRep = (node /*: Object */) /*: PBNode */ => {
   return pbRep
 }
 
+// TODO vmx 2018-12-06: Have a proper multicodec table with constants
+// instead of magic numbers
 const defaultHashAlg = 0x12
 const format = 0x70
 
-// TODO vmx 2018-12-01: GO ON HERE and add the missing APIs.
-//   Not adding:
-//    - clone: overkill, is it really needed?
 const cid = async (
   binaryBlob /*: ArrayBuffer */,
   userOptions /*: {version: number, hashAlg: Multicodec } */
@@ -120,26 +112,6 @@ const serialize = async (node /*: DagPb */) /*: ArrayBuffer */ => {
   proto.PBNode.write(pbRep, pbf)
   const encoded = pbf.finish()
   return encoded
-}
-
-const main = async () => {
-  const data = new Uint8Array([0, 1, 2, 3])
-  console.log(data)
-
-  const serialized = await serialize({
-    data
-  })
-  console.log(serialized)
-
-  const deserialized = await deserialize(serialized)
-  console.log(deserialized)
-
-  const pbcid = await cid(serialized)
-  console.log(pbcid)
-}
-
-if (require.main === module) {
-  main()
 }
 
 module.exports = {
