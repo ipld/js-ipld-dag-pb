@@ -7,9 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const parallel = require('async/parallel')
 const CID = require('cids')
-const waterfall = require('async/waterfall')
 const isPlainObject = require('is-plain-object')
 
 const dagPB = require('../src')
@@ -29,16 +27,6 @@ const buildTree = (object) => {
   }
   actualBuildTree(object, '')
   return result
-}
-
-const toGoStyleLinks = (links) => {
-  return links.map((link) => {
-    return {
-      Name: link.name,
-      Tsize: link.size,
-      Hash: link.cid
-    }
-  })
 }
 
 describe('IPLD Format resolver (local)', async () => {

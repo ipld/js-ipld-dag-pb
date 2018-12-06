@@ -40,8 +40,6 @@ const asDAGLink = async (link) => {
 //   })
 // }
 
-
-
 // TODO vmx 2018-12-03: Find out why the original code did cloning of the link
 // and node. Why isn't the link just added to the existing node
 const addLink = async (node, link) => {

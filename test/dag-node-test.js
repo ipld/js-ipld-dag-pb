@@ -13,11 +13,7 @@ const dagPB = require('../src')
 const DAGLink = dagPB.DAGLink
 const DAGNode = dagPB.DAGNode
 const toDAGLink = require('../src/dag-node/util').toDAGLink
-const util = dagPB.util
-const series = require('async/series')
-const waterfall = require('async/waterfall')
 const isNode = require('detect-node')
-const multicodec = require('multicodec')
 const multihash = require('multihashes')
 
 const BlockService = require('ipfs-block-service')
@@ -277,7 +273,7 @@ module.exports = (repo) => {
       const cid = new CID(cidStr)
 
       return new Promise((resolve) => {
-        bs.get(cid, async(err, block) => {
+        bs.get(cid, async (err, block) => {
           expect(err).to.not.exist()
           const node = await dagPB.deserialize(block.data)
           expect(node.data).to.exist()

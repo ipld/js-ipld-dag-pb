@@ -7,7 +7,7 @@ const addNamedLink = require('./addNamedLink')
 /**
  * Makes all properties with a leading underscore non-enumerable.
  *
- * @param object {Object} - The object it should be applied to
+ * @param {Object} object - The object it should be applied to
  */
 const hidePrivateFields = (object) => {
   for (const key in object) {
@@ -23,8 +23,8 @@ const hidePrivateFields = (object) => {
  * This can be used to add additional getters that are enumerable and hence
  * show up on an `Object.keys()` call.
  *
- * @param object {Object} - The object it should be applied to
- * @param fields {Array.<String>} - The fields that should be made enumnerable
+ * @param {Object} object - The object it should be applied to
+ * @param {Array.<String>} fields - The fields that should be made enumnerable
  */
 const addEnumerableGetters = (object, fields) => {
   for (const field of fields) {

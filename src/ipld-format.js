@@ -3,7 +3,7 @@
 // const protons = require('protons')
 // const proto = protons(require('./dag.proto.js'))
 const CID = require('cids')
-const mergeOptions = require('merge-options');
+const mergeOptions = require('merge-options')
 const Pbf = require('pbf')
 const proto = require('./dag.proto.js')
 const multihashing = require('multihashing-async')
@@ -15,8 +15,11 @@ const DAGNode = require('./dag-node')
  *
  * The Protocol Buffers decoder creates an object which hasn't exactly
  * the shape the we want our object to look like, hence transfrom it.
+ *
+ * @param {Object} pbNode - A decoded Protocol Buffer DAGNode
+ * @returns {Object} - More Javascripty representation of a DAGNode
  */
-const fromPbRep = (pbNode /*: PBNode */) /*: DapPb */ => {
+const fromPbRep = (pbNode /*: PBNode */) /*: Object */ => {
   const links = pbNode.Links.map((link) => {
     // TODO vmx 2018-12-03: This is a hack, CID should also take an
     // ArrayBuffer/Uint8Array as input
@@ -40,8 +43,12 @@ const fromPbRep = (pbNode /*: PBNode */) /*: DapPb */ => {
  *
  * The Protocol Buffers encoder needs a JavaScript object with certain
  * field names. This function creates such an object out of our object.
+ *
+ * @param {Object} node - A DAGNode
+ * @return {Object} PBNode - A representation of the DAGNode that is suitable
+ *   for encoding as a Protocol Buffer DAGNode
  */
-const toPbRep = (node /*: DapPb */) /*: Object */ => {
+const toPbRep = (node /*: Object */) /*: PBNode */ => {
   const pbRep = {}
   if (node.data && node.data.length > 0) {
     pbRep.Data = node.data
@@ -79,9 +86,9 @@ const format = 0x70
 //   Not adding:
 //    - clone: overkill, is it really needed?
 const cid = async (
-    binaryBlob /*: ArrayBuffer */,
-    userOptions /*: {version: number, hashAlg: Multicodec } */
-  ) /*: CID */  => {
+  binaryBlob /*: ArrayBuffer */,
+  userOptions /*: {version: number, hashAlg: Multicodec } */
+) /*: CID */ => {
   const defaultOptions = { version: 1, hashAlg: defaultHashAlg }
   const options = mergeOptions(defaultOptions, userOptions)
   // NOTE vmx 2018-12-01: This is a dirty hack to make things work with the
@@ -100,11 +107,10 @@ const cid = async (
   })
 }
 
-
 const deserialize = async (binaryBlob /*: ArrayBuffer */) /*: DagPb */ => {
   const pbf = new Pbf(binaryBlob)
   const pbRep = proto.PBNode.read(pbf)
-  const {data, links} = fromPbRep(pbRep)
+  const { data, links } = fromPbRep(pbRep)
   return new DAGNode(data, links, binaryBlob.length)
 }
 
@@ -115,7 +121,6 @@ const serialize = async (node /*: DagPb */) /*: ArrayBuffer */ => {
   const encoded = pbf.finish()
   return encoded
 }
-
 
 const main = async () => {
   const data = new Uint8Array([0, 1, 2, 3])
@@ -142,5 +147,5 @@ module.exports = {
   defaultHashAlg,
   deserialize,
   format,
-  serialize,
+  serialize
 }

@@ -6,9 +6,9 @@
  * The link won't be added if its name is empty or matches one of the existing
  * properties.
  *
- * @param object {Object} - The object that contains an array of links
- * @param name {string} - The name of the link to add
- * @param position {numner} - The position within the array of links
+ * @param {Object} object - The object that contains an array of links
+ * @param {string} name - The name of the link to add
+ * @param {numner} position - The position within the array of links
  */
 const addNamedLink = (object, name, position) => {
   const skipNames = ['', ...Object.keys(this)]
