@@ -82,7 +82,7 @@ function deserialize (buffer, callback) {
     return new DAGLink(link.Name, link.Tsize, link.Hash)
   })
 
-  const data = pbn.Data == null ? Buffer.alloc(0) : Buffer.from(pbn.Data)
+  const data = pbn.Data == null ? Buffer.alloc(0) : pbn.Data
 
   setImmediate(() => callback(null, new DAGNode(data, links, buffer.length)))
 }
