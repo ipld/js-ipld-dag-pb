@@ -1,3 +1,13 @@
+<a name="0.15.1"></a>
+## [0.15.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.0...v0.15.1) (2018-12-11)
+
+
+### Performance Improvements
+
+* remove unneeded Buffer.from() call during deserialize ([4632596](https://github.com/ipld/js-ipld-dag-pb/commit/4632596))
+
+
+
 <a name="0.15.0"></a>
 # [0.15.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.14.11...v0.15.0) (2018-11-09)
 
