@@ -13,6 +13,7 @@ class DAGLink {
     //  for now to maintain consistency with go-ipfs pinset
 
     this._name = name || ''
+    this._nameBuf = null
     this._size = size
     this._cid = new CID(cid)
   }
@@ -35,6 +36,18 @@ class DAGLink {
 
   get name () {
     return this._name
+  }
+
+  // Memoize the Buffer representation of name
+  // We need this to sort the links, otherwise
+  // we will reallocate new buffers every time
+  get nameAsBuffer () {
+    if (this._nameBuf !== null) {
+      return this._nameBuf
+    }
+
+    this._nameBuf = Buffer.from(this._name)
+    return this._nameBuf
   }
 
   set name (name) {
