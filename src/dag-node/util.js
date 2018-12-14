@@ -25,10 +25,7 @@ function cloneLinks (dagNode) {
 }
 
 function linkSort (a, b) {
-  const aBuf = Buffer.from(a.name || '')
-  const bBuf = Buffer.from(b.name || '')
-
-  return aBuf.compare(bBuf)
+  return Buffer.compare(a.nameAsBuffer, b.nameAsBuffer)
 }
 
 /*
