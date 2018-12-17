@@ -1,3 +1,13 @@
+<a name="0.15.2"></a>
+## [0.15.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.1...v0.15.2) (2018-12-17)
+
+
+### Performance Improvements
+
+* memoize the Name buffer in DAGLink to avoid unneeded allocations ([83edf36](https://github.com/ipld/js-ipld-dag-pb/commit/83edf36))
+
+
+
 <a name="0.15.1"></a>
 ## [0.15.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.0...v0.15.1) (2018-12-11)
 
