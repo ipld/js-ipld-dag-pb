@@ -72,7 +72,7 @@
     "stable": "~0.1.8"
   },
   "devDependencies": {
-    "aegir": "^17.0.0",
+    "aegir": "^18.0.0",
     "chai": "^4.1.2",
     "chai-checkmark": "^1.0.1",
     "detect-node": "^2.0.4",
