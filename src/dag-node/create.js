@@ -37,7 +37,7 @@ function create (data, links, callback) {
       return callback(err)
     }
 
-    callback(null, new DAGNode(data, links, buffer.length))
+    return callback(null, new DAGNode(data, links, buffer.length))
   })
 }
 
