@@ -8,6 +8,7 @@ const DAGLink = require('./dag-link')
 const DAGNode = require('./dag-node')
 const multihashing = require('multihashing-async')
 const waterfall = require('async/waterfall')
+const setImmediate = require('async/setImmediate')
 
 exports = module.exports
 
