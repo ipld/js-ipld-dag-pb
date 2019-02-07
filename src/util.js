@@ -21,7 +21,7 @@ exports = module.exports
  *
  * @param {Object} dagNode - Internal representation
  * @param {Object} [options] - Options to create the CID
- * @param {number} [options.version] - CID version number. Defaults to zero if hashAlg == 'sha2-256'; otherwise, 1.
+ * @param {number} [options.version] - CID version number. Defaults to 1.
  * @param {string} [options.hashAlg] - Defaults to hashAlg for the resolver
  * @param {CidCallback} callback - Callback that handles the return value
  * @returns {void}
@@ -33,10 +33,8 @@ function cid (dagNode, options, callback) {
   }
   options = options || {}
   const hashAlg = options.hashAlg || resolver.defaultHashAlg
-  let version = options.version
-  if (typeof version === 'undefined') {
-    version = hashAlg === 'sha2-256' ? 0 : 1
-  }
+  const version = options.version == null ? 1 : options.version
+
   waterfall([
     (cb) => {
       if (Buffer.isBuffer(dagNode)) {

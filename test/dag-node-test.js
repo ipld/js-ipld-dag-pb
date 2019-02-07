@@ -416,7 +416,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           expect(cid.multihash).to.exist()
           expect(cid.codec).to.equal('dag-pb')
-          expect(cid.version).to.equal(0)
+          expect(cid.version).to.equal(1)
           const mh = multihash.decode(cid.multihash)
           expect(mh.name).to.equal('sha2-256')
           done()
@@ -532,7 +532,7 @@ module.exports = (repo) => {
 
         dagPB.util.cid(node, (err, cid) => {
           expect(err).to.not.exist()
-          expect(cid.toBaseEncodedString()).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
+          expect(cid.toBaseEncodedString()).to.eql('bafybeibfhhww5bpsu34qs7nz25wp7ve36mcc5mxd5du26sr45bbnjhpkei')
           done()
         })
       })
@@ -571,7 +571,7 @@ module.exports = (repo) => {
 
         dagPB.util.cid(node, (err, cid) => {
           expect(err).to.not.exist()
-          expect(cid.toBaseEncodedString()).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
+          expect(cid.toBaseEncodedString()).to.eql('bafybeigcsevw74ssldzfwhiijzmg7a35lssfmjkuoj2t5qs5u5aztj47tq')
           done()
         })
       })
