@@ -8,11 +8,13 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const {
+  DAGNode,
   DAGLink
 } = require('../src')
 const {
   serialize,
-  deserialize
+  deserialize,
+  cid
 } = require('../src/util')
 
 describe('util', () => {
@@ -92,6 +94,18 @@ describe('util', () => {
       expect(result).to.be.an.instanceof(Buffer)
       expect(result).to.be.empty()
       done()
+    })
+  })
+
+  it('should calculate a v0 CID', (done) => {
+    DAGNode.create(Buffer.from('TEST' + Date.now()), (err, node) => {
+      expect(err).to.not.exist()
+
+      cid(node, { version: 0 }, (err, cid) => {
+        expect(err).to.not.exist()
+        expect(cid.version).to.equal(0)
+        done()
+      })
     })
   })
 })
