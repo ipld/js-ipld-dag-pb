@@ -1,2 +1,4 @@
 * text=auto
 test/fixtures/** text eol=lf
+*.data binary
+*.ldb binary
