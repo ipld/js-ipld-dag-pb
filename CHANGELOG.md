@@ -1,3 +1,14 @@
+<a name="0.15.3"></a>
+## [0.15.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.2...v0.15.3) (2019-03-13)
+
+
+### Bug Fixes
+
+* add a return to callback ([eb73e70](https://github.com/ipld/js-ipld-dag-pb/commit/eb73e70))
+* **package:** update is-ipfs to version 0.6.0 ([0935e53](https://github.com/ipld/js-ipld-dag-pb/commit/0935e53))
+
+
+
 <a name="0.15.2"></a>
 ## [0.15.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.1...v0.15.2) (2018-12-17)
 
