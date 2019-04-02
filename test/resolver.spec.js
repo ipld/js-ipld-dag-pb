@@ -1,5 +1,4 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
 
 'use strict'
 
@@ -7,297 +6,215 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const parallel = require('async/parallel')
 const CID = require('cids')
-const waterfall = require('async/waterfall')
 
-const dagPB = require('../src')
-const DAGNode = dagPB.DAGNode
-const resolver = dagPB.resolver
+const { DAGNode, resolver } = require('../src')
 const utils = require('../src/util')
 
 describe('IPLD Format resolver (local)', () => {
-  let emptyNodeBlob
-  let linksNodeBlob
-  let dataLinksNodeBlob
-
   const links = [{
-    name: '',
-    cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
-    size: 10
+    Name: '',
+    Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'),
+    Tsize: 10
   }, {
-    name: 'named link',
-    cid: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
-    size: 8
+    Name: 'named link',
+    Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'),
+    Tsize: 8
   }]
-  const create = (data, links, callback) => waterfall([
-    (cb) => DAGNode.create(data, links, cb),
-    (n, cb) => utils.serialize(n, cb)
-  ], callback)
 
-  before((done) => {
-    parallel([
-      (cb) => create(Buffer.alloc(0), [], cb),
-      (cb) => create(Buffer.alloc(0), links, cb),
-      (cb) => create(Buffer.from('aaah the data'), links, cb)
-    ], (err, res) => {
-      expect(err).to.not.exist()
-      emptyNodeBlob = res[0]
-      linksNodeBlob = res[1]
-      dataLinksNodeBlob = res[2]
-      done()
-    })
-  })
+  const create = (data, links) => {
+    const node = DAGNode.create(data, links)
+    return utils.serialize(node)
+  }
 
-  it('multicodec is dag-pb', () => {
-    expect(resolver.multicodec).to.equal('dag-pb')
-  })
-
-  it('defaultHashAlg is sha2-256', () => {
-    expect(resolver.defaultHashAlg).to.equal('sha2-256')
-  })
+  const emptyNodeBlob = create(Buffer.alloc(0), [])
+  const linksNodeBlob = create(Buffer.alloc(0), links)
+  const dataLinksNodeBlob = create(Buffer.from('aaah the data'), links)
 
   describe('empty node', () => {
     describe('resolver.resolve', () => {
-      it('links path', (done) => {
-        resolver.resolve(emptyNodeBlob, 'Links', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql([])
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('links path', () => {
+        const result = resolver.resolve(emptyNodeBlob, 'Links')
+        expect(result.value).to.eql([])
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('data path', (done) => {
-        resolver.resolve(emptyNodeBlob, 'Data', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(Buffer.alloc(0))
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('data path', () => {
+        const result = resolver.resolve(emptyNodeBlob, 'Data')
+        expect(result.value).to.eql(Buffer.alloc(0))
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('non existent path', (done) => {
-        resolver.resolve(emptyNodeBlob, 'pathThatDoesNotExist', (err, result) => {
-          expect(err).to.exist()
-          done()
-        })
+      it('non existent path', () => {
+        expect(() =>
+          resolver.resolve(emptyNodeBlob, 'pathThatDoesNotExist')
+        ).to.throw(
+          "Object has no property 'pathThatDoesNotExist'"
+        )
       })
 
-      it('empty path', (done) => {
-        resolver.resolve(emptyNodeBlob, '', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value.data).to.eql(Buffer.alloc(0))
-          expect(result.value.links).to.eql([])
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('empty path', () => {
+        const result = resolver.resolve(emptyNodeBlob, '')
+        expect(result.value.Data).to.eql(Buffer.alloc(0))
+        expect(result.value.Links).to.eql([])
+        expect(result.remainderPath).to.eql('')
       })
     })
 
-    it('resolver.tree', (done) => {
-      resolver.tree(emptyNodeBlob, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([
-          'Links',
-          'Data'
-        ])
-        done()
-      })
+    it('resolver.tree', () => {
+      const tree = resolver.tree(emptyNodeBlob)
+      const paths = [...tree]
+      expect(paths).to.have.members([
+        'Links',
+        'Data'
+      ])
     })
   })
 
   describe('links node', () => {
     describe('resolver.resolve', () => {
-      it('links path', (done) => {
-        resolver.resolve(linksNodeBlob, 'Links', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(links)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('links path', () => {
+        const result = resolver.resolve(linksNodeBlob, 'Links')
+        expect(result.value).to.eql(links)
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('links position path Hash', (done) => {
-        resolver.resolve(linksNodeBlob, 'Links/1/Hash', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].cid)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('links position path Hash', () => {
+        const result = resolver.resolve(linksNodeBlob, 'Links/1/Hash')
+        expect(result.value).to.eql(links[1].Hash)
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('links position path Name', (done) => {
-        resolver.resolve(linksNodeBlob, 'Links/1/Name', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(links[1].name)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('links position path Name', () => {
+        const result = resolver.resolve(linksNodeBlob, 'Links/1/Name')
+        expect(result.value).to.eql(links[1].Name)
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('links position path Tsize', (done) => {
-        resolver.resolve(linksNodeBlob, 'Links/1/Tsize', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(links[1].size)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('links position path Tsize', () => {
+        const result = resolver.resolve(linksNodeBlob, 'Links/1/Tsize')
+        expect(result.value).to.eql(links[1].Tsize)
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('links by name', (done) => {
-        resolver.resolve(linksNodeBlob, 'named link', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/']).to.eql(links[1].cid)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('links by name', () => {
+        const result = resolver.resolve(linksNodeBlob, 'named link')
+        expect(result.value.Hash.equals(links[1].Hash)).to.be.true()
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('missing link by name', (done) => {
-        resolver.resolve(linksNodeBlob, 'missing link', (err, result) => {
-          expect(err).to.exist()
-          expect(err.message).to.equal('path not available')
-          done()
-        })
+      it('missing link by name', () => {
+        expect(() =>
+          resolver.resolve(linksNodeBlob, 'missing link')
+        ).to.throw(
+          "Object has no property 'missing link'"
+        )
       })
 
-      it('yield remainderPath if impossible to resolve through (a)', (done) => {
-        resolver.resolve(linksNodeBlob, 'Links/1/Hash/Data', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/']).to.exist()
-          expect(result.value['/']).to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-          expect(result.remainderPath).to.equal('Data')
-          done()
-        })
+      it('yield remainderPath if impossible to resolve through (a)', () => {
+        const result = resolver.resolve(linksNodeBlob, 'Links/1/Hash/Data')
+        expect(result.value.equals(
+          new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
+        )).to.be.true()
+        expect(result.remainderPath).to.equal('Data')
       })
 
-      it('yield remainderPath if impossible to resolve through (b)', (done) => {
-        resolver.resolve(linksNodeBlob, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/'])
-            .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-
-          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
-          done()
-        })
+      it('yield remainderPath if impossible to resolve through (b)', () => {
+        const result = resolver.resolve(linksNodeBlob, 'Links/1/Hash/Links/0/Hash/Data')
+        expect(result.value.equals(
+          new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
+        )).to.be.true()
+        expect(result.remainderPath).to.equal('Links/0/Hash/Data')
       })
 
-      it('yield remainderPath if impossible to resolve through named link (a)', (done) => {
-        resolver.resolve(linksNodeBlob, 'named link/Data', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/']).to.exist()
-          expect(result.value['/']).to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-          expect(result.remainderPath).to.equal('Data')
-          done()
-        })
+      it('yield remainderPath if impossible to resolve through named link (a)', () => {
+        const result = resolver.resolve(linksNodeBlob, 'named link/Hash/Data')
+        expect(result.value.equals(
+          new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
+        )).to.be.true()
+        expect(result.remainderPath).to.equal('Data')
       })
 
-      it('yield remainderPath if impossible to resolve through named link (b)', (done) => {
-        resolver.resolve(linksNodeBlob, 'named link/Links/0/Hash/Data', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value['/'])
-            .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-
-          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
-          done()
-        })
+      it('yield remainderPath if impossible to resolve through named link (b)', () => {
+        const result = resolver.resolve(linksNodeBlob, 'named link/Hash/Links/0/Hash/Data')
+        expect(result.value.equals(
+          new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
+        )).to.be.true()
+        expect(result.remainderPath).to.equal('Links/0/Hash/Data')
       })
     })
 
-    it('resolver.tree', (done) => {
-      resolver.tree(linksNodeBlob, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([
-          'Links',
-          'Links/0/Name',
-          'Links/0/Tsize',
-          'Links/0/Hash',
-          'Links/1/Name',
-          'Links/1/Tsize',
-          'Links/1/Hash',
-          'Data'
-        ])
-        done()
-      })
+    it('resolver.tree', () => {
+      const tree = resolver.tree(linksNodeBlob)
+      const paths = [...tree]
+      expect(paths).to.have.members([
+        'Links',
+        'Links/0',
+        'Links/0/Name',
+        'Links/0/Tsize',
+        'Links/0/Hash',
+        'Links/1',
+        'Links/1/Name',
+        'Links/1/Tsize',
+        'Links/1/Hash',
+        'Data',
+        'named link',
+        'named link/Name',
+        'named link/Tsize',
+        'named link/Hash'
+      ])
     })
   })
 
   describe('links and data node', () => {
-    describe('resolver.resolve', (done) => {
-      it('links path', (done) => {
-        resolver.resolve(dataLinksNodeBlob, 'Links', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(links)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+    describe('resolver.resolve', () => {
+      it('links path', () => {
+        const result = resolver.resolve(dataLinksNodeBlob, 'Links')
+        expect(result.value).to.eql(links)
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('data path', (done) => {
-        resolver.resolve(dataLinksNodeBlob, 'Data', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(Buffer.from('aaah the data'))
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('data path', () => {
+        const result = resolver.resolve(dataLinksNodeBlob, 'Data')
+        expect(result.value).to.eql(Buffer.from('aaah the data'))
+        expect(result.remainderPath).to.eql('')
       })
 
-      it('non existent path', (done) => {
-        resolver.resolve(dataLinksNodeBlob, 'pathThatDoesNotExist', (err, result) => {
-          expect(err).to.exist()
-          done()
-        })
+      it('non existent path', () => {
+        expect(() =>
+          resolver.resolve(dataLinksNodeBlob, 'pathThatDoesNotExist')
+        ).to.throw(
+          "Object has no property 'pathThatDoesNotExist'"
+        )
       })
 
-      it('empty path', (done) => {
-        resolver.resolve(dataLinksNodeBlob, '', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value.data).to.eql(Buffer.from('aaah the data'))
-          expect(result.value.links.map((link) => link.toJSON())).to.eql(links)
-          expect(result.remainderPath).to.eql('')
-          done()
-        })
+      it('empty path', () => {
+        const result = resolver.resolve(dataLinksNodeBlob, '')
+        expect(result.value.Data).to.eql(Buffer.from('aaah the data'))
+        expect(result.value.Links).to.eql(links)
+        expect(result.remainderPath).to.eql('')
       })
     })
 
-    it('resolver.tree', (done) => {
-      resolver.tree(dataLinksNodeBlob, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([
-          'Links',
-          'Links/0/Name',
-          'Links/0/Tsize',
-          'Links/0/Hash',
-          'Links/1/Name',
-          'Links/1/Tsize',
-          'Links/1/Hash',
-          'Data'
-        ])
-        done()
-      })
-    })
-  })
-
-  it('resolver.isLink for valid CID', (done) => {
-    resolver.isLink(dataLinksNodeBlob, 'Links/0/Hash', (err, link) => {
-      expect(err).to.not.exist()
-      expect(CID.isCID(new CID(link['/']))).to.equal(true)
-      done()
-    })
-  })
-
-  it('resolver.isLink for non valid CID', (done) => {
-    // blank value case
-    resolver.isLink(dataLinksNodeBlob, 'Links/0/Name', (err, link) => {
-      expect(err).to.not.exist()
-      expect(link).to.equal(false)
-      // non-blank value case
-      resolver.isLink(dataLinksNodeBlob, 'Links/0/Tsize', (err, link) => {
-        expect(err).to.not.exist()
-        expect(link).to.equal(false)
-        done()
-      })
+    it('resolver.tree', () => {
+      const tree = resolver.tree(dataLinksNodeBlob)
+      const paths = [...tree]
+      expect(paths).to.have.members([
+        'Links',
+        'Links/0',
+        'Links/0/Name',
+        'Links/0/Tsize',
+        'Links/0/Hash',
+        'Links/1',
+        'Links/1/Name',
+        'Links/1/Tsize',
+        'Links/1/Hash',
+        'Data',
+        'named link',
+        'named link/Name',
+        'named link/Tsize',
+        'named link/Hash'
+      ])
     })
   })
 })

@@ -3,6 +3,7 @@
 const CID = require('cids')
 const assert = require('assert')
 const withIs = require('class-is')
+const visibility = require('../visibility')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
@@ -16,25 +17,29 @@ class DAGLink {
     this._nameBuf = null
     this._size = size
     this._cid = new CID(cid)
+
+    // Make sure we have a nice public API that can be used by an IPLD resolver
+    visibility.hidePrivateFields(this)
+    visibility.addEnumerableGetters(this, ['Hash', 'Name', 'Tsize'])
   }
 
   toString () {
-    return `DAGLink <${this._cid.toBaseEncodedString()} - name: "${this.name}", size: ${this.size}>`
+    return `DAGLink <${this._cid.toBaseEncodedString()} - name: "${this.Name}", size: ${this.Tsize}>`
   }
 
   toJSON () {
     if (!this._json) {
       this._json = Object.freeze({
-        name: this.name,
-        size: this.size,
-        cid: this._cid.toBaseEncodedString()
+        name: this.Name,
+        size: this.Tsize,
+        cid: this.Hash.toBaseEncodedString()
       })
     }
 
     return Object.assign({}, this._json)
   }
 
-  get name () {
+  get Name () {
     return this._name
   }
 
@@ -50,27 +55,26 @@ class DAGLink {
     return this._nameBuf
   }
 
-  set name (name) {
+  set Name (name) {
     throw new Error("Can't set property: 'name' is immutable")
   }
 
-  get size () {
+  get Tsize () {
     return this._size
   }
 
-  set size (size) {
+  set Tsize (size) {
     throw new Error("Can't set property: 'size' is immutable")
   }
 
-  get cid () {
+  get Hash () {
     return this._cid
   }
 
-  set cid (cid) {
+  set Hash (cid) {
     throw new Error("Can't set property: 'cid' is immutable")
   }
 }
 
 exports = module.exports = withIs(DAGLink, { className: 'DAGLink', symbolName: '@ipld/js-ipld-dag-pb/daglink' })
-exports.create = require('./create')
 exports.util = require('./util')
