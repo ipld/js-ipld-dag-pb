@@ -27,10 +27,10 @@
     - [Add and remove a Link](#add-and-remove-a-link)
 - [API](#api)
   - [DAGNode functions](#dagnode-functions)
-    - [DAGNode.create(data, links, callback)](#dagnodecreatedata-links-callback)
-    - [addLink(node, link, callback)](#addlinknode-link-callback)
-    - [rmLink(node, nameOrCid, callback)](#rmlinknode-nameorcid-callback)
-    - [clone(node, callback)](#clonenode-callback)
+    - [DAGNode.create(data, links)](#dagnodecreatedata-links)
+    - [addLink(node, link)](#addlinknode-link)
+    - [rmLink(node, nameOrCid)](#rmlinknode-nameorcid)
+    - [clone(node)](#clonenode)
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
     - [`node.data`](#nodedata)
     - [`node.links`](#nodelinks)
@@ -38,7 +38,7 @@
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
   - [DAGLink functions](#daglink-functions)
-    - [DAGLink.create(name, size, cid, callback)](#daglinkcreatename-size-cid-callback)
+    - [DAGLink.create(name, size, cid)](#daglinkcreatename-size-cid)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
     - [`link.name`](#linkname)
     - [`link.size`](#linksize)
@@ -83,15 +83,10 @@ dagPB.util
 #### Create a DAGNode
 
 ```JavaScript
-DAGNode.create(new Buffer('some data'), (err, node1) => {
-  if (err) {
-    throw error
-  }
-  // node1 is your DAGNode instance.
-})
+const node1 = DAGNode.create(Buffer.from('some data'))
 
-DAGNode.create('some data', (err, node2) => {
-  // node2 will have the same data as node1.
+// node2 will have the same data as node1
+const node2 = DAGNode.create('some data')
 })
 ```
 
@@ -104,22 +99,13 @@ const link = {
   size: 42
 }
 
-DAGNode.addLink(node, link, (err, nodeA) => {
-  if (err) {
-    throw err
-  }
-  // node - DAGNode instance with the link
-  console.log('with link', nodeA.toJSON())
+const nodeA = await DAGNode.addLink(node, link)
+// nodeA - DAGNode instance with the link
+console.log('with link', nodeA.toJSON())
 
-  DAGNode.rmLink(nodeA, 'I am a link', (err, nodeB) => {
-    if (err) {
-      throw err
-    }
-
-  // node - DAGNode instance without the link, equal to just node
-  console.log('without link', nodeB.toJSON())
-  })
-})
+const nodeB = await DAGNode.rmLink(nodeA, 'I am a link')
+// nodeB - DAGNode instance without the link, equal to just node
+console.log('without link', nodeB.toJSON())
 ```
 
 ## API
@@ -135,18 +121,15 @@ const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 ```
 
-#### DAGNode.create(data, links, callback)
+#### DAGNode.create(data, links)
 
 - `data` - type: Buffer
 - `links`- type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
-- `callback` - type: function with signature `function (err, node) {}`
 
 Create a DAGNode.
 
 ```JavaScript
-DAGNode.create('data', links, (err, dagNode) => {
-  // ...
-})
+const dagNode = DAGNode.create('data', links)
 ```
 
 links can be a single or an array of DAGLinks instances or objects with the following pattern
@@ -159,11 +142,10 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 }
 ```
 
-#### addLink(node, link, callback)
+#### addLink(node, link)
 
 - `node` - type: DAGNode
 - `link` - type: DAGLink or DAGLink in its json format
-- `callback` - type: function with signature `function (err, node) {}`
 
 Creates a link on node A to node B by using node B to get its CID. Returns a *new* instance of DAGNode without modifying the old one.
 
@@ -175,34 +157,34 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
 - Object with the following properties:
 
 ```JavaScript
-{
+const link = {
   name: '<some string>', // optional
   size: <size in bytes>,
   cid: <cid> // can be a String CID, CID buffer or CID object
 }
+
+const dagNode = await DAGNode.addLink(node, link)
 ```
 
-#### rmLink(node, nameOrCid, callback)
+#### rmLink(node, nameOrCid)
 
 - `node` - type: DAGNode
 - `nameOrCid` - type: String, CID object or CID buffer
-- `callback` - type: function with signature `function (err, node) {}`
 
 Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
 
 ```JavaScript
-DAGNode.rmLink(node, 'Link1' (err, dagNode) => ...)
+const dagNode = await DAGNode.rmLink(node, 'Link1')
 ```
 
-#### clone(node, callback)
+#### clone(node)
 
 - `node` - type: DAGNode
-- `callback` - type: function with signature `function (err, node) {}`
 
 Creates a clone of the DAGNode instance passed
 
 ```JavaScript
-DAGNode.clone(node, (err, nodeClone) => {})
+const nodeClone = DAGNode.clone(node)
 ```
 
 ### DAGNode instance methods and properties
@@ -235,19 +217,15 @@ const dagPB = require('ipld-dag-pb')
 const DAGLink = dagPB.DAGLink
 ```
 
-#### DAGLink.create(name, size, cid, callback)
+#### DAGLink.create(name, size, cid)
 
 ```JavaScript
-DAGLink.create(
+// link is a DAGLink instance
+const link = DAGLink.create(
   'link-to-file',  // name of the link (can be empty)
   10,              // size in bytes
   'QmSomeHash...', // can be CID object, CID buffer or string
-  (err, link) => {
-    if (err) {
-      throw err
-    }
-   // link is a DAGLink instance
-})
+)
 ```
 
 Note: DAGLinks are simpler objects and can be instantiated directly:

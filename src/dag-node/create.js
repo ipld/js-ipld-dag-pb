@@ -9,36 +9,25 @@ const linkSort = dagNodeUtil.linkSort
 const DAGNode = require('./index.js')
 const DAGLink = require('../dag-link')
 
-function create (data, links, callback) {
-  if (typeof data === 'function') {
-    callback = data
-    data = undefined
-  } else if (typeof data === 'string') {
+const create = (data, links = []) => {
+  if (typeof data === 'string') {
     data = Buffer.from(data)
-  }
-  if (typeof links === 'function') {
-    callback = links
-    links = []
   }
 
   if (!Buffer.isBuffer(data)) {
-    return callback(new Error('Passed \'data\' is not a buffer or a string!'))
+    throw new Error('Passed \'data\' is not a buffer or a string!')
   }
-
   links = links.map((link) => {
     return DAGLink.isDAGLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
   })
   links = sort(links, linkSort)
 
-  serialize({
-    data, links
-  }, (err, buffer) => {
-    if (err) {
-      return callback(err)
-    }
-
-    return callback(null, new DAGNode(data, links, buffer.length))
+  const serialized = serialize({
+    Data: data,
+    Links: links
   })
+
+  return new DAGNode(data, links, serialized.length)
 }
 
 module.exports = create

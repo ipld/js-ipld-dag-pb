@@ -1,164 +1,70 @@
 'use strict'
 
-const waterfall = require('async/waterfall')
 const CID = require('cids')
 
 const util = require('./util')
 
-exports = module.exports
-exports.multicodec = 'dag-pb'
-exports.defaultHashAlg = 'sha2-256'
-
-/*
- * resolve: receives a path and a binary blob and returns the value on path,
- * throw if not possible. `binaryBlob` is the ProtocolBuffer encoded data.
+/**
+ * Resolves a path within a PB block.
+ *
+ * Returns the value or a link and the partial mising path. This way the
+ * IPLD Resolver can fetch the link and continue to resolve.
+ *
+ * @param {Buffer} binaryBlob - Binary representation of a PB block
+ * @param {string} [path='/'] - Path that should be resolved
+ * @returns {Object} result - Result of the path it it was resolved successfully
+ * @returns {*} result.value - Value the path resolves to
+ * @returns {string} result.remainderPath - If the path resolves half-way to a
+ *   link, then the `remainderPath` is the part after the link that can be used
+ *   for further resolving
  */
-exports.resolve = (binaryBlob, path, callback) => {
-  waterfall([
-    (cb) => util.deserialize(binaryBlob, cb),
-    (node, cb) => {
-      // Return the deserialized block if no path is given
-      if (!path) {
-        return callback(null, {
-          value: node,
-          remainderPath: ''
-        })
-      }
+exports.resolve = (binaryBlob, path) => {
+  let node = util.deserialize(binaryBlob)
 
-      const split = path.split('/')
+  const parts = path.split('/').filter(Boolean)
+  while (parts.length) {
+    const key = parts.shift()
+    if (node[key] === undefined) {
+      throw new Error(`Object has no property '${key}'`)
+    }
 
-      if (split[0] === 'Links') {
-        let remainderPath = ''
-
-        // all links
-        if (!split[1]) {
-          return cb(null, {
-            value: node.links.map((l) => l.toJSON()),
-            remainderPath: ''
-          })
-        }
-
-        // select one link
-
-        const values = {}
-
-        // populate both index number and name to enable both cases
-        // for the resolver
-        node.links.forEach((l, i) => {
-          const link = l.toJSON()
-          values[i] = values[link.name] = {
-            cid: link.cid,
-            name: link.name,
-            size: link.size
-          }
-        })
-
-        let value = values[split[1]]
-
-        // if remainderPath exists, value needs to be CID
-        if (split[2] === 'Hash') {
-          value = { '/': value.cid }
-        } else if (split[2] === 'Tsize') {
-          value = value.size
-        } else if (split[2] === 'Name') {
-          value = value.name
-        }
-
-        remainderPath = split.slice(3).join('/')
-
-        cb(null, { value: value, remainderPath: remainderPath })
-      } else if (split[0] === 'Data') {
-        cb(null, { value: node.data, remainderPath: '' })
-      } else {
-        // If split[0] is not 'Data' or 'Links' then we might be trying to refer
-        // to a named link from the Links array. This is because go-ipfs and
-        // js-ipfs have historically supported the ability to do
-        // `ipfs dag get CID/a` where a is a named link in a dag-pb.
-        const values = {}
-
-        node.links.forEach((l, i) => {
-          const link = l.toJSON()
-          values[link.name] = {
-            cid: link.cid,
-            name: link.name,
-            size: link.size
-          }
-        })
-
-        const value = values[split[0]]
-
-        if (value) {
-          return cb(null, {
-            value: { '/': value.cid },
-            remainderPath: split.slice(1).join('/')
-          })
-        }
-
-        cb(new Error('path not available'))
+    node = node[key]
+    if (CID.isCID(node)) {
+      return {
+        value: node,
+        remainderPath: parts.join('/')
       }
     }
-  ], callback)
-}
-
-/*
- * tree: returns a flattened array with paths: values of the project. options
- * is an object that can carry several options (i.e. nestness)
- */
-exports.tree = (binaryBlob, options, callback) => {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
   }
 
-  options = options || {}
-
-  util.deserialize(binaryBlob, (err, node) => {
-    if (err) {
-      return callback(err)
-    }
-
-    const paths = []
-
-    paths.push('Links')
-
-    node.links.forEach((link, i) => {
-      paths.push(`Links/${i}/Name`)
-      paths.push(`Links/${i}/Tsize`)
-      paths.push(`Links/${i}/Hash`)
-    })
-
-    paths.push('Data')
-
-    callback(null, paths)
-  })
+  return {
+    value: node,
+    remainderPath: ''
+  }
 }
 
-/*
- * isLink: returns the Link if a given path in a binary blob is a Link,
- * false otherwise
+const traverse = function * (node, path) {
+  // Traverse only objects and arrays
+  if (Buffer.isBuffer(node) || CID.isCID(node) || typeof node === 'string' ||
+      node === null) {
+    return
+  }
+  for (const item of Object.keys(node)) {
+    const nextpath = path === undefined ? item : path + '/' + item
+    yield nextpath
+    yield * traverse(node[item], nextpath)
+  }
+}
+
+/**
+ * Return all available paths of a block.
+ *
+ * @generator
+ * @param {Buffer} binaryBlob - Binary representation of a PB block
+ * @yields {string} - A single path
  */
-exports.isLink = (binaryBlob, path, callback) => {
-  exports.resolve(binaryBlob, path, (err, result) => {
-    if (err) {
-      return callback(err)
-    }
+exports.tree = function * (binaryBlob) {
+  const node = util.deserialize(binaryBlob)
 
-    if (result.remainderPath.length > 0) {
-      return callback(new Error('path out of scope'))
-    }
-
-    if (typeof result.value === 'object' && result.value['/']) {
-      let valid
-      try {
-        valid = CID.isCID(new CID(result.value['/']))
-      } catch (err) {
-        valid = false
-      }
-      if (valid) {
-        return callback(null, result.value)
-      }
-    }
-
-    callback(null, false)
-  })
+  yield * traverse(node)
 }

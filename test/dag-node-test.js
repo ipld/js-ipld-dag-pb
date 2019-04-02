@@ -1,23 +1,19 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const checkmark = require('chai-checkmark')
 const expect = chai.expect
 chai.use(dirtyChai)
-chai.use(checkmark)
 
 const dagPB = require('../src')
 const DAGLink = dagPB.DAGLink
 const DAGNode = dagPB.DAGNode
 const toDAGLink = require('../src/dag-node/util').toDAGLink
-const util = dagPB.util
-const series = require('async/series')
-const waterfall = require('async/waterfall')
 const isNode = require('detect-node')
 const multihash = require('multihashes')
+const multicodec = require('multicodec')
+const promisify = require('promisify-es6')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
@@ -29,462 +25,257 @@ const testBlockNamedLinks = loadFixture('test/fixtures/test-block-named-links')
 const testBlockUnnamedLinks = loadFixture('test/fixtures/test-block-unnamed-links')
 
 module.exports = (repo) => {
-  const bs = new BlockService(repo)
+  const _bs = new BlockService(repo)
+  const bs = {
+    get: promisify(_bs.get.bind(_bs)),
+    put: promisify(_bs.put.bind(_bs))
+  }
 
   describe('DAGNode', () => {
-    it('create a node', (done) => {
-      expect(7).checks(done)
+    it('create a node', () => {
       const data = Buffer.from('some data')
 
-      DAGNode.create(data, (err, node) => {
-        expect(err).to.not.exist.mark()
-        expect(node.data.length).to.be.above(0).mark()
-        expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.size).to.be.above(0).mark()
+      const node = DAGNode.create(data)
+      expect(node.Data.length).to.be.above(0)
+      expect(Buffer.isBuffer(node.Data)).to.be.true()
+      expect(node.size).to.be.above(0)
 
-        dagPB.util.serialize(node, (err, serialized) => {
-          expect(err).to.not.exist.mark()
-
-          dagPB.util.deserialize(serialized, (err, deserialized) => {
-            expect(err).to.not.exist.mark()
-            expect(node.data).to.eql(deserialized.data).mark()
-          })
-        })
-      })
+      const serialized = dagPB.util.serialize(node)
+      const deserialized = dagPB.util.deserialize(serialized)
+      expect(node.Data).to.eql(deserialized.Data)
     })
 
-    it('create a node with string data', (done) => {
-      expect(7).checks(done)
+    it('create a node with string data', () => {
       const data = 'some data'
 
-      DAGNode.create(data, (err, node) => {
-        expect(err).to.not.exist.mark()
-        expect(node.data.length).to.be.above(0).mark()
-        expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.size).to.be.above(0).mark()
+      const node = DAGNode.create(data)
+      expect(node.Data.length).to.be.above(0)
+      expect(Buffer.isBuffer(node.Data)).to.be.true()
+      expect(node.size).to.be.above(0)
 
-        dagPB.util.serialize(node, (err, serialized) => {
-          expect(err).to.not.exist.mark()
+      const serialized = dagPB.util.serialize(node)
 
-          dagPB.util.deserialize(serialized, (err, deserialized) => {
-            expect(err).to.not.exist.mark()
-            expect(node.data).to.eql(deserialized.data).mark()
-          })
-        })
-      })
+      const deserialized = dagPB.util.deserialize(serialized)
+      expect(node.Data).to.eql(deserialized.Data)
     })
 
-    it('create a node with links', (done) => {
+    it('create a node with links', () => {
       const l1 = [{
         Name: 'some other link',
-        Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V',
-        Size: 8
+        Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'),
+        Tsize: 8
       }, {
         Name: 'some link',
-        Hash: 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U',
-        Size: 10
+        Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'),
+        Tsize: 10
       }]
 
-      let node1
-      let node2
       const someData = Buffer.from('some data')
 
-      series([
-        (cb) => {
-          DAGNode.create(someData, l1, (err, node) => {
-            expect(err).to.not.exist()
-            node1 = node
-            cb()
-          })
-        },
-        (cb) => {
-          const l2 = l1.map((l) => {
-            return new DAGLink(l.Name, l.Size, l.Hash)
-          })
-
-          DAGNode.create(someData, l2, (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            expect(node2.links).to.eql([l2[1], l2[0]])
-            cb()
-          })
-        }
-      ], (err) => {
-        expect(err).to.not.exist()
-        expect(node1.toJSON()).to.eql(node2.toJSON())
-
-        // check sorting
-        expect(node1.links.map((l) => l.name)).to.be.eql([
-          'some link',
-          'some other link'
-        ])
-        done()
+      const node1 = DAGNode.create(someData, l1)
+      const l2 = l1.map((l) => {
+        return new DAGLink(l.Name, l.Tsize, l.Hash)
       })
+
+      const node2 = DAGNode.create(someData, l2)
+      expect(node2.Links).to.eql([l1[1], l1[0]])
+      expect(node1.toJSON()).to.eql(node2.toJSON())
+
+      // check sorting
+      expect(node1.Links.map((l) => l.Name)).to.be.eql([
+        'some link',
+        'some other link'
+      ])
     })
 
-    it('create with empty link name', (done) => {
-      DAGNode.create(Buffer.from('hello'), [
+    it('create with empty link name', () => {
+      const node = DAGNode.create(Buffer.from('hello'), [
         new DAGLink('', 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
-      ], (err, node) => {
-        expect(err).to.not.exist()
-        expect(node.links[0].name).to.be.eql('')
-        done()
-      })
+      ])
+      expect(node.Links[0].Name).to.be.eql('')
     })
 
-    it('create with undefined link name', (done) => {
-      waterfall([
-        (cb) => DAGNode.create(Buffer.from('hello'), [
-          new DAGLink(undefined, 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
-        ], cb),
-        (node, cb) => {
-          expect(node.links[0].name).to.be.eql('')
-
-          waterfall([
-            (cb) => dagPB.util.serialize(node, cb),
-            (buffer, cb) => dagPB.util.deserialize(buffer, cb),
-            (deserialized, cb) => {
-              Object.getOwnPropertyNames(node).forEach(key => {
-                expect(node[key]).to.deep.equal(deserialized[key])
-              })
-
-              cb()
-            }
-          ], cb)
-        }
-      ], done)
+    it('create with undefined link name', () => {
+      const node = DAGNode.create(Buffer.from('hello'), [
+        new DAGLink(undefined, 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+      ])
+      expect(node.Links[0].Name).to.be.eql('')
+      const serialized = dagPB.util.serialize(node)
+      const deserialized = dagPB.util.deserialize(serialized)
+      for (const key of Object.keys(node)) {
+        expect(node[key]).to.deep.equal(deserialized[key])
+      }
     })
 
-    it('create an empty node', (done) => {
+    it('create an empty node', () => {
       // this node is not in the repo as we don't copy node data to the browser
-      expect(7).checks(done)
+      const node = DAGNode.create(Buffer.alloc(0))
+      expect(node.Data.length).to.be.equal(0)
+      expect(Buffer.isBuffer(node.Data)).to.be.true()
+      expect(node.size).to.be.equal(0)
 
-      DAGNode.create(Buffer.alloc(0), (err, node) => {
-        expect(err).to.not.exist.mark()
-        expect(node.data.length).to.be.equal(0).mark()
-        expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.size).to.be.equal(0).mark()
-
-        dagPB.util.serialize(node, (err, serialized) => {
-          expect(err).to.not.exist.mark()
-
-          dagPB.util.deserialize(serialized, (err, deserialized) => {
-            expect(err).to.not.exist.mark()
-            expect(node.data).to.eql(deserialized.data).mark()
-          })
-        })
-      })
+      const serialized = dagPB.util.serialize(node)
+      const deserialized = dagPB.util.deserialize(serialized)
+      expect(node.Data).to.eql(deserialized.Data)
     })
 
-    it('fail to create a node with other data types', (done) => {
-      DAGNode.create({}, (err, node) => {
-        expect(err).to.exist()
-        expect(node).to.not.exist()
-        DAGNode.create([], (err, node) => {
-          expect(err).to.exist()
-          expect(node).to.not.exist()
-          done()
-        })
-      })
+    it('fail to create a node with other data types', () => {
+      expect(() => DAGNode.create({})).to.throw(
+        'Passed \'data\' is not a buffer or a string!'
+      )
+      expect(() => DAGNode.create([])).to.throw(
+        'Passed \'data\' is not a buffer or a string!'
+      )
     })
 
-    it('addLink by DAGNode', (done) => {
-      let node1
-      let node2
-
-      series([
-        (cb) => {
-          DAGNode.create(Buffer.from('1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1 = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.addLink(node1, node2, (err, node1b) => {
-            expect(err).to.not.exist()
-            expect(node1b.links.length).to.equal(1)
-            expect(node1b.links[0].size)
-              .to.eql(node2.size)
-            expect(node1b.links[0].name).to.be.eql('')
-            cb()
-          })
-        }
-      ], done)
+    it('addLink by DAGNode', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const node1b = await DAGNode.addLink(node1a, node2)
+      expect(node1b.Links.length).to.equal(1)
+      expect(node1b.Links[0].Tsize).to.eql(node2.size)
+      expect(node1b.Links[0].Name).to.be.eql('')
     })
 
-    it('addLink by DAGLink', (done) => {
-      let node1
-      let node2
-
-      waterfall([
-        (cb) => {
-          DAGNode.create(Buffer.from('1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1 = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => toDAGLink(node2, cb),
-        (link, cb) => {
-          DAGNode.addLink(node1, link, (err, node1b) => {
-            expect(err).to.not.exist()
-            expect(node1b.links.length).to.equal(1)
-            expect(node1b.links[0].size)
-              .to.eql(node2.size)
-            expect(node1b.links[0].name).to.be.eql('')
-            cb()
-          })
-        }
-      ], done)
+    it('addLink by DAGLink', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const link = await toDAGLink(node2)
+      const node1b = await DAGNode.addLink(node1a, link)
+      expect(node1b.Links.length).to.equal(1)
+      expect(node1b.Links[0].Tsize).to.eql(node2.size)
+      expect(node1b.Links[0].Name).to.be.eql('')
     })
 
-    it('addLink by object', (done) => {
-      let node1
-      let node2
-
-      waterfall([
-        (cb) => {
-          DAGNode.create(Buffer.from('1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1 = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => toDAGLink(node2, cb),
-        (link, cb) => {
-          const linkObject = link.toJSON()
-          DAGNode.addLink(node1, linkObject, (err, node1b) => {
-            expect(err).to.not.exist()
-            expect(node1b.links.length).to.equal(1)
-            expect(node1b.links[0].size)
-              .to.eql(node2.size)
-            expect(node1b.links[0].name).to.be.eql('')
-            cb()
-          })
-        }
-      ], done)
+    it('addLink by object', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const link = await toDAGLink(node2)
+      const linkObject = link.toJSON()
+      const node1b = await DAGNode.addLink(node1a, linkObject)
+      expect(node1b.Links.length).to.equal(1)
+      expect(node1b.Links[0].Tsize).to.eql(node2.size)
+      expect(node1b.Links[0].Name).to.be.eql('')
     })
 
-    it('addLink - add several links', (done) => {
-      let node1a
-      let node1b
-      let node1c
-
-      series([
-        (cb) => {
-          DAGNode.create(Buffer.from('1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('2'), (err, node) => {
-            expect(err).to.not.exist()
-            DAGNode.addLink(node1a, node, (err, node) => {
-              expect(err).to.not.exist()
-              node1b = node
-              cb()
-            })
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('3'), (err, node) => {
-            expect(err).to.not.exist()
-            DAGNode.addLink(node1b, node, (err, node) => {
-              expect(err).to.not.exist()
-              node1c = node
-              cb()
-            })
-          })
-        },
-        (cb) => {
-          expect(node1a.links.length).to.equal(0)
-          expect(node1b.links.length).to.equal(1)
-          expect(node1c.links.length).to.equal(2)
-          cb()
-        }
-      ], done)
+    it('addLink by name', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const link = await toDAGLink(node2, { name: 'banana' })
+      expect(Object.keys(node1a)).to.not.include('banana')
+      const node1b = await DAGNode.addLink(node1a, link)
+      expect(node1b.Links.length).to.equal(1)
+      expect(node1b.Links[0].Tsize).to.eql(node2.size)
+      expect(node1b.Links[0].Name).to.eql('banana')
+      expect(Object.keys(node1b)).to.include('banana')
     })
 
-    it('rmLink by name', (done) => {
-      let node1a
-      let node1b
-      let node2
+    it('addLink - add several links', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      expect(node1a.Links.length).to.equal(0)
 
-      waterfall([
-        (cb) => {
-          DAGNode.create(Buffer.from('1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => toDAGLink(node2, {
-          name: 'banana'
-        }, cb),
-        (link, cb) => {
-          DAGNode.addLink(node1a, link, (err, node) => {
-            expect(err).to.not.exist()
-            node1b = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.rmLink(node1b, 'banana', (err, node) => {
-            expect(err).to.not.exist()
-            expect(node1a.toJSON()).to.eql(node.toJSON())
-            cb()
-          })
-        }
-      ], done)
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const node1b = await DAGNode.addLink(node1a, node2)
+      expect(node1b.Links.length).to.equal(1)
+
+      const node3 = DAGNode.create(Buffer.from('3'))
+      const node1c = await DAGNode.addLink(node1b, node3)
+      expect(node1c.Links.length).to.equal(2)
     })
 
-    it('rmLink by hash', (done) => {
-      let node1a
-      let node1b
-      let node2
+    it('rmLink by name', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      expect(node1a.Links.length).to.eql(0)
+      const withoutLink = node1a.toJSON()
 
-      waterfall([
-        (cb) => {
-          DAGNode.create(Buffer.from('1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1a = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.create(Buffer.from('2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => toDAGLink(node2, {
-          name: 'banana'
-        }, cb),
-        (link, cb) => {
-          DAGNode.addLink(node1a, link, (err, node) => {
-            expect(err).to.not.exist()
-            node1b = node
-            cb()
-          })
-        },
-        (cb) => {
-          DAGNode.rmLink(node1b, node1b.links[0].cid, (err, node) => {
-            expect(err).to.not.exist()
-            expect(node1a.toJSON()).to.eql(node.toJSON())
-            cb()
-          })
-        }
-      ], done)
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const link = await toDAGLink(node2, { name: 'banana' })
+
+      const node1b = await DAGNode.addLink(node1a, link)
+      expect(node1b.Links.length).to.eql(1)
+      expect(Object.keys(node1b)).to.include('banana')
+      const node1c = DAGNode.rmLink(node1b, 'banana')
+      expect(Object.keys(node1c)).to.not.include('banana')
+      expect(node1c.Links.length).to.eql(0)
+      expect(node1c.toJSON()).to.eql(withoutLink)
     })
 
-    it('get node CID', (done) => {
-      DAGNode.create(Buffer.from('some data'), (err, node) => {
-        expect(err).to.not.exist()
-        util.cid(node, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid.multihash).to.exist()
-          expect(cid.codec).to.equal('dag-pb')
-          expect(cid.version).to.equal(0)
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha2-256')
-          done()
-        })
-      })
+    it('rmLink by hash', async () => {
+      const node1a = DAGNode.create(Buffer.from('1'))
+      expect(node1a.Links.length).to.eql(0)
+      const withoutLink = node1a.toJSON()
+
+      const node2 = DAGNode.create(Buffer.from('2'))
+      const link = await toDAGLink(node2, { name: 'banana' })
+
+      const node1b = await DAGNode.addLink(node1a, link)
+      expect(node1b.Links.length).to.eql(1)
+      expect(Object.keys(node1b)).to.include('banana')
+      const node1c = DAGNode.rmLink(node1b, node1b.Links[0].Hash)
+      expect(Object.keys(node1c)).to.not.include('banana')
+      expect(node1c.Links.length).to.eql(0)
+      expect(node1c.toJSON()).to.eql(withoutLink)
     })
 
-    it('get node CID with hashAlg', (done) => {
-      DAGNode.create(Buffer.from('some data'), (err, node) => {
-        expect(err).to.not.exist()
-        util.cid(node, { hashAlg: 'sha2-512' }, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid.multihash).to.exist()
-          expect(cid.codec).to.equal('dag-pb')
-          expect(cid.version).to.equal(1)
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha2-512')
-          done()
-        })
-      })
+    it('get node CID', async () => {
+      const node = DAGNode.create(Buffer.from('some data'))
+      const serialized = dagPB.util.serialize(node)
+      const cid = await dagPB.util.cid(serialized)
+      expect(cid.multihash).to.exist()
+      expect(cid.codec).to.equal('dag-pb')
+      expect(cid.version).to.equal(1)
+      const mh = multihash.decode(cid.multihash)
+      expect(mh.name).to.equal('sha2-256')
     })
 
-    it('marshal a node and store it with block-service', (done) => {
-      DAGNode.create(Buffer.from('some data'), (err, node) => {
-        expect(err).to.not.exist()
-        let block
-
-        waterfall([
-          (cb) => dagPB.util.serialize(node, cb),
-          (s, cb) => dagPB.util.cid(s, (err, cid) => {
-            cb(err, {
-              buffer: s,
-              cid: cid
-            })
-          }),
-          ({ buffer, cid }, cb) => {
-            block = new Block(buffer, cid)
-            bs.put(block, cb)
-          },
-          (cb) => bs.get(block.cid, cb),
-          (retrievedBlock, cb) => {
-            expect(retrievedBlock).to.eql(block)
-            cb()
-          }
-        ], done)
-      })
+    it('get node CID with version', async () => {
+      const node = DAGNode.create(Buffer.from('some data'))
+      const serialized = dagPB.util.serialize(node)
+      const cid = await dagPB.util.cid(serialized, { cidVersion: 0 })
+      expect(cid.multihash).to.exist()
+      expect(cid.codec).to.equal('dag-pb')
+      expect(cid.version).to.equal(0)
+      const mh = multihash.decode(cid.multihash)
+      expect(mh.name).to.equal('sha2-256')
     })
 
-    it('deserialize go-ipfs block from ipldResolver', (done) => {
+    it('get node CID with hashAlg', async () => {
+      const node = DAGNode.create(Buffer.from('some data'))
+      const serialized = dagPB.util.serialize(node)
+      const cid = await dagPB.util.cid(serialized, { hashAlg: multicodec.SHA2_512 })
+      expect(cid.multihash).to.exist()
+      expect(cid.codec).to.equal('dag-pb')
+      expect(cid.version).to.equal(1)
+      const mh = multihash.decode(cid.multihash)
+      expect(mh.name).to.equal('sha2-512')
+    })
+
+    it('marshal a node and store it with block-service', async () => {
+      const node = DAGNode.create(Buffer.from('some data'))
+      const serialized = dagPB.util.serialize(node)
+      const cid = await dagPB.util.cid(serialized)
+      const block = new Block(Buffer.from(serialized), cid)
+
+      await bs.put(block)
+      const retrievedBlock = await bs.get(block.cid)
+      expect(retrievedBlock).to.eql(block)
+    })
+
+    it('deserialize go-ipfs block from ipldResolver', async () => {
       if (!isNode) {
-        return done()
+        return
       }
 
       const cidStr = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
       const cid = new CID(cidStr)
 
-      bs.get(cid, (err, block) => {
-        expect(err).to.not.exist()
-        dagPB.util.deserialize(block.data, (err, node) => {
-          expect(err).to.not.exist()
-          expect(node.data).to.exist()
-          expect(node.links.length).to.equal(6)
-          done()
-        })
-      })
+      const block = await bs.get(cid)
+      const node = dagPB.util.deserialize(block.data)
+      expect(node.Data).to.exist()
+      expect(node.Links.length).to.equal(6)
     })
 
-    it('deserialize go-ipfs block with unnamed links', (done) => {
+    it('deserialize go-ipfs block with unnamed links', async () => {
       const buf = testBlockUnnamedLinks
 
       const expectedLinks = [
@@ -525,20 +316,16 @@ module.exports = (repo) => {
         }
       ]
 
-      dagPB.util.deserialize(buf, (err, node) => {
-        expect(err).to.not.exist()
-        const nodeJSON = node.toJSON()
-        expect(nodeJSON.links).to.eql(expectedLinks)
+      const node = dagPB.util.deserialize(buf)
+      const nodeJSON = node.toJSON()
+      expect(nodeJSON.links).to.eql(expectedLinks)
 
-        dagPB.util.cid(node, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid.toBaseEncodedString()).to.eql('QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
-          done()
-        })
-      })
+      const cid = await dagPB.util.cid(buf, { cidVersion: 0 })
+      expect(cid.toBaseEncodedString()).to.eql(
+        'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX')
     })
 
-    it('deserialize go-ipfs block with named links', (done) => {
+    it('deserialize go-ipfs block with named links', async () => {
       const buf = testBlockNamedLinks
 
       const expectedLinks = [
@@ -564,41 +351,31 @@ module.exports = (repo) => {
         }
       ]
 
-      dagPB.util.deserialize(buf, (err, node) => {
-        expect(err).to.not.exist()
-        const nodeJSON = node.toJSON()
-        expect(nodeJSON.links).to.eql(expectedLinks)
+      const node = dagPB.util.deserialize(buf)
+      const nodeJSON = node.toJSON()
+      expect(nodeJSON.links).to.eql(expectedLinks)
 
-        dagPB.util.cid(node, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid.toBaseEncodedString()).to.eql('QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
-          done()
-        })
-      })
+      const cid = await dagPB.util.cid(buf, { cidVersion: 0 })
+      expect(cid.toBaseEncodedString()).to.eql(
+        'QmbSAC58x1tsuPBAoarwGuTQAgghKvdbKSBC8yp5gKCj5M')
     })
 
-    it('dagNode.toJSON with empty Node', (done) => {
-      DAGNode.create(Buffer.alloc(0), (err, node) => {
-        expect(err).to.not.exist()
-        expect(node.toJSON().data).to.eql(Buffer.alloc(0))
-        expect(node.toJSON().links).to.eql([])
-        expect(node.toJSON().size).to.exist()
-        done()
-      })
+    it('dagNode.toJSON with empty Node', () => {
+      const node = DAGNode.create(Buffer.alloc(0))
+      expect(node.toJSON().data).to.eql(Buffer.alloc(0))
+      expect(node.toJSON().links).to.eql([])
+      expect(node.toJSON().size).to.exist()
     })
 
-    it('dagNode.toJSON with data no links', (done) => {
+    it('dagNode.toJSON with data no links', () => {
       const data = Buffer.from('La cucaracha')
-      DAGNode.create(data, (err, node) => {
-        expect(err).to.not.exist()
-        expect(node.toJSON().data).to.eql(data)
-        expect(node.toJSON().links).to.eql([])
-        expect(node.toJSON().size).to.exist()
-        done()
-      })
+      const node = DAGNode.create(data)
+      expect(node.toJSON().data).to.eql(data)
+      expect(node.toJSON().links).to.eql([])
+      expect(node.toJSON().size).to.exist()
     })
 
-    it('add two nameless links to a node', (done) => {
+    it('add two nameless links to a node', () => {
       const l1 = {
         Name: '',
         Hash: 'QmbAmuwox51c91FmC2jEX5Ng4zS4HyVgpA5GNPBF5QsWMA',
@@ -611,56 +388,41 @@ module.exports = (repo) => {
         Size: 262158
       }
 
-      const link1 = new DAGLink(l1.Name, l1.Size, Buffer.from(bs58.decode(l1.Hash)))
-      const link2 = new DAGLink(l2.Name, l2.Size, Buffer.from(bs58.decode(l2.Hash)))
+      const link1 = new DAGLink(l1.Name, l1.Tsize,
+        Buffer.from(bs58.decode(l1.Hash)))
+      const link2 = new DAGLink(l2.Name, l2.Tsize,
+        Buffer.from(bs58.decode(l2.Hash)))
 
-      DAGNode.create(Buffer.from('hiya'), [link1, link2], (err, node) => {
-        expect(err).to.not.exist()
-        done()
-      })
+      const node = DAGNode.create(Buffer.from('hiya'), [link1, link2])
+      expect(node.Links).to.have.lengthOf(2)
     })
 
-    it('toString', (done) => {
-      DAGNode.create(Buffer.from('hello world'), (err, node) => {
-        expect(err).to.not.exist()
-        const expected = 'DAGNode <data: "aGVsbG8gd29ybGQ=", links: 0, size: 13>'
-        expect(node.toString()).to.equal(expected)
-        done()
-      })
+    it('toString', () => {
+      const node = DAGNode.create(Buffer.from('hello world'))
+      const expected = 'DAGNode <data: "aGVsbG8gd29ybGQ=", links: 0, size: 13>'
+      expect(node.toString()).to.equal(expected)
     })
 
-    it('deserializing a node and an object should yield the same result', (done) => {
-      expect(10).checks(done)
+    it('deserializing a node and an object should yield the same result', () => {
       const obj = {
-        data: Buffer.from('Hello World'),
-        links: [{
-          multihash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
-          name: 'payload',
-          size: 819
+        Data: Buffer.from('Hello World'),
+        Links: [{
+          Hash: new CID('QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7'),
+          Name: 'payload',
+          Tsize: 819
         }]
       }
 
-      DAGNode.create(obj.data, obj.links, (err, node) => {
-        expect(err).to.not.exist.mark()
-        expect(node.data.length).to.be.above(0).mark()
-        expect(Buffer.isBuffer(node.data)).to.be.true.mark()
-        expect(node.size).to.be.above(0).mark()
+      const node = DAGNode.create(obj.Data, obj.Links)
+      expect(node.Data.length).to.be.above(0)
+      expect(Buffer.isBuffer(node.Data)).to.be.true()
+      expect(node.size).to.be.above(0)
 
-        dagPB.util.serialize(node, (err, serialized) => {
-          expect(err).to.not.exist.mark()
-          dagPB.util.serialize(obj, (err, serializedObject) => {
-            expect(err).to.not.exist.mark()
-            dagPB.util.deserialize(serialized, (err, deserialized) => {
-              expect(err).to.not.exist.mark()
-              dagPB.util.deserialize(serializedObject, (err, deserializedObject) => {
-                expect(err).to.not.exist.mark()
-                expect(deserialized.toJSON()).to.deep.equal(deserializedObject.toJSON()).mark()
-                done()
-              })
-            })
-          })
-        })
-      })
-    }).timeout(6000)
+      const serialized = dagPB.util.serialize(node)
+      const serializedObject = dagPB.util.serialize(obj)
+      const deserialized = dagPB.util.deserialize(serialized)
+      const deserializedObject = dagPB.util.deserialize(serializedObject)
+      expect(deserialized.toJSON()).to.deep.equal(deserializedObject.toJSON())
+    })
   })
 }

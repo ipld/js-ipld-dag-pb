@@ -2,7 +2,8 @@
 
 const DAGLink = require('./../dag-link')
 const {
-  cid
+  cid,
+  serialize
 } = require('../util')
 
 exports = module.exports
@@ -10,9 +11,9 @@ exports = module.exports
 function cloneData (dagNode) {
   let data
 
-  if (dagNode.data && dagNode.data.length > 0) {
-    data = Buffer.alloc(dagNode.data.length)
-    dagNode.data.copy(data)
+  if (dagNode.Data && dagNode.Data.length > 0) {
+    data = Buffer.alloc(dagNode.Data.length)
+    dagNode.Data.copy(data)
   } else {
     data = Buffer.alloc(0)
   }
@@ -21,7 +22,7 @@ function cloneData (dagNode) {
 }
 
 function cloneLinks (dagNode) {
-  return dagNode.links.slice()
+  return dagNode.Links.slice()
 }
 
 function linkSort (a, b) {
@@ -31,19 +32,10 @@ function linkSort (a, b) {
 /*
  * toDAGLink converts a DAGNode to a DAGLink
  */
-function toDAGLink (node, options, callback) {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
-  }
-
-  cid(node, options, (error, cid) => {
-    if (error) {
-      return callback(error)
-    }
-
-    callback(null, new DAGLink(options.name || '', node.size, cid))
-  })
+const toDAGLink = async (node, options = {}) => {
+  const serialized = serialize(node)
+  const nodeCid = await cid(serialized)
+  return new DAGLink(options.name || '', serialized.length, nodeCid)
 }
 
 exports.cloneData = cloneData
