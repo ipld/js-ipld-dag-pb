@@ -1,62 +1,47 @@
 'use strict'
 
 const CID = require('cids')
+const mergeOptions = require('merge-options')
 const protons = require('protons')
 const proto = protons(require('./dag.proto.js'))
-const resolver = require('./resolver')
 const DAGLink = require('./dag-link')
 const DAGNode = require('./dag-node')
+const multicodec = require('multicodec')
 const multihashing = require('multihashing-async')
-const waterfall = require('async/waterfall')
-const setImmediate = require('async/setImmediate')
 
 exports = module.exports
 
-/**
- * @callback CidCallback
- * @param {?Error} error - Error if getting the CID failed
- * @param {?CID} cid - CID if call was successful
- */
-/**
- * Get the CID of the DAG-Node.
- *
- * @param {Object} dagNode - Internal representation
- * @param {Object} [options] - Options to create the CID
- * @param {number} [options.version] - CID version number. Defaults to zero if hashAlg == 'sha2-256'; otherwise, 1.
- * @param {string} [options.hashAlg] - Defaults to hashAlg for the resolver
- * @param {CidCallback} callback - Callback that handles the return value
- * @returns {void}
- */
-function cid (dagNode, options, callback) {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
-  }
-  options = options || {}
-  const hashAlg = options.hashAlg || resolver.defaultHashAlg
-  let version = options.version
-  if (typeof version === 'undefined') {
-    version = hashAlg === 'sha2-256' ? 0 : 1
-  }
-  waterfall([
-    (cb) => {
-      if (Buffer.isBuffer(dagNode)) {
-        return cb(null, dagNode)
-      }
+exports.format = multicodec.DAG_PB
+exports.defaultHashAlg = multicodec.SHA2_256
 
-      serialize(dagNode, cb)
-    },
-    (serialized, cb) => multihashing(serialized, hashAlg, cb),
-    (mh, cb) => cb(null, new CID(version, resolver.multicodec, mh))
-  ], callback)
+/**
+ * Calculate the CID of the binary blob.
+ *
+ * @param {Object} binaryBlob - Internal representation
+ * @param {Object} [userOptions] - Options to create the CID
+ * @param {number} [userOptions.cidVersion] - CID version number. Defaults to zero if hashAlg == 'sha2-256'; otherwise, 1.
+ * @param {string} [UserOptions.hashAlg] - Defaults to hashAlg for the resolver
+ * @returns {Promise.<CID>}
+ */
+const cid = async (binaryBlob, userOptions) => {
+  const defaultOptions = { cidVersion: 1, hashAlg: exports.defaultHashAlg }
+  const options = mergeOptions(defaultOptions, userOptions)
+
+  return new Promise((resolve, reject) => {
+    multihashing(binaryBlob, options.hashAlg, (error, multihash) => {
+      if (error) {
+        return reject(error)
+      }
+      const formatName = multicodec.print[exports.format]
+      const cid = new CID(options.cidVersion, formatName, multihash)
+      return resolve(cid)
+    })
+  })
 }
 
-function serialize (node, callback) {
-  let serialized
-  let {
-    data,
-    links = []
-  } = node
+const serialize = async (node) => {
+  let data = node.Data
+  let links = node.Links || []
 
   // If the node is not an instance of a DAGNode, the link.hash might be a Base58 encoded string; decode it
   if (!DAGNode.isDAGNode(node) && links) {
@@ -65,19 +50,16 @@ function serialize (node, callback) {
     })
   }
 
-  try {
-    serialized = proto.PBNode.encode(toProtoBuf({
-      data, links
-    }))
-  } catch (err) {
-    return callback(err)
-  }
+  const serialized = proto.PBNode.encode(toProtoBuf({
+    Data: data,
+    Links: links
+  }))
 
-  callback(null, serialized)
+  return Uint8Array.from(serialized)
 }
 
-function deserialize (buffer, callback) {
-  const pbn = proto.PBNode.decode(buffer)
+const deserialize = async (buffer) => {
+  const pbn = proto.PBNode.decode(Buffer.from(buffer))
 
   const links = pbn.Links.map((link) => {
     return new DAGLink(link.Name, link.Tsize, link.Hash)
@@ -85,25 +67,25 @@ function deserialize (buffer, callback) {
 
   const data = pbn.Data == null ? Buffer.alloc(0) : pbn.Data
 
-  setImmediate(() => callback(null, new DAGNode(data, links, buffer.length)))
+  return new DAGNode(data, links, buffer.length)
 }
 
 function toProtoBuf (node) {
   const pbn = {}
 
-  if (node.data && node.data.length > 0) {
-    pbn.Data = node.data
+  if (node.Data && node.Data.length > 0) {
+    pbn.Data = node.Data
   } else {
     // NOTE: this has to be null in order to match go-ipfs serialization `null !== new Buffer(0)`
     pbn.Data = null
   }
 
-  if (node.links && node.links.length > 0) {
-    pbn.Links = node.links
+  if (node.Links && node.Links.length > 0) {
+    pbn.Links = node.Links
       .map((link) => ({
-        Hash: link.cid.buffer,
-        Name: link.name,
-        Tsize: link.size
+        Hash: link.Hash.buffer,
+        Name: link.Name,
+        Tsize: link.Tsize
       }))
   } else {
     pbn.Links = null

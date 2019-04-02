@@ -14,19 +14,19 @@ module.exports = (repo) => {
       it('string', () => {
         const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
 
-        expect(link.cid.buffer.toString('hex'))
+        expect(link.Hash.buffer.toString('hex'))
           .to.equal('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43')
       })
 
       it('empty string', () => {
         const link = new DAGLink('', 4, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
-        expect(link.name).to.be.eql('')
+        expect(link.Name).to.be.eql('')
       })
 
       it('create with multihash as a multihash Buffer', () => {
         const link = new DAGLink('hello', 3, Buffer.from('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43', 'hex'))
 
-        expect(new CID(link.cid).toBaseEncodedString())
+        expect(new CID(link.Hash).toBaseEncodedString())
           .to.equal('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
       })
 
@@ -57,17 +57,17 @@ module.exports = (repo) => {
     it('exposes a CID', () => {
       const cid = 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
       const link = new DAGLink('hello', 3, cid)
-      expect(link.cid.toBaseEncodedString()).to.equal(cid)
+      expect(link.Hash.toBaseEncodedString()).to.equal(cid)
     })
 
     it('has an immutable CID', () => {
       const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
 
       try {
-        link.cid = 'foo'
+        link.Hash = 'foo'
         throw new Error('Should not be able to update CID')
       } catch (error) {
-        expect(error.message).to.include("'cid' is immutable")
+        expect(error.message).to.include('Cannot set property Hash of')
       }
     })
   })

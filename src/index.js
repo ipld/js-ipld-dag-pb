@@ -9,3 +9,5 @@ exports.DAGLink = require('./dag-link')
  */
 exports.resolver = require('./resolver')
 exports.util = require('./util')
+exports.format = exports.util.format
+exports.defaultHashAlg = exports.util.defaultHashAlg
