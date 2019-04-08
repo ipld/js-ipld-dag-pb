@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "async": "^2.6.1",
-    "cids": "~0.5.4",
+    "cids": "~0.6.0",
     "class-is": "^1.1.0",
     "multihashing-async": "~0.5.1",
     "protons": "^1.0.1",
