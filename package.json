@@ -65,7 +65,7 @@
     "async": "^2.6.1",
     "cids": "~0.5.4",
     "class-is": "^1.1.0",
-    "multihashing-async": "~0.6.0",
+    "multihashing-async": "~0.7.0",
     "protons": "^1.0.1",
     "stable": "~0.1.8"
   },
