@@ -1,3 +1,40 @@
+<a name="0.16.0"></a>
+# [0.16.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.3...v0.16.0) (2019-05-08)
+
+
+### Bug Fixes
+
+* **package:** update multihashing-async to version 0.6.0 ([63b7986](https://github.com/ipld/js-ipld-dag-pb/commit/63b7986))
+
+
+### Features
+
+* new IPLD Format API ([1de1bcc](https://github.com/ipld/js-ipld-dag-pb/commit/1de1bcc))
+
+
+### BREAKING CHANGES
+
+* The API is now async/await based
+
+There are numerous changes, the most significant one is that the API
+is no longer callback based, but it using async/await.
+
+The properties of DAGNode and DAGLink are now in sync with the paths
+that are used for resolving. This means that e.g. `name` is now called
+`Name` and `size` is `Tsize`.
+
+All return values from `resolve()` now conform to the [IPLD Data Model],
+this means that e.g. links are no longer represented as
+`{'/': "baseecodedcid"}`, but as [CID] instances instead.
+
+For the full new API please see the [IPLD Formats spec].
+
+[IPLD Data Model]: https://github.com/ipld/specs/blob/master/IPLD-Data-Model-v1.md
+[CID]: https://github.com/multiformats/js-cid/
+[IPLD Formats spec]: https://github.com/ipld/interface-ipld-format
+
+
+
 <a name="0.15.3"></a>
 ## [0.15.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.2...v0.15.3) (2019-03-13)
 
