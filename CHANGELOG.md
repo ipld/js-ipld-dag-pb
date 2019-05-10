@@ -1,3 +1,22 @@
+<a name="0.17.0"></a>
+# [0.17.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.16.0...v0.17.0) (2019-05-10)
+
+
+### Bug Fixes
+
+* **package:** update cids to version 0.7.0 ([2afca2c](https://github.com/ipld/js-ipld-dag-pb/commit/2afca2c))
+
+
+### BREAKING CHANGES
+
+* **package:** Returned v1 CIDs now default to base32 encoding
+
+Previous versions returned a base58 encoded string when `toString()`/
+`toBaseEncodedString()` was called on a CIDv1. It now returns a base32
+encoded string.
+
+
+
 <a name="0.16.0"></a>
 # [0.16.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.15.3...v0.16.0) (2019-05-08)
 
