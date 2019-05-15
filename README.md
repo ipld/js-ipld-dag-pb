@@ -32,24 +32,23 @@
     - [rmLink(node, nameOrCid)](#rmlinknode-nameorcid)
     - [clone(node)](#clonenode)
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
-    - [`node.data`](#nodedata)
-    - [`node.links`](#nodelinks)
+    - [`node.Data`](#nodedata)
+    - [`node.Links`](#nodelinks)
     - [`node.size`](#nodesize)
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
   - [DAGLink functions](#daglink-functions)
-    - [DAGLink.create(name, size, cid)](#daglinkcreatename-size-cid)
+    - [DAGLink constructor](#daglink-constructor)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
-    - [`link.name`](#linkname)
-    - [`link.size`](#linksize)
-    - [`link.cid`](#linkcid)
+    - [`link.Name`](#linkname)
+    - [`link.Tsize`](#linktsize)
+    - [`link.Hash`](#linkhash)
     - [`link.toJSON()`](#linktojson)
     - [`link.toString()`](#linktostring)
-  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specificshttpsgithubcomipldinterface-ipld-format---local-nodeblock-scope-resolver)
+  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specifics---local-nodeblock-scope-resolver)
     - [`dagPB.resolver.resolve`](#dagpbresolverresolve)
     - [`dagPB.resolver.tree`](#dagpbresolvertree)
-    - [`dagPB.resolver.patch`](#dagpbresolverpatch)
-  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util](#ipld-format-specificshttpsgithubcomipldinterface-ipld-format---util)
+  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util](#ipld-format-specifics---util)
   - [`dagPB.util.cid`](#dagpbutilcid)
   - [`dagPB.util.serialize`](#dagpbutilserialize)
   - [`dagPB.util.deserialize`](#dagpbutildeserialize)
@@ -71,7 +70,6 @@ dagPB.DAGNode.create  // create a DAGNode
 dagPB.DAGNode.clone   // clone a DAGNode
 dagPB.DAGNode.addLink // add a Link to a DAGNode, creating a new one
 dagPB.DAGNode.rmLink  // remove a Link to a DAGNode, creating a new one
-dagPB.DAGLink.create  // create a DAGLink
 
 // IPLD Format specifics
 dagPB.resolver
@@ -87,16 +85,15 @@ const node1 = DAGNode.create(Buffer.from('some data'))
 
 // node2 will have the same data as node1
 const node2 = DAGNode.create('some data')
-})
 ```
 
 #### Add and remove a Link
 
 ```JavaScript
 const link = {
-  name: 'I am a link',
-  cid: 'QmHash..',
-  size: 42
+  Name: 'I am a link',
+  Hash: 'QmHash..',
+  Tsize: 42
 }
 
 const nodeA = await DAGNode.addLink(node, link)
@@ -136,9 +133,9 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 
 ```JavaScript
 {
-  name: '<some name>',
-  cid: '<some cid>',
-  size: <sizeInBytes>
+  Name: '<some name>',
+  Hash: '<some cid>',
+  TSize: <sizeInBytes>
 }
 ```
 
@@ -158,9 +155,9 @@ Creates a new DAGNode instance with the union of node.links plus the new link.
 
 ```JavaScript
 const link = {
-  name: '<some string>', // optional
-  size: <size in bytes>,
-  cid: <cid> // can be a String CID, CID buffer or CID object
+  Name: '<some string>', // optional
+  Tsize: <size in bytes>,
+  Hash: <cid> // can be a String CID, CID buffer or CID object
 }
 
 const dagNode = await DAGNode.addLink(node, link)
@@ -191,11 +188,11 @@ const nodeClone = DAGNode.clone(node)
 
 You have the following methods and properties available in every DAGNode instance.
 
-#### `node.data`
+#### `node.Data`
 
-#### `node.links`
+#### `node.Links`
 
-An array of `DAGLinks`
+An array of JSON Objects with fields named `Hash`, `Name`, and `Tsize`.
 
 #### `node.size`
 
@@ -217,30 +214,24 @@ const dagPB = require('ipld-dag-pb')
 const DAGLink = dagPB.DAGLink
 ```
 
-#### DAGLink.create(name, size, cid)
+#### DAGLink constructor
 
 ```JavaScript
 // link is a DAGLink instance
-const link = DAGLink.create(
+const link = new DAGLink(
   'link-to-file',  // name of the link (can be empty)
   10,              // size in bytes
   'QmSomeHash...', // can be CID object, CID buffer or string
 )
 ```
 
-Note: DAGLinks are simpler objects and can be instantiated directly:
-
-```JavaScript
-const link = new DAGLink(name, size, cid)
-```
-
 ### DAGLink instance methods and properties
 
-#### `link.name`
+#### `link.Name`
 
-#### `link.size`
+#### `link.Tsize`
 
-#### `link.cid`
+#### `link.Hash`
 
 #### `link.toJSON()`
 
@@ -254,8 +245,6 @@ const link = new DAGLink(name, size, cid)
 #### `dagPB.resolver.resolve`
 
 #### `dagPB.resolver.tree`
-
-#### `dagPB.resolver.patch`
 
 ### [IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util
 
