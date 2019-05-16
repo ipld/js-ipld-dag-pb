@@ -183,6 +183,25 @@ module.exports = (repo) => {
       expect(node1c.Links.length).to.equal(2)
     })
 
+    it('addLink by DAGNode.Links', async () => {
+      const linkName = 'link-name'
+      const remote = DAGNode.create(Buffer.from('2'))
+      const source = await DAGNode.addLink(
+        DAGNode.create(Buffer.from('1')), await toDAGLink(remote, {
+          name: linkName
+        })
+      )
+
+      expect(source.Links.length).to.equal(1)
+
+      let target = new DAGNode(null, [], 0)
+      target = await DAGNode.addLink(target, source.Links[0])
+
+      expect(target.Links.length).to.equal(1)
+      expect(target.Links[0].Tsize).to.eql(remote.size)
+      expect(target.Links[0].Name).to.be.eql(linkName)
+    })
+
     it('rmLink by name', async () => {
       const node1a = DAGNode.create(Buffer.from('1'))
       expect(node1a.Links.length).to.eql(0)

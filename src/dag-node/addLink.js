@@ -22,7 +22,7 @@ const asDAGLink = async (link) => {
   }
 
   // It's a Object with name, multihash/hash/cid and size
-  return new DAGLink(link.name, link.size, link.multihash || link.hash || link.cid)
+  return new DAGLink(link.Name || link.name, link.Tsize || link.size, link.Hash || link.multihash || link.hash || link.cid)
 }
 
 const addLink = async (node, link) => {
