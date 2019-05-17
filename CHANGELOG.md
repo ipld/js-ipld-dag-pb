@@ -1,3 +1,13 @@
+<a name="0.17.1"></a>
+## [0.17.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.0...v0.17.1) (2019-05-17)
+
+
+### Bug Fixes
+
+* allow adding links from DAGNode.Links ([a5d300f](https://github.com/ipld/js-ipld-dag-pb/commit/a5d300f))
+
+
+
 <a name="0.17.0"></a>
 # [0.17.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.16.0...v0.17.0) (2019-05-10)
 
