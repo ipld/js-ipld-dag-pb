@@ -443,5 +443,14 @@ module.exports = (repo) => {
       const deserializedObject = dagPB.util.deserialize(serializedObject)
       expect(deserialized.toJSON()).to.deep.equal(deserializedObject.toJSON())
     })
+
+    it('creates links from objects with .Size properties', () => {
+      const node = DAGNode.create(Buffer.from('some data'), [{
+        Hash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
+        Size: 9001
+      }])
+
+      expect(node.Links[0].Tsize).to.eql(9001)
+    })
   })
 }
