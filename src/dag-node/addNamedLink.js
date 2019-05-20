@@ -18,7 +18,7 @@ const addNamedLink = (object, name, position) => {
   Object.defineProperty(object, name, {
     enumerable: true,
     configurable: true,
-    get: () => object._links[position]
+    get: () => object._links[position].Hash
   })
 }
 

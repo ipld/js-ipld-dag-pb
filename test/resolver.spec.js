@@ -99,7 +99,7 @@ describe('IPLD Format resolver (local)', () => {
 
       it('links by name', () => {
         const result = resolver.resolve(linksNodeBlob, 'named link')
-        expect(result.value.Hash.equals(links[1].Hash)).to.be.true()
+        expect(result.value.equals(links[1].Hash)).to.be.true()
         expect(result.remainderPath).to.eql('')
       })
 
@@ -128,7 +128,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('yield remainderPath if impossible to resolve through named link (a)', () => {
-        const result = resolver.resolve(linksNodeBlob, 'named link/Hash/Data')
+        const result = resolver.resolve(linksNodeBlob, 'named link/Data')
         expect(result.value.equals(
           new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
         )).to.be.true()
@@ -136,7 +136,7 @@ describe('IPLD Format resolver (local)', () => {
       })
 
       it('yield remainderPath if impossible to resolve through named link (b)', () => {
-        const result = resolver.resolve(linksNodeBlob, 'named link/Hash/Links/0/Hash/Data')
+        const result = resolver.resolve(linksNodeBlob, 'named link/Links/0/Hash/Data')
         expect(result.value.equals(
           new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
         )).to.be.true()
@@ -158,10 +158,7 @@ describe('IPLD Format resolver (local)', () => {
         'Links/1/Tsize',
         'Links/1/Hash',
         'Data',
-        'named link',
-        'named link/Name',
-        'named link/Tsize',
-        'named link/Hash'
+        'named link'
       ])
     })
   })
@@ -210,10 +207,7 @@ describe('IPLD Format resolver (local)', () => {
         'Links/1/Tsize',
         'Links/1/Hash',
         'Data',
-        'named link',
-        'named link/Name',
-        'named link/Tsize',
-        'named link/Hash'
+        'named link'
       ])
     })
   })
