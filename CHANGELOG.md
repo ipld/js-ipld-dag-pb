@@ -1,3 +1,13 @@
+<a name="0.17.3"></a>
+## [0.17.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.2...v0.17.3) (2019-05-20)
+
+
+### Bug Fixes
+
+* named links should return the CID ([ee96d28](https://github.com/ipld/js-ipld-dag-pb/commit/ee96d28))
+
+
+
 <a name="0.17.2"></a>
 ## [0.17.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.1...v0.17.2) (2019-05-20)
 
