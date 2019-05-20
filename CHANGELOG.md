@@ -1,3 +1,13 @@
+<a name="0.17.2"></a>
+## [0.17.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.1...v0.17.2) (2019-05-20)
+
+
+### Bug Fixes
+
+* support .Size property ([30b5d55](https://github.com/ipld/js-ipld-dag-pb/commit/30b5d55))
+
+
+
 <a name="0.17.1"></a>
 ## [0.17.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.0...v0.17.1) (2019-05-17)
 
