@@ -142,6 +142,12 @@ describe('IPLD Format resolver (local)', () => {
         )).to.be.true()
         expect(result.remainderPath).to.equal('Links/0/Hash/Data')
       })
+
+      it('named link still works even if other links get removed', async () => {
+        const deserialized = utils.deserialize(linksNodeBlob)
+        const lessLinks = DAGNode.rmLink(deserialized, links[0].Hash)
+        expect(lessLinks['named link']).to.exist()
+      })
     })
 
     it('resolver.tree', () => {
