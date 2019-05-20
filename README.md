@@ -30,7 +30,6 @@
     - [DAGNode.create(data, links)](#dagnodecreatedata-links)
     - [addLink(node, link)](#addlinknode-link)
     - [rmLink(node, nameOrCid)](#rmlinknode-nameorcid)
-    - [clone(node)](#clonenode)
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
     - [`node.Data`](#nodedata)
     - [`node.Links`](#nodelinks)
@@ -67,7 +66,6 @@
 const dagPB = require('ipld-dag-pb')
 
 dagPB.DAGNode.create  // create a DAGNode
-dagPB.DAGNode.clone   // clone a DAGNode
 dagPB.DAGNode.addLink // add a Link to a DAGNode, creating a new one
 dagPB.DAGNode.rmLink  // remove a Link to a DAGNode, creating a new one
 
@@ -96,13 +94,11 @@ const link = {
   Tsize: 42
 }
 
-const nodeA = await DAGNode.addLink(node, link)
-// nodeA - DAGNode instance with the link
-console.log('with link', nodeA.toJSON())
+await DAGNode.addLink(node, link)
+console.log('with link', node.toJSON())
 
-const nodeB = await DAGNode.rmLink(nodeA, 'I am a link')
-// nodeB - DAGNode instance without the link, equal to just node
-console.log('without link', nodeB.toJSON())
+DAGNode.rmLink(nodeA, 'I am a link')
+console.log('now without link', node.toJSON())
 ```
 
 ## API
@@ -144,9 +140,7 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 - `node` - type: DAGNode
 - `link` - type: DAGLink or DAGLink in its json format
 
-Creates a link on node A to node B by using node B to get its CID. Returns a *new* instance of DAGNode without modifying the old one.
-
-Creates a new DAGNode instance with the union of node.links plus the new link.
+Creates a link on node A. Modifies the node.
 
 `link` can be:
 - DAGLink instance
@@ -160,7 +154,7 @@ const link = {
   Hash: <cid> // can be a String CID, CID buffer or CID object
 }
 
-const dagNode = await DAGNode.addLink(node, link)
+await DAGNode.addLink(node, link)
 ```
 
 #### rmLink(node, nameOrCid)
@@ -168,21 +162,12 @@ const dagNode = await DAGNode.addLink(node, link)
 - `node` - type: DAGNode
 - `nameOrCid` - type: String, CID object or CID buffer
 
-Removes a link from the node by name. Returns a *new* instance of DAGNode without modifying the old one.
+Removes a link from the node by name. Modifies the node.
 
 ```JavaScript
-const dagNode = await DAGNode.rmLink(node, 'Link1')
+DAGNode.rmLink(node, 'Link1')
 ```
 
-#### clone(node)
-
-- `node` - type: DAGNode
-
-Creates a clone of the DAGNode instance passed
-
-```JavaScript
-const nodeClone = DAGNode.clone(node)
-```
 
 ### DAGNode instance methods and properties
 
