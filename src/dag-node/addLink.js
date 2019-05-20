@@ -1,12 +1,9 @@
 'use strict'
 
-const dagNodeUtil = require('./util')
-const cloneLinks = dagNodeUtil.cloneLinks
-const cloneData = dagNodeUtil.cloneData
-const toDAGLink = dagNodeUtil.toDAGLink
-const DAGLink = require('../dag-link/dagLink')
-const DAGNode = require('./dagNode')
-const create = require('./create')
+const sort = require('stable')
+const { linkSort, toDAGLink } = require('./util')
+const DAGLink = require('../dag-link')
+const DAGNode = require('./index')
 
 // Intentionally keeping the `async` to signal that it may return a promise
 // eslint-disable-next-line require-await
@@ -28,12 +25,9 @@ const asDAGLink = async (link) => {
 }
 
 const addLink = async (node, link) => {
-  const links = cloneLinks(node)
-  const data = cloneData(node)
-
   const dagLink = await asDAGLink(link)
-  links.push(dagLink)
-  return create(data, links)
+  node._links.push(dagLink)
+  node._links = sort(node._links, linkSort)
 }
 
 module.exports = addLink

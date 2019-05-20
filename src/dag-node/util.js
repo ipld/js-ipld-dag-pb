@@ -8,23 +8,6 @@ const {
 
 exports = module.exports
 
-function cloneData (dagNode) {
-  let data
-
-  if (dagNode.Data && dagNode.Data.length > 0) {
-    data = Buffer.alloc(dagNode.Data.length)
-    dagNode.Data.copy(data)
-  } else {
-    data = Buffer.alloc(0)
-  }
-
-  return data
-}
-
-function cloneLinks (dagNode) {
-  return dagNode.Links.slice()
-}
-
 function linkSort (a, b) {
   return Buffer.compare(a.nameAsBuffer, b.nameAsBuffer)
 }
@@ -38,7 +21,5 @@ const toDAGLink = async (node, options = {}) => {
   return new DAGLink(options.name || '', serialized.length, nodeCid)
 }
 
-exports.cloneData = cloneData
-exports.cloneLinks = cloneLinks
 exports.linkSort = linkSort
 exports.toDAGLink = toDAGLink
