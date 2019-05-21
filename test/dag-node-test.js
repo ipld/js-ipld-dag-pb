@@ -107,6 +107,15 @@ module.exports = (repo) => {
       }
     })
 
+    it('create with link named like a private property', () => {
+      const node = DAGNode.create(Buffer.from('hello'), [
+        new DAGLink(
+          '_links', 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
+        )
+      ])
+      expect(node.Links[0].Name).to.be.eql('_links')
+    })
+
     it('create an empty node', () => {
       // this node is not in the repo as we don't copy node data to the browser
       const node = DAGNode.create(Buffer.alloc(0))
@@ -162,12 +171,12 @@ module.exports = (repo) => {
       const node1a = DAGNode.create(Buffer.from('1'))
       const node2 = DAGNode.create(Buffer.from('2'))
       const link = await toDAGLink(node2, { name: 'banana' })
-      expect(Object.keys(node1a)).to.not.include('banana')
+      expect(Object.keys(node1a._namedLinks)).to.not.include('banana')
       const node1b = await DAGNode.addLink(node1a, link)
       expect(node1b.Links.length).to.equal(1)
       expect(node1b.Links[0].Tsize).to.eql(node2.size)
       expect(node1b.Links[0].Name).to.eql('banana')
-      expect(Object.keys(node1b)).to.include('banana')
+      expect(Object.keys(node1b._namedLinks)).to.include('banana')
     })
 
     it('addLink - add several links', async () => {
@@ -212,9 +221,9 @@ module.exports = (repo) => {
 
       const node1b = await DAGNode.addLink(node1a, link)
       expect(node1b.Links.length).to.eql(1)
-      expect(Object.keys(node1b)).to.include('banana')
+      expect(Object.keys(node1b._namedLinks)).to.include('banana')
       const node1c = DAGNode.rmLink(node1b, 'banana')
-      expect(Object.keys(node1c)).to.not.include('banana')
+      expect(Object.keys(node1c._namedLinks)).to.not.include('banana')
       expect(node1c.Links.length).to.eql(0)
       expect(node1c.toJSON()).to.eql(withoutLink)
     })
@@ -229,9 +238,9 @@ module.exports = (repo) => {
 
       const node1b = await DAGNode.addLink(node1a, link)
       expect(node1b.Links.length).to.eql(1)
-      expect(Object.keys(node1b)).to.include('banana')
+      expect(Object.keys(node1b._namedLinks)).to.include('banana')
       const node1c = DAGNode.rmLink(node1b, node1b.Links[0].Hash)
-      expect(Object.keys(node1c)).to.not.include('banana')
+      expect(Object.keys(node1c._namedLinks)).to.not.include('banana')
       expect(node1c.Links.length).to.eql(0)
       expect(node1c.toJSON()).to.eql(withoutLink)
     })

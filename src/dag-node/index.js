@@ -14,6 +14,7 @@ class DAGNode {
     this._data = data || Buffer.alloc(0)
     this._links = links
     this._serializedSize = serializedSize
+    this._namedLinks = {}
 
     // Make sure we have a nice public API that can be used by an IPLD resolver
     visibility.hidePrivateFields(this)

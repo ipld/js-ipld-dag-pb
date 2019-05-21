@@ -15,11 +15,7 @@ const addNamedLink = (object, name, position) => {
   if (skipNames.includes(name)) {
     return
   }
-  Object.defineProperty(object, name, {
-    enumerable: true,
-    configurable: true,
-    get: () => object._links[position].Hash
-  })
+  object._namedLinks[name] = object._links[position].Hash
 }
 
 module.exports = addNamedLink

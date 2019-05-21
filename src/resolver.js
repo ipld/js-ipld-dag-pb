@@ -25,10 +25,16 @@ exports.resolve = (binaryBlob, path) => {
   while (parts.length) {
     const key = parts.shift()
     if (node[key] === undefined) {
-      throw new Error(`Object has no property '${key}'`)
+      // Check the named links
+      if (node._namedLinks[key] === undefined) {
+        throw new Error(`Object has no property '${key}'`)
+      } else {
+        node = node._namedLinks[key]
+      }
+    } else {
+      node = node[key]
     }
 
-    node = node[key]
     if (CID.isCID(node)) {
       return {
         value: node,
@@ -67,4 +73,9 @@ exports.tree = function * (binaryBlob) {
   const node = util.deserialize(binaryBlob)
 
   yield * traverse(node)
+
+  // The named links are in a separate property
+  for (const namedLink of Object.keys(node._namedLinks)) {
+    yield namedLink
+  }
 }
