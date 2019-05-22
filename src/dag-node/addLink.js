@@ -2,7 +2,6 @@
 
 const sortLinks = require('./sortLinks')
 const DAGLink = require('../dag-link')
-const DAGNode = require('./index')
 
 const asDAGLink = (link) => {
   if (DAGLink.isDAGLink(link)) {
@@ -11,7 +10,13 @@ const asDAGLink = (link) => {
     return link
   }
 
-  if (DAGNode.isDAGNode(link)) {
+  // DAGNode.isDagNode() would be more appropriate here, but it can't be used
+  // as it would lead to circular dependencies as `addLink` is called from
+  // within the DAGNode object.
+  if (!('cid' in link ||
+        'hash' in link ||
+        'Hash' in link ||
+        'multihash' in link)) {
     throw new Error('Link must be a DAGLink or DAGLink-like. Convert the DAGNode into a DAGLink via `node.toDAGLink()`.')
   }
 

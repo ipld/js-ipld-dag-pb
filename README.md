@@ -28,8 +28,6 @@
 - [API](#api)
   - [DAGNode functions](#dagnode-functions)
     - [DAGNode constructor](#dagnode-constructor)
-    - [addLink(node, link)](#addlinknode-link)
-    - [rmLink(node, nameOrCid)](#rmlinknode-nameorcid)
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
     - [`node.Data`](#nodedata)
     - [`node.Links`](#nodelinks)
@@ -37,6 +35,8 @@
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
     - [`node.toDAGLink(options)`](#nodetodaglinkoptions)
+    - [`node.addLink(link)`](#nodeaddlinklink)
+    - [`node.rmLink(nameOrCid)`](#nodermlinknameorcid)
   - [DAGLink functions](#daglink-functions)
     - [DAGLink constructor](#daglink-constructor)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
@@ -66,9 +66,6 @@
 ```JavaScript
 const dagPB = require('ipld-dag-pb')
 
-dagPB.DAGNode.addLink // add a Link to a DAGNode, creating a new one
-dagPB.DAGNode.rmLink  // remove a Link to a DAGNode, creating a new one
-
 // IPLD Format specifics
 dagPB.resolver
 dagPB.util
@@ -94,10 +91,10 @@ const link = {
   Tsize: 42
 }
 
-DAGNode.addLink(node, link)
+node.addLink(link)
 console.log('with link', node.toJSON())
 
-DAGNode.rmLink(nodeA, 'I am a link')
+nodeA.rmLink('I am a link')
 console.log('now without link', node.toJSON())
 ```
 
@@ -136,38 +133,6 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 }
 ```
 
-#### addLink(node, link)
-
-- `node` - type: DAGNode
-- `link` - type: DAGLink or DAGLink in its json format
-
-Creates a link on node A. Modifies the node.
-
-`link` can be:
-- DAGLink instance
-- DAGNode instance
-- Object with the following properties:
-
-```JavaScript
-const link = {
-  Name: '<some string>', // optional
-  Tsize: <size in bytes>,
-  Hash: <cid> // can be a String CID, CID buffer or CID object
-}
-
-DAGNode.addLink(node, link)
-```
-
-#### rmLink(node, nameOrCid)
-
-- `node` - type: DAGNode
-- `nameOrCid` - type: String, CID object or CID buffer
-
-Removes a link from the node by name. Modifies the node.
-
-```JavaScript
-DAGNode.rmLink(node, 'Link1')
-```
 
 
 ### DAGNode instance methods and properties
@@ -199,6 +164,37 @@ const node = new DAGNode('some data')
 const link = node.toDAGLink()
 // Named link
 const link = node.toDAGLink({ name: 'name-of-the-link' })
+```
+
+#### addLink(link)
+
+- `link` - type: DAGLink or DAGLink in its json format
+
+Creates a link on node A. Modifies the node.
+
+`link` can be:
+- DAGLink instance
+- DAGNode instance
+- Object with the following properties:
+
+```JavaScript
+const link = {
+  Name: '<some string>', // optional
+  Tsize: <size in bytes>,
+  Hash: <cid> // can be a String CID, CID buffer or CID object
+}
+
+node.addLink(link)
+```
+
+#### rmLink(nameOrCid)
+
+- `nameOrCid` - type: String, CID object or CID buffer
+
+Removes a link from the node by name. Modifies the node.
+
+```JavaScript
+node.rmLink('Link1')
 ```
 
 
