@@ -1,3 +1,13 @@
+<a name="0.17.4"></a>
+## [0.17.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.3...v0.17.4) (2019-05-22)
+
+
+### Bug Fixes
+
+* actually use object keys ([a411eeb](https://github.com/ipld/js-ipld-dag-pb/commit/a411eeb))
+
+
+
 <a name="0.17.3"></a>
 ## [0.17.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.2...v0.17.3) (2019-05-20)
 
