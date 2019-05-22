@@ -11,7 +11,7 @@
  * @param {numner} position - The position within the array of links
  */
 const addNamedLink = (object, name, position) => {
-  const skipNames = ['', ...Object.keys(this)]
+  const skipNames = ['', ...Object.keys(object)]
   if (skipNames.includes(name)) {
     return
   }
