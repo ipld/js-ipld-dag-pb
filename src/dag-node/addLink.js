@@ -8,6 +8,9 @@ const DAGLink = require('../dag-link')
 const DAGNode = require('./index')
 const create = require('./create')
 
+// NOTE vmx 2019-05-27: The `async` is intentionally there to make it more
+// explicit that this function might return a promise
+// eslint-disable-next-line require-await
 const asDAGLink = async (link) => {
   if (DAGLink.isDAGLink(link)) {
     // It's a DAGLink instance
