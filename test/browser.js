@@ -3,7 +3,6 @@
 
 'use strict'
 
-const series = require('async/series')
 const IPFSRepo = require('ipfs-repo')
 
 const basePath = 'ipfs' + Math.random()
@@ -19,22 +18,15 @@ idb.deleteDatabase(basePath + '/blocks')
 describe('Browser', () => {
   const repo = new IPFSRepo(basePath)
 
-  before((done) => {
-    series([
-      (cb) => repo.init({}, cb),
-      (cb) => repo.open(cb)
-    ], done)
+  before(async () => {
+    await repo.init({})
+    await repo.open()
   })
 
-  after((done) => {
-    series([
-      (cb) => repo.close(cb),
-      (cb) => {
-        idb.deleteDatabase(basePath)
-        idb.deleteDatabase(basePath + '/blocks')
-        cb()
-      }
-    ], done)
+  after(async () => {
+    await repo.close()
+    idb.deleteDatabase(basePath)
+    idb.deleteDatabase(basePath + '/blocks')
   })
 
   require('./dag-node-test')(repo)
