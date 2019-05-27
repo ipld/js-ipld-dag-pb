@@ -1,10 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const ncp = require('ncp').ncp
-const rimraf = require('rimraf')
+const fs = require('fs-extra')
 const IPFSRepo = require('ipfs-repo')
-const series = require('async/series')
 const os = require('os')
 
 describe('Node.js', () => {
@@ -12,18 +10,14 @@ describe('Node.js', () => {
   const repoTests = os.tmpdir() + '/t-r-' + Date.now()
   const repo = new IPFSRepo(repoTests)
 
-  before((done) => {
-    series([
-      (cb) => ncp(repoExample, repoTests, cb),
-      (cb) => repo.open(cb)
-    ], done)
+  before(async () => {
+    await fs.copy(repoExample, repoTests)
+    await repo.open()
   })
 
-  after((done) => {
-    series([
-      (cb) => repo.close(cb),
-      (cb) => rimraf(repoTests, cb)
-    ], done)
+  after(async () => {
+    await repo.close()
+    await fs.remove(repoTests)
   })
 
   require('./dag-link-test')(repo)

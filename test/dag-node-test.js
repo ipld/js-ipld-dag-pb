@@ -13,7 +13,6 @@ const toDAGLink = require('../src/dag-node/util').toDAGLink
 const isNode = require('detect-node')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
-const promisify = require('promisify-es6')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
@@ -25,11 +24,7 @@ const testBlockNamedLinks = loadFixture('test/fixtures/test-block-named-links')
 const testBlockUnnamedLinks = loadFixture('test/fixtures/test-block-unnamed-links')
 
 module.exports = (repo) => {
-  const _bs = new BlockService(repo)
-  const bs = {
-    get: promisify(_bs.get.bind(_bs)),
-    put: promisify(_bs.put.bind(_bs))
-  }
+  const bs = new BlockService(repo)
 
   describe('DAGNode', () => {
     it('create a node', () => {
