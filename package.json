@@ -78,7 +78,7 @@
     "dirty-chai": "^2.0.1",
     "ipfs-block": "~0.8.0",
     "ipfs-block-service": "~0.15.2",
-    "ipfs-repo": "~0.26.4",
+    "ipfs-repo": "~0.27.0",
     "multihashes": "~0.4.14",
     "ncp": "^2.0.0",
     "promisify-es6": "^1.0.3",
