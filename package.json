@@ -77,7 +77,7 @@
     "detect-node": "^2.0.4",
     "dirty-chai": "^2.0.1",
     "ipfs-block": "~0.8.0",
-    "ipfs-block-service": "~0.15.2",
+    "ipfs-block-service": "~0.16.0",
     "ipfs-repo": "~0.26.4",
     "multihashes": "~0.4.14",
     "ncp": "^2.0.0",
