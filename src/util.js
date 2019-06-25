@@ -2,9 +2,9 @@
 
 const CID = require('cids')
 const protons = require('protons')
-const proto = protons(require('./dag.proto.js'))
-const DAGLink = require('./dag-link')
-const DAGNode = require('./dag-node/dagNode.js')
+const proto = protons(require('./dag.proto'))
+const DAGLink = require('./dag-link/dagLink')
+const DAGNode = require('./dag-node/dagNode')
 const multicodec = require('multicodec')
 const multihashing = require('multihashing-async')
 
