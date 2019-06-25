@@ -1,6 +1,6 @@
 'use strict'
 
-const DAGLink = require('./../dag-link')
+const DAGLink = require('./../dag-link/dagLink')
 const {
   cid,
   serialize

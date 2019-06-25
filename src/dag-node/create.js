@@ -3,11 +3,11 @@
 const sort = require('stable')
 const {
   serialize
-} = require('../util.js')
-const dagNodeUtil = require('./util.js')
+} = require('../util')
+const dagNodeUtil = require('./util')
 const linkSort = dagNodeUtil.linkSort
-const DAGNode = require('./dagNode.js')
-const DAGLink = require('../dag-link')
+const DAGNode = require('./dagNode')
+const DAGLink = require('../dag-link/dagLink')
 
 const create = (data, links = []) => {
   if (typeof data === 'string') {
