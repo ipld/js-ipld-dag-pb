@@ -5,7 +5,7 @@ const cloneLinks = dagNodeUtil.cloneLinks
 const cloneData = dagNodeUtil.cloneData
 const toDAGLink = dagNodeUtil.toDAGLink
 const DAGLink = require('../dag-link')
-const DAGNode = require('./index')
+const DAGNode = require('./dagNode.js')
 const create = require('./create')
 
 const asDAGLink = async (link) => {
