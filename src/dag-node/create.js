@@ -6,7 +6,7 @@ const {
 } = require('../util.js')
 const dagNodeUtil = require('./util.js')
 const linkSort = dagNodeUtil.linkSort
-const DAGNode = require('./index.js')
+const DAGNode = require('./dagNode.js')
 const DAGLink = require('../dag-link')
 
 const create = (data, links = []) => {

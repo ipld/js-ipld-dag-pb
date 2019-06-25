@@ -4,7 +4,7 @@ const CID = require('cids')
 const protons = require('protons')
 const proto = protons(require('./dag.proto.js'))
 const DAGLink = require('./dag-link')
-const DAGNode = require('./dag-node')
+const DAGNode = require('./dag-node/dagNode.js')
 const multicodec = require('multicodec')
 const multihashing = require('multihashing-async')
 
