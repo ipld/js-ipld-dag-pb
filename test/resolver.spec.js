@@ -157,8 +157,7 @@ describe('IPLD Format resolver (local)', () => {
         'Links/1/Name',
         'Links/1/Tsize',
         'Links/1/Hash',
-        'Data',
-        'named link'
+        'Data'
       ])
     })
   })
@@ -206,8 +205,7 @@ describe('IPLD Format resolver (local)', () => {
         'Links/1/Name',
         'Links/1/Tsize',
         'Links/1/Hash',
-        'Data',
-        'named link'
+        'Data'
       ])
     })
   })
