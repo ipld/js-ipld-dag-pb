@@ -25,6 +25,17 @@ exports.resolve = (binaryBlob, path) => {
   while (parts.length) {
     const key = parts.shift()
     if (node[key] === undefined) {
+      // There might be a matching named link
+      for (const link of node.Links) {
+        if (link.Name === key) {
+          return {
+            value: link.Hash,
+            remainderPath: parts.join('/')
+          }
+        }
+      }
+
+      // There wasn't even a matching named link
       throw new Error(`Object has no property '${key}'`)
     }
 

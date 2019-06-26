@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const withIs = require('class-is')
-const addNamedLink = require('./addNamedLink')
 const visibility = require('../visibility')
 
 class DAGNode {
@@ -18,13 +17,6 @@ class DAGNode {
     // Make sure we have a nice public API that can be used by an IPLD resolver
     visibility.hidePrivateFields(this)
     visibility.addEnumerableGetters(this, ['Data', 'Links'])
-
-    // Add getters for existing links by the name of the link
-    // This is how paths are traversed in IPFS. Links with names won't
-    // override existing fields like `data` or `links`.
-    links.forEach((link, position) => {
-      addNamedLink(this, link.Name, position)
-    })
   }
 
   toJSON () {
