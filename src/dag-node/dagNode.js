@@ -51,9 +51,11 @@ class DAGNode {
   get Data () {
     return this._data
   }
+
   set Data (_) {
     throw new Error("Can't set property: 'Data' is immutable")
   }
+
   get Links () {
     return this._links.map((link) => {
       return {
@@ -63,6 +65,7 @@ class DAGNode {
       }
     })
   }
+
   set Links (_) {
     throw new Error("Can't set property: 'Links' is immutable")
   }

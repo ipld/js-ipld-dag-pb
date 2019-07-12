@@ -40,7 +40,7 @@ const cid = async (binaryBlob, userOptions) => {
  * @returns {Buffer} - The encoded binary representation
  */
 const serialize = (node) => {
-  let data = node.Data
+  const data = node.Data
   let links = node.Links || []
 
   // If the node is not an instance of a DAGNode, the link.hash might be a Base58 encoded string; decode it
