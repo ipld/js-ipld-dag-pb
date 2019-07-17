@@ -54,19 +54,6 @@ exports.resolve = (binaryBlob, path) => {
   }
 }
 
-const traverse = function * (node, path) {
-  // Traverse only objects and arrays
-  if (Buffer.isBuffer(node) || CID.isCID(node) || typeof node === 'string' ||
-      node === null) {
-    return
-  }
-  for (const item of Object.keys(node)) {
-    const nextpath = path === undefined ? item : path + '/' + item
-    yield nextpath
-    yield * traverse(node[item], nextpath)
-  }
-}
-
 /**
  * Return all available paths of a block.
  *
@@ -77,5 +64,13 @@ const traverse = function * (node, path) {
 exports.tree = function * (binaryBlob) {
   const node = util.deserialize(binaryBlob)
 
-  yield * traverse(node)
+  // There is always a `Data` and `Links` property
+  yield 'Data'
+  yield 'Links'
+  for (let ii = 0; ii < node.Links.length; ii++) {
+    yield `Links/${ii}`
+    yield `Links/${ii}/Name`
+    yield `Links/${ii}/Tsize`
+    yield `Links/${ii}/Hash`
+  }
 }
