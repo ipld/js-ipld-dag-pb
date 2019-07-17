@@ -23,7 +23,7 @@ describe('IPLD Format resolver (local)', () => {
   }]
 
   const create = (data, links) => {
-    const node = DAGNode.create(data, links)
+    const node = new DAGNode(data, links)
     return utils.serialize(node)
   }
 

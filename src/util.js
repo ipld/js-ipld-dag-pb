@@ -7,6 +7,7 @@ const DAGLink = require('./dag-link/dagLink')
 const DAGNode = require('./dag-node/dagNode')
 const multicodec = require('multicodec')
 const multihashing = require('multihashing-async')
+const { serializeDAGNode, serializeDAGNodeLike } = require('./serialize')
 
 exports = module.exports
 
@@ -40,22 +41,11 @@ const cid = async (binaryBlob, userOptions) => {
  * @returns {Buffer} - The encoded binary representation
  */
 const serialize = (node) => {
-  const data = node.Data
-  let links = node.Links || []
-
-  // If the node is not an instance of a DAGNode, the link.hash might be a Base58 encoded string; decode it
-  if (!DAGNode.isDAGNode(node) && links) {
-    links = links.map((link) => {
-      return DAGLink.isDAGLink(link) ? link : DAGLink.util.createDagLinkFromB58EncodedHash(link)
-    })
+  if (DAGNode.isDAGNode(node)) {
+    return serializeDAGNode(node)
+  } else {
+    return serializeDAGNodeLike(node.Data, node.Links)
   }
-
-  const serialized = proto.PBNode.encode(toProtoBuf({
-    Data: data,
-    Links: links
-  }))
-
-  return serialized
 }
 
 /**
@@ -74,30 +64,6 @@ const deserialize = (buffer) => {
   const data = pbn.Data == null ? Buffer.alloc(0) : pbn.Data
 
   return new DAGNode(data, links, buffer.length)
-}
-
-function toProtoBuf (node) {
-  const pbn = {}
-
-  if (node.Data && node.Data.length > 0) {
-    pbn.Data = node.Data
-  } else {
-    // NOTE: this has to be null in order to match go-ipfs serialization `null !== new Buffer(0)`
-    pbn.Data = null
-  }
-
-  if (node.Links && node.Links.length > 0) {
-    pbn.Links = node.Links
-      .map((link) => ({
-        Hash: link.Hash.buffer,
-        Name: link.Name,
-        Tsize: link.Tsize
-      }))
-  } else {
-    pbn.Links = null
-  }
-
-  return pbn
 }
 
 exports.serialize = serialize
