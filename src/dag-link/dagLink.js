@@ -2,7 +2,6 @@
 
 const CID = require('cids')
 const assert = require('assert')
-const visibility = require('../visibility')
 const withIs = require('class-is')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
@@ -17,10 +16,6 @@ class DAGLink {
     this._nameBuf = null
     this._size = size
     this._cid = new CID(cid)
-
-    // Make sure we have a nice public API that can be used by an IPLD resolver
-    visibility.hidePrivateFields(this)
-    visibility.addEnumerableGetters(this, ['Hash', 'Name', 'Tsize'])
   }
 
   toString () {

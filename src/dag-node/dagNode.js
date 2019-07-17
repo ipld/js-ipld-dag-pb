@@ -2,7 +2,6 @@
 
 const withIs = require('class-is')
 const sortLinks = require('./sortLinks')
-const visibility = require('../visibility')
 const DAGLink = require('../dag-link/dagLink')
 const { serializeDAGNode } = require('../serialize.js')
 const toDAGLink = require('./toDagLink')
@@ -38,10 +37,6 @@ class DAGNode {
     this._data = data
     this._links = links
     this._serializedSize = serializedSize
-
-    // Make sure we have a nice public API that can be used by an IPLD resolver
-    visibility.hidePrivateFields(this)
-    visibility.addEnumerableGetters(this, ['Data', 'Links'])
   }
 
   toJSON () {
