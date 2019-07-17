@@ -36,6 +36,7 @@
     - [`node.size`](#nodesize)
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
+    - [`node.toDAGLink(options)`](#nodetodaglinkoptions)
   - [DAGLink functions](#daglink-functions)
     - [DAGLink constructor](#daglink-constructor)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
@@ -93,7 +94,7 @@ const link = {
   Tsize: 42
 }
 
-await DAGNode.addLink(node, link)
+DAGNode.addLink(node, link)
 console.log('with link', node.toJSON())
 
 DAGNode.rmLink(nodeA, 'I am a link')
@@ -154,7 +155,7 @@ const link = {
   Hash: <cid> // can be a String CID, CID buffer or CID object
 }
 
-await DAGNode.addLink(node, link)
+DAGNode.addLink(node, link)
 ```
 
 #### rmLink(node, nameOrCid)
@@ -186,6 +187,19 @@ Size of the node, in bytes
 #### `node.toJSON()`
 
 #### `node.toString()`
+
+#### `node.toDAGLink()`
+
+- `options` - (optional) type: Object. Currently the only option is `name` to specify a named link.
+
+Converts a `DAGNode` into a `DAGLink`.
+
+```JavaScript
+const node = new DAGNode('some data')
+const link = node.toDAGLink()
+// Named link
+const link = node.toDAGLink({ name: 'name-of-the-link' })
+```
 
 
 ### DAGLink functions

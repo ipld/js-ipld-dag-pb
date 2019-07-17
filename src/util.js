@@ -1,18 +1,16 @@
 'use strict'
 
-const CID = require('cids')
 const protons = require('protons')
 const proto = protons(require('./dag.proto'))
 const DAGLink = require('./dag-link/dagLink')
 const DAGNode = require('./dag-node/dagNode')
-const multicodec = require('multicodec')
-const multihashing = require('multihashing-async')
 const { serializeDAGNode, serializeDAGNodeLike } = require('./serialize')
+const genCid = require('./genCid')
 
 exports = module.exports
 
-exports.codec = multicodec.DAG_PB
-exports.defaultHashAlg = multicodec.SHA2_256
+exports.codec = genCid.codec
+exports.defaultHashAlg = genCid.defaultHashAlg
 
 /**
  * Calculate the CID of the binary blob.
@@ -23,15 +21,8 @@ exports.defaultHashAlg = multicodec.SHA2_256
  * @param {string} [UserOptions.hashAlg] - Defaults to the defaultHashAlg of the format
  * @returns {Promise.<CID>}
  */
-const cid = async (binaryBlob, userOptions) => {
-  const defaultOptions = { cidVersion: 1, hashAlg: exports.defaultHashAlg }
-  const options = Object.assign(defaultOptions, userOptions)
-
-  const multihash = await multihashing(binaryBlob, options.hashAlg)
-  const codecName = multicodec.print[exports.codec]
-  const cid = new CID(options.cidVersion, codecName, multihash)
-
-  return cid
+const cid = (binaryBlob, userOptions) => {
+  return genCid.cid(binaryBlob, userOptions)
 }
 
 /**
