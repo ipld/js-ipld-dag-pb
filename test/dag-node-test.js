@@ -9,7 +9,6 @@ chai.use(dirtyChai)
 const dagPB = require('../src')
 const DAGLink = dagPB.DAGLink
 const DAGNode = dagPB.DAGNode
-const toDAGLink = require('../src/dag-node/toDagLink')
 const isNode = require('detect-node')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
@@ -126,7 +125,7 @@ module.exports = (repo) => {
     it('addLink by DAGNode', async () => {
       const node1 = new DAGNode(Buffer.from('1'))
       const node2 = new DAGNode(Buffer.from('2'))
-      await DAGNode.addLink(node1, node2)
+      DAGNode.addLink(node1, await node2.toDAGLink())
       expect(node1.Links.length).to.equal(1)
       expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.be.eql('')
@@ -135,8 +134,8 @@ module.exports = (repo) => {
     it('addLink by DAGLink', async () => {
       const node1 = new DAGNode(Buffer.from('1'))
       const node2 = new DAGNode(Buffer.from('2'))
-      const link = await toDAGLink(node2)
-      await DAGNode.addLink(node1, link)
+      const link = await node2.toDAGLink()
+      DAGNode.addLink(node1, link)
       expect(node1.Links.length).to.equal(1)
       expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.be.eql('')
@@ -145,9 +144,9 @@ module.exports = (repo) => {
     it('addLink by object', async () => {
       const node1 = new DAGNode(Buffer.from('1'))
       const node2 = new DAGNode(Buffer.from('2'))
-      const link = await toDAGLink(node2)
+      const link = await node2.toDAGLink()
       const linkObject = link.toJSON()
-      await DAGNode.addLink(node1, linkObject)
+      DAGNode.addLink(node1, linkObject)
       expect(node1.Links.length).to.equal(1)
       expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.be.eql('')
@@ -156,9 +155,9 @@ module.exports = (repo) => {
     it('addLink by name', async () => {
       const node1 = new DAGNode(Buffer.from('1'))
       const node2 = new DAGNode(Buffer.from('2'))
-      const link = await toDAGLink(node2, { name: 'banana' })
+      const link = await node2.toDAGLink({ name: 'banana' })
       expect(node1.Links.length).to.equal(0)
-      await DAGNode.addLink(node1, link)
+      DAGNode.addLink(node1, link)
       expect(node1.Links.length).to.equal(1)
       expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.eql('banana')
@@ -169,11 +168,11 @@ module.exports = (repo) => {
       expect(node1.Links.length).to.equal(0)
 
       const node2 = new DAGNode(Buffer.from('2'))
-      await DAGNode.addLink(node1, node2)
+      DAGNode.addLink(node1, await node2.toDAGLink())
       expect(node1.Links.length).to.equal(1)
 
       const node3 = new DAGNode(Buffer.from('3'))
-      await DAGNode.addLink(node1, node3)
+      DAGNode.addLink(node1, await node3.toDAGLink())
       expect(node1.Links.length).to.equal(2)
     })
 
@@ -181,17 +180,15 @@ module.exports = (repo) => {
       const linkName = 'link-name'
       const remote = new DAGNode(Buffer.from('2'))
       const source = new DAGNode(Buffer.from('1'))
-      await DAGNode.addLink(
+      DAGNode.addLink(
         source,
-        await toDAGLink(remote, {
-          name: linkName
-        })
+        await remote.toDAGLink({ name: linkName })
       )
 
       expect(source.Links.length).to.equal(1)
 
       const target = new DAGNode(null, [], 0)
-      await DAGNode.addLink(target, source.Links[0])
+      DAGNode.addLink(target, source.Links[0])
 
       expect(target.Links.length).to.equal(1)
       expect(target.Links[0].Tsize).to.eql(remote.size)
@@ -204,9 +201,9 @@ module.exports = (repo) => {
       const withoutLink = node1.toJSON()
 
       const node2 = new DAGNode(Buffer.from('2'))
-      const link = await toDAGLink(node2, { name: 'banana' })
+      const link = await node2.toDAGLink({ name: 'banana' })
 
-      await DAGNode.addLink(node1, link)
+      DAGNode.addLink(node1, link)
       expect(node1.Links.length).to.eql(1)
       DAGNode.rmLink(node1, 'banana')
       expect(node1.Links.length).to.eql(0)
@@ -219,9 +216,9 @@ module.exports = (repo) => {
       const withoutLink = node1.toJSON()
 
       const node2 = new DAGNode(Buffer.from('2'))
-      const link = await toDAGLink(node2, { name: 'banana' })
+      const link = await node2.toDAGLink({ name: 'banana' })
 
-      await DAGNode.addLink(node1, link)
+      DAGNode.addLink(node1, link)
       expect(node1.Links.length).to.eql(1)
       DAGNode.rmLink(node1, node1.Links[0].Hash)
       expect(node1.Links.length).to.eql(0)
