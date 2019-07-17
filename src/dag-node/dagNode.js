@@ -1,16 +1,38 @@
 'use strict'
 
-const assert = require('assert')
 const withIs = require('class-is')
+const sortLinks = require('./sortLinks')
 const visibility = require('../visibility')
+const DAGLink = require('../dag-link/dagLink')
+const { serializeDAGNode } = require('../serialize.js')
 
 class DAGNode {
-  constructor (data, links, serializedSize) {
-    if (serializedSize !== 0) {
-      assert(serializedSize, 'A DAGNode requires it\'s serialized size')
+  constructor (data, links = [], serializedSize = 0) {
+    if (!data) {
+      data = Buffer.alloc(0)
+    }
+    if (typeof data === 'string') {
+      data = Buffer.from(data)
+    }
+    if (!Buffer.isBuffer(data)) {
+      throw new Error('Passed \'data\' is not a buffer or a string!')
     }
 
-    this._data = data || Buffer.alloc(0)
+    links = links.map((link) => {
+      return DAGLink.isDAGLink(link)
+        ? link
+        : DAGLink.util.createDagLinkFromB58EncodedHash(link)
+    })
+    links = sortLinks(links)
+
+    if (serializedSize === 0) {
+      serializedSize = serializeDAGNode({
+        Data: data,
+        Links: links
+      }).length
+    }
+
+    this._data = data
     this._links = links
     this._serializedSize = serializedSize
 

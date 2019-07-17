@@ -1,16 +1,7 @@
 'use strict'
 
 const DAGLink = require('./../dag-link/dagLink')
-const {
-  cid,
-  serialize
-} = require('../util')
-
-exports = module.exports
-
-function linkSort (a, b) {
-  return Buffer.compare(a.nameAsBuffer, b.nameAsBuffer)
-}
+const { cid, serialize } = require('../util')
 
 /*
  * toDAGLink converts a DAGNode to a DAGLink
@@ -21,5 +12,4 @@ const toDAGLink = async (node, options = {}) => {
   return new DAGLink(options.name || '', serialized.length, nodeCid)
 }
 
-exports.linkSort = linkSort
-exports.toDAGLink = toDAGLink
+module.exports = toDAGLink

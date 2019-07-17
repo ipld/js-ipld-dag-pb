@@ -27,7 +27,7 @@
     - [Add and remove a Link](#add-and-remove-a-link)
 - [API](#api)
   - [DAGNode functions](#dagnode-functions)
-    - [DAGNode.create(data, links)](#dagnodecreatedata-links)
+    - [DAGNode constructor](#dagnode-constructor)
     - [addLink(node, link)](#addlinknode-link)
     - [rmLink(node, nameOrCid)](#rmlinknode-nameorcid)
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
@@ -65,7 +65,6 @@
 ```JavaScript
 const dagPB = require('ipld-dag-pb')
 
-dagPB.DAGNode.create  // create a DAGNode
 dagPB.DAGNode.addLink // add a Link to a DAGNode, creating a new one
 dagPB.DAGNode.rmLink  // remove a Link to a DAGNode, creating a new one
 
@@ -79,10 +78,10 @@ dagPB.util
 #### Create a DAGNode
 
 ```JavaScript
-const node1 = DAGNode.create(Buffer.from('some data'))
+const node1 = new DAGNode(Buffer.from('some data'))
 
 // node2 will have the same data as node1
-const node2 = DAGNode.create('some data')
+const node2 = new DAGNode('some data')
 ```
 
 #### Add and remove a Link
@@ -114,15 +113,16 @@ const dagPB = require('ipld-dag-pb')
 const DAGNode = dagPB.DAGNode
 ```
 
-#### DAGNode.create(data, links)
+#### DAGNode constructor
 
 - `data` - type: Buffer
-- `links`- type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
+- `links`- (optional) type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
+- `serializedSize`- (optional) type: Number of bytes the serialized node has. If none is given, it will automatically be calculated.
 
 Create a DAGNode.
 
 ```JavaScript
-const dagNode = DAGNode.create('data', links)
+const dagNode = new DAGNode('data', links)
 ```
 
 links can be a single or an array of DAGLinks instances or objects with the following pattern
