@@ -4,7 +4,7 @@ const protons = require('protons')
 const proto = protons(require('./dag.proto'))
 const DAGLink = require('./dag-link/dagLink')
 const DAGNode = require('./dag-node/dagNode')
-const { serializeDAGNode, serializeDAGNodeLike } = require('./serialize')
+const { serializeDAGNodeLike } = require('./serialize')
 const genCid = require('./genCid')
 
 exports = module.exports
@@ -33,7 +33,7 @@ const cid = (binaryBlob, userOptions) => {
  */
 const serialize = (node) => {
   if (DAGNode.isDAGNode(node)) {
-    return serializeDAGNode(node)
+    return node.serialize()
   } else {
     return serializeDAGNodeLike(node.Data, node.Links)
   }

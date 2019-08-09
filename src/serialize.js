@@ -34,7 +34,7 @@ const toProtoBuf = (node) => {
 /**
  * Serialize internal representation into a binary PB block.
  *
- * @param {Object} node - Internal representation of a CBOR block
+ * @param {Object} node - Internal representation of a PB block
  * @returns {Buffer} - The encoded binary representation
  */
 const serializeDAGNode = (node) => {
