@@ -12,6 +12,7 @@ const DAGNode = dagPB.DAGNode
 const isNode = require('detect-node')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
+const multihashing = require('multihashing-async')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
@@ -37,6 +38,12 @@ module.exports = (repo) => {
       const serialized = dagPB.util.serialize(node)
       const deserialized = dagPB.util.deserialize(serialized)
       expect(node.Data).to.eql(deserialized.Data)
+    })
+
+    it('dagPB.util.serialize same as node.serialize()', () => {
+      const node = new DAGNode(Buffer.from('some data'))
+      const serialized = dagPB.util.serialize(node)
+      expect(serialized).to.eql(node.serialize())
     })
 
     it('create a node with string data', () => {
@@ -94,9 +101,12 @@ module.exports = (repo) => {
         new DAGLink(undefined, 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
       ])
       expect(node.Links[0].Name).to.be.eql('')
-      const serialized = dagPB.util.serialize(node)
+      const serialized = node.serialize()
       const deserialized = dagPB.util.deserialize(serialized)
       for (const key of Object.keys(node)) {
+        if (key === '_serializedSize') {
+          continue
+        }
         expect(node[key]).to.deep.equal(deserialized[key])
       }
     })
@@ -253,6 +263,75 @@ module.exports = (repo) => {
       expect(cid.version).to.equal(1)
       const mh = multihash.decode(cid.multihash)
       expect(mh.name).to.equal('sha2-512')
+    })
+
+    it('node size updates with mutation', async () => {
+      // see pbcross.go for the source of the sizes and CIDs here
+
+      async function cid (node) {
+        const serialized = dagPB.util.serialize(node)
+        const cid = await dagPB.util.cid(serialized, { cidVersion: 0 })
+        return cid.toBaseEncodedString()
+      }
+
+      async function rawBlockCid (str) {
+        const raw = Buffer.from(str)
+        const rawHash = await multihashing(raw, 'sha2-256')
+        return new CID(1, 'raw', rawHash)
+      }
+
+      // raw nodes
+      const rnd1 = await rawBlockCid('aaaa')
+      const rnd2 = await rawBlockCid('bbbb')
+      const rnd3 = await rawBlockCid('cccc')
+
+      // empty PB nodes
+      const pnd1 = new DAGNode()
+      const pnd2 = new DAGNode()
+      const pnd3 = new DAGNode()
+
+      // sanity check empty nodes
+      for (const node of [pnd1, pnd2, pnd3]) {
+        expect(node.size).to.equal(0)
+        expect(await cid(node)).to.equal('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n')
+      }
+
+      // named PB links to a raw nodes
+      const cat = new DAGLink('cat', 4, rnd1)
+      const dog = new DAGLink('dog', 4, rnd2)
+      const bear = new DAGLink('bear', 4, rnd3)
+
+      // pnd1
+      // links by constructor and addLink should yield the same node
+      const pnd1ByConstructor = new DAGNode(null, [cat])
+      expect(pnd1ByConstructor.size).to.equal(51)
+      expect(await cid(pnd1ByConstructor)).to.equal('QmdwjhxpxzcMsR3qUuj7vUL8pbA7MgR3GAxWi2GLHjsKCT')
+
+      pnd1.addLink(cat)
+      expect(pnd1.size).to.equal(51)
+      expect(await cid(pnd1)).to.equal('QmdwjhxpxzcMsR3qUuj7vUL8pbA7MgR3GAxWi2GLHjsKCT')
+
+      // pnd2
+      const pnd1Link = await pnd1.toDAGLink({ name: 'first', cidVersion: 0 })
+      const pnd2ByConstructor = new DAGNode(null, [pnd1Link, dog])
+      expect(pnd2ByConstructor.size).to.equal(149)
+      expect(await cid(pnd2ByConstructor)).to.equal('QmWXZxVQ9yZfhQxLD35eDR8LiMRsYtHxYqTFCBbJoiJVys')
+
+      pnd2.addLink(pnd1Link)
+      pnd2.addLink(dog)
+      expect(pnd2.size).to.equal(149)
+      expect(await cid(pnd2)).to.equal('QmWXZxVQ9yZfhQxLD35eDR8LiMRsYtHxYqTFCBbJoiJVys')
+
+      // pnd3
+      const pnd2Link = await pnd2.toDAGLink({ name: 'second', cidVersion: 0 })
+      const pnd3ByConstructor = new DAGNode(null, [pnd2Link, bear])
+      expect(pnd3ByConstructor.size).to.equal(250)
+      expect(await cid(pnd3ByConstructor)).to.equal('QmNX6Tffavsya4xgBi2VJQnSuqy9GsxongxZZ9uZBqp16d')
+
+      pnd3.addLink(pnd2Link)
+      pnd3.addLink(bear)
+      expect(pnd3.size).to.equal(250)
+      expect(await cid(pnd3)).to.equal('QmNX6Tffavsya4xgBi2VJQnSuqy9GsxongxZZ9uZBqp16d')
     })
 
     it('marshal a node and store it with block-service', async () => {

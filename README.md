@@ -133,8 +133,6 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 }
 ```
 
-
-
 ### DAGNode instance methods and properties
 
 You have the following methods and properties available in every DAGNode instance.
@@ -166,7 +164,7 @@ const link = node.toDAGLink()
 const link = node.toDAGLink({ name: 'name-of-the-link' })
 ```
 
-#### addLink(link)
+#### `node.addLink(link)`
 
 - `link` - type: DAGLink or DAGLink in its json format
 
@@ -187,7 +185,7 @@ const link = {
 node.addLink(link)
 ```
 
-#### rmLink(nameOrCid)
+#### `node.rmLink(nameOrCid)`
 
 - `nameOrCid` - type: String, CID object or CID buffer
 
@@ -197,6 +195,9 @@ Removes a link from the node by name. Modifies the node.
 node.rmLink('Link1')
 ```
 
+#### `node.serialize()`
+
+Serialize the DAGNode instance to its portable binary format. Yields the same result as `dagPB.util.serialize(node)`. Returns a `Buffer`.
 
 ### DAGLink functions
 
@@ -249,7 +250,11 @@ const link = new DAGLink(
 
 ### `dagPB.util.serialize`
 
+Serialize the DAGNode instance to its portable binary format. Yields the same result as `node.serialize()`. Returns a `Buffer`.
+
 ### `dagPB.util.deserialize`
+
+Deserialize a DAGNode instance from its portable binary format. Returns a DAGNode.
 
 ## Contribute
 

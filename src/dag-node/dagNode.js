@@ -9,7 +9,7 @@ const addLink = require('./addLink')
 const rmLink = require('./rmLink')
 
 class DAGNode {
-  constructor (data, links = [], serializedSize = 0) {
+  constructor (data, links = [], serializedSize = null) {
     if (!data) {
       data = Buffer.alloc(0)
     }
@@ -20,6 +20,10 @@ class DAGNode {
       throw new Error('Passed \'data\' is not a buffer or a string!')
     }
 
+    if (serializedSize !== null && typeof serializedSize !== 'number') {
+      throw new Error('Passed \'serializedSize\' must be a number!')
+    }
+
     links = links.map((link) => {
       return DAGLink.isDAGLink(link)
         ? link
@@ -27,16 +31,10 @@ class DAGNode {
     })
     links = sortLinks(links)
 
-    if (serializedSize === 0) {
-      serializedSize = serializeDAGNode({
-        Data: data,
-        Links: links
-      }).length
-    }
-
     this._data = data
     this._links = links
     this._serializedSize = serializedSize
+    this._size = null
   }
 
   toJSON () {
@@ -55,11 +53,18 @@ class DAGNode {
     return `DAGNode <data: "${this.Data.toString('base64')}", links: ${this.Links.length}, size: ${this.size}>`
   }
 
+  _invalidateCached () {
+    this._serializedSize = null
+    this._size = null
+  }
+
   addLink (link) {
+    this._invalidateCached()
     return addLink(this, link)
   }
 
   rmLink (link) {
+    this._invalidateCached()
     return rmLink(this, link)
   }
 
@@ -68,8 +73,18 @@ class DAGNode {
     return toDAGLink(this, options)
   }
 
+  serialize () {
+    return serializeDAGNode({
+      Data: this._data,
+      Links: this._links
+    })
+  }
+
   get size () {
-    if (this._size === undefined) {
+    if (this._size === null) {
+      if (this._serializedSize === null) {
+        this._serializedSize = this.serialize().length
+      }
       this._size = this._links.reduce((sum, l) => sum + l.Tsize, this._serializedSize)
     }
 
