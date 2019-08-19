@@ -1,3 +1,13 @@
+<a name="0.18.1"></a>
+## [0.18.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.0...v0.18.1) (2019-08-19)
+
+
+### Bug Fixes
+
+* serialization and size portability problems ([f348cb8](https://github.com/ipld/js-ipld-dag-pb/commit/f348cb8))
+
+
+
 <a name="0.18.0"></a>
 # [0.18.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.17.4...v0.18.0) (2019-07-29)
 
