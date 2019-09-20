@@ -82,7 +82,7 @@
     "fs-extra": "^8.1.0",
     "ipfs-block": "~0.8.1",
     "ipfs-block-service": "~0.16.0",
-    "ipfs-repo": "~0.27.0",
+    "ipfs-repo": "~0.28.0",
     "multihashes": "~0.4.15"
   }
 }
