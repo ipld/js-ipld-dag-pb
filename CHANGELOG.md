@@ -1,3 +1,14 @@
+<a name="0.18.2"></a>
+## [0.18.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.1...v0.18.2) (2020-01-13)
+
+
+### Bug Fixes
+
+* **package:** update multicodec to version 1.0.0 ([f0fee49](https://github.com/ipld/js-ipld-dag-pb/commit/f0fee49))
+* **package:** update multihashing-async to version 0.8.0 ([244665a](https://github.com/ipld/js-ipld-dag-pb/commit/244665a))
+
+
+
 <a name="0.18.1"></a>
 ## [0.18.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.0...v0.18.1) (2019-08-19)
 
