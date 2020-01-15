@@ -49,7 +49,7 @@ const deserialize = (buffer) => {
   const pbn = proto.PBNode.decode(buffer)
 
   const links = pbn.Links.map((link) => {
-    return new DAGLink(link.Name, link.Hash)
+    return new DAGLink(link.Hash, link.Name)
   })
 
   const data = pbn.Data == null ? Buffer.alloc(0) : pbn.Data

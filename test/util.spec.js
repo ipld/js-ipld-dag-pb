@@ -34,7 +34,7 @@ describe('util', () => {
 
   it('should serialize a node with links', () => {
     const links = [
-      new DAGLink('', 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
+      new DAGLink('QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
     ]
     const result = serialize({ Links: links })
     expect(result).to.be.an.instanceof(Uint8Array)

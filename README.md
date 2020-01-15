@@ -1,4 +1,4 @@
-# js-ipld-dag-pb
+# js-ipld-dag-pb <!-- omit in toc -->
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
@@ -14,11 +14,11 @@
 
 > JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf. In addition to the IPLD Format methods, this module also provides an API for creating the nodes and manipulating them (adding and removing links, etc).
 
-## Lead Maintainer
+## Lead Maintainer <!-- omit in toc -->
 
 [Volker Mische](https://github.com/vmx)
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
 - [Install](#install)
 - [Usage](#usage)
@@ -31,24 +31,23 @@
   - [DAGNode instance methods and properties](#dagnode-instance-methods-and-properties)
     - [`node.Data`](#nodedata)
     - [`node.Links`](#nodelinks)
-    - [`node.size`](#nodesize)
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
-    - [`node.toDAGLink(options)`](#nodetodaglinkoptions)
+    - [`node.toDAGLink()`](#nodetodaglink)
     - [`node.addLink(link)`](#nodeaddlinklink)
     - [`node.rmLink(nameOrCid)`](#nodermlinknameorcid)
+    - [`node.serialize()`](#nodeserialize)
   - [DAGLink functions](#daglink-functions)
     - [DAGLink constructor](#daglink-constructor)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
     - [`link.Name`](#linkname)
-    - [`link.Tsize`](#linktsize)
     - [`link.Hash`](#linkhash)
     - [`link.toJSON()`](#linktojson)
     - [`link.toString()`](#linktostring)
-  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specifics---local-nodeblock-scope-resolver)
+  - [IPLD Format Specifics - Local (node/block scope) resolver](#ipld-format-specifics---local-nodeblock-scope-resolver)
     - [`dagPB.resolver.resolve`](#dagpbresolverresolve)
     - [`dagPB.resolver.tree`](#dagpbresolvertree)
-  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util](#ipld-format-specifics---util)
+  - [IPLD Format Specifics - util](#ipld-format-specifics---util)
   - [`dagPB.util.cid`](#dagpbutilcid)
   - [`dagPB.util.serialize`](#dagpbutilserialize)
   - [`dagPB.util.deserialize`](#dagpbutildeserialize)
@@ -87,9 +86,7 @@ const node2 = new DAGNode('some data')
 ```JavaScript
 const link = {
   Name: 'I am a link',
-  Hash: 'QmHash..',
-  Tsize: 42
-}
+  Hash: 'QmHash..'
 
 node.addLink(link)
 console.log('with link', node.toJSON())
@@ -115,7 +112,6 @@ const DAGNode = dagPB.DAGNode
 
 - `data` - type: Buffer
 - `links`- (optional) type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
-- `serializedSize`- (optional) type: Number of bytes the serialized node has. If none is given, it will automatically be calculated.
 
 Create a DAGNode.
 
@@ -127,9 +123,8 @@ links can be a single or an array of DAGLinks instances or objects with the foll
 
 ```JavaScript
 {
-  Name: '<some name>',
   Hash: '<some cid>',
-  TSize: <sizeInBytes>
+  Name: '<some name>'
 }
 ```
 
@@ -142,10 +137,6 @@ You have the following methods and properties available in every DAGNode instanc
 #### `node.Links`
 
 An array of JSON Objects with fields named `Hash`, `Name`, and `Tsize`.
-
-#### `node.size`
-
-Size of the node, in bytes
 
 #### `node.toJSON()`
 
@@ -215,17 +206,14 @@ const DAGLink = dagPB.DAGLink
 ```JavaScript
 // link is a DAGLink instance
 const link = new DAGLink(
-  'link-to-file',  // name of the link (can be empty)
-  10,              // size in bytes
   'QmSomeHash...', // can be CID object, CID buffer or string
+  'link-to-file'  // optional name of the link
 )
 ```
 
 ### DAGLink instance methods and properties
 
 #### `link.Name`
-
-#### `link.Tsize`
 
 #### `link.Hash`
 

@@ -6,11 +6,8 @@ const withIs = require('class-is')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
-  constructor (name, cid) {
+  constructor (cid, name) {
     assert(cid, 'A link requires a cid to point to')
-    // assert(size, 'A link requires a size')
-    //  note - links should include size, but this assert is disabled
-    //  for now to maintain consistency with go-ipfs pinset
 
     this._name = name || ''
     this._nameBuf = null

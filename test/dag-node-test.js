@@ -70,7 +70,7 @@ module.exports = (repo) => {
 
       const node1 = new DAGNode(someData, l1)
       const l2 = l1.map((l) => {
-        return new DAGLink(l.Name, l.Hash)
+        return new DAGLink(l.Hash, l.Name)
       })
 
       const node2 = new DAGNode(someData, l2)
@@ -86,14 +86,14 @@ module.exports = (repo) => {
 
     it('create with empty link name', () => {
       const node = new DAGNode(Buffer.from('hello'), [
-        new DAGLink('', 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+        new DAGLink('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U', '')
       ])
       expect(node.Links[0].Name).to.be.eql('')
     })
 
     it('create with undefined link name', () => {
       const node = new DAGNode(Buffer.from('hello'), [
-        new DAGLink(undefined, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+        new DAGLink('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U', undefined)
       ])
       expect(node.Links[0].Name).to.be.eql('')
       const serialized = node.serialize()
@@ -104,6 +104,13 @@ module.exports = (repo) => {
         }
         expect(node[key]).to.deep.equal(deserialized[key])
       }
+    })
+
+    it('create with null link name', () => {
+      const node = new DAGNode(Buffer.from('hello'), [
+        new DAGLink('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U', null)
+      ])
+      expect(node.Links[0].Name).to.be.eql('')
     })
 
     it('create an empty node', () => {
@@ -377,8 +384,8 @@ module.exports = (repo) => {
         Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy'
       }
 
-      const link1 = new DAGLink(l1.Name, Buffer.from(bs58.decode(l1.Hash)))
-      const link2 = new DAGLink(l2.Name, Buffer.from(bs58.decode(l2.Hash)))
+      const link1 = new DAGLink(Buffer.from(bs58.decode(l1.Hash)), l1.Name)
+      const link2 = new DAGLink(Buffer.from(bs58.decode(l2.Hash)), l2.Name)
 
       const node = new DAGNode(Buffer.from('hiya'), [link1, link2])
       expect(node.Links).to.have.lengthOf(2)
