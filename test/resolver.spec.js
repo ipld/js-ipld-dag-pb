@@ -14,12 +14,10 @@ const utils = require('../src/util')
 describe('IPLD Format resolver (local)', () => {
   const links = [{
     Name: '',
-    Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'),
-    Tsize: 10
+    Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
   }, {
     Name: 'named link',
-    Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'),
-    Tsize: 8
+    Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
   }]
 
   const create = (data, links) => {
@@ -91,12 +89,6 @@ describe('IPLD Format resolver (local)', () => {
         expect(result.remainderPath).to.eql('')
       })
 
-      it('links position path Tsize', () => {
-        const result = resolver.resolve(linksNodeBlob, 'Links/1/Tsize')
-        expect(result.value).to.eql(links[1].Tsize)
-        expect(result.remainderPath).to.eql('')
-      })
-
       it('links by name', () => {
         const result = resolver.resolve(linksNodeBlob, 'named link')
         expect(result.value.equals(links[1].Hash)).to.be.true()
@@ -151,11 +143,9 @@ describe('IPLD Format resolver (local)', () => {
         'Links',
         'Links/0',
         'Links/0/Name',
-        'Links/0/Tsize',
         'Links/0/Hash',
         'Links/1',
         'Links/1/Name',
-        'Links/1/Tsize',
         'Links/1/Hash',
         'Data'
       ])
@@ -199,11 +189,9 @@ describe('IPLD Format resolver (local)', () => {
         'Links',
         'Links/0',
         'Links/0/Name',
-        'Links/0/Tsize',
         'Links/0/Hash',
         'Links/1',
         'Links/1/Name',
-        'Links/1/Tsize',
         'Links/1/Hash',
         'Data'
       ])

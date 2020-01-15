@@ -70,7 +70,6 @@ exports.tree = function * (binaryBlob) {
   for (let ii = 0; ii < node.Links.length; ii++) {
     yield `Links/${ii}`
     yield `Links/${ii}/Name`
-    yield `Links/${ii}/Tsize`
     yield `Links/${ii}/Hash`
   }
 }

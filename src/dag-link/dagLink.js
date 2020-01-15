@@ -6,7 +6,7 @@ const withIs = require('class-is')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
-  constructor (name, size, cid) {
+  constructor (name, cid) {
     assert(cid, 'A link requires a cid to point to')
     // assert(size, 'A link requires a size')
     //  note - links should include size, but this assert is disabled
@@ -14,19 +14,17 @@ class DAGLink {
 
     this._name = name || ''
     this._nameBuf = null
-    this._size = size
     this._cid = new CID(cid)
   }
 
   toString () {
-    return `DAGLink <${this._cid.toBaseEncodedString()} - name: "${this.Name}", size: ${this.Tsize}>`
+    return `DAGLink <${this._cid.toBaseEncodedString()} - name: "${this.Name}">`
   }
 
   toJSON () {
     if (!this._json) {
       this._json = Object.freeze({
         name: this.Name,
-        size: this.Tsize,
         cid: this.Hash.toBaseEncodedString()
       })
     }
@@ -52,14 +50,6 @@ class DAGLink {
 
   set Name (name) {
     throw new Error("Can't set property: 'name' is immutable")
-  }
-
-  get Tsize () {
-    return this._size
-  }
-
-  set Tsize (size) {
-    throw new Error("Can't set property: 'size' is immutable")
   }
 
   get Hash () {

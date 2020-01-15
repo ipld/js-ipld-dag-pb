@@ -34,7 +34,7 @@ describe('util', () => {
 
   it('should serialize a node with links', () => {
     const links = [
-      new DAGLink('', 0, 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
+      new DAGLink('', 'QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
     ]
     const result = serialize({ Links: links })
     expect(result).to.be.an.instanceof(Uint8Array)
@@ -42,7 +42,6 @@ describe('util', () => {
     const node = deserialize(result)
     expect(node.Links).to.deep.equal([{
       Name: '',
-      Tsize: 0,
       Hash: new CID('QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
     }])
   })
@@ -50,7 +49,6 @@ describe('util', () => {
   it('should serialize a node with links as plain objects', () => {
     const links = [{
       Name: '',
-      Tsize: 0,
       Hash: new CID('QmWDtUQj38YLW8v3q4A6LwPn4vYKEbuKWpgSm6bjKW6Xfe')
     }]
     const result = serialize({ Links: links })

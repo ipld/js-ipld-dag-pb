@@ -12,7 +12,6 @@ const DAGNode = dagPB.DAGNode
 const isNode = require('detect-node')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
-const multihashing = require('multihashing-async')
 
 const BlockService = require('ipfs-block-service')
 const Block = require('ipfs-block')
@@ -33,7 +32,6 @@ module.exports = (repo) => {
       const node = new DAGNode(data)
       expect(node.Data.length).to.be.above(0)
       expect(Buffer.isBuffer(node.Data)).to.be.true()
-      expect(node.size).to.be.above(0)
 
       const serialized = dagPB.util.serialize(node)
       const deserialized = dagPB.util.deserialize(serialized)
@@ -52,7 +50,6 @@ module.exports = (repo) => {
       const node = new DAGNode(data)
       expect(node.Data.length).to.be.above(0)
       expect(Buffer.isBuffer(node.Data)).to.be.true()
-      expect(node.size).to.be.above(0)
 
       const serialized = dagPB.util.serialize(node)
 
@@ -63,19 +60,17 @@ module.exports = (repo) => {
     it('create a node with links', () => {
       const l1 = [{
         Name: 'some other link',
-        Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'),
-        Tsize: 8
+        Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
       }, {
         Name: 'some link',
-        Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'),
-        Tsize: 10
+        Hash: new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
       }]
 
       const someData = Buffer.from('some data')
 
       const node1 = new DAGNode(someData, l1)
       const l2 = l1.map((l) => {
-        return new DAGLink(l.Name, l.Tsize, l.Hash)
+        return new DAGLink(l.Name, l.Hash)
       })
 
       const node2 = new DAGNode(someData, l2)
@@ -91,14 +86,14 @@ module.exports = (repo) => {
 
     it('create with empty link name', () => {
       const node = new DAGNode(Buffer.from('hello'), [
-        new DAGLink('', 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+        new DAGLink('', 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
       ])
       expect(node.Links[0].Name).to.be.eql('')
     })
 
     it('create with undefined link name', () => {
       const node = new DAGNode(Buffer.from('hello'), [
-        new DAGLink(undefined, 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+        new DAGLink(undefined, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
       ])
       expect(node.Links[0].Name).to.be.eql('')
       const serialized = node.serialize()
@@ -116,7 +111,6 @@ module.exports = (repo) => {
       const node = new DAGNode(Buffer.alloc(0))
       expect(node.Data.length).to.be.equal(0)
       expect(Buffer.isBuffer(node.Data)).to.be.true()
-      expect(node.size).to.be.equal(0)
 
       const serialized = dagPB.util.serialize(node)
       const deserialized = dagPB.util.deserialize(serialized)
@@ -137,7 +131,6 @@ module.exports = (repo) => {
       const node2 = new DAGNode(Buffer.from('2'))
       node1.addLink(await node2.toDAGLink())
       expect(node1.Links.length).to.equal(1)
-      expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.be.eql('')
     })
 
@@ -147,7 +140,6 @@ module.exports = (repo) => {
       const link = await node2.toDAGLink()
       node1.addLink(link)
       expect(node1.Links.length).to.equal(1)
-      expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.be.eql('')
     })
 
@@ -158,7 +150,6 @@ module.exports = (repo) => {
       const linkObject = link.toJSON()
       node1.addLink(linkObject)
       expect(node1.Links.length).to.equal(1)
-      expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.be.eql('')
     })
 
@@ -169,7 +160,6 @@ module.exports = (repo) => {
       expect(node1.Links.length).to.equal(0)
       node1.addLink(link)
       expect(node1.Links.length).to.equal(1)
-      expect(node1.Links[0].Tsize).to.eql(node2.size)
       expect(node1.Links[0].Name).to.eql('banana')
     })
 
@@ -198,7 +188,6 @@ module.exports = (repo) => {
       target.addLink(source.Links[0])
 
       expect(target.Links.length).to.equal(1)
-      expect(target.Links[0].Tsize).to.eql(remote.size)
       expect(target.Links[0].Name).to.be.eql(linkName)
     })
 
@@ -265,75 +254,6 @@ module.exports = (repo) => {
       expect(mh.name).to.equal('sha2-512')
     })
 
-    it('node size updates with mutation', async () => {
-      // see pbcross.go for the source of the sizes and CIDs here
-
-      async function cid (node) {
-        const serialized = dagPB.util.serialize(node)
-        const cid = await dagPB.util.cid(serialized, { cidVersion: 0 })
-        return cid.toBaseEncodedString()
-      }
-
-      async function rawBlockCid (str) {
-        const raw = Buffer.from(str)
-        const rawHash = await multihashing(raw, 'sha2-256')
-        return new CID(1, 'raw', rawHash)
-      }
-
-      // raw nodes
-      const rnd1 = await rawBlockCid('aaaa')
-      const rnd2 = await rawBlockCid('bbbb')
-      const rnd3 = await rawBlockCid('cccc')
-
-      // empty PB nodes
-      const pnd1 = new DAGNode()
-      const pnd2 = new DAGNode()
-      const pnd3 = new DAGNode()
-
-      // sanity check empty nodes
-      for (const node of [pnd1, pnd2, pnd3]) {
-        expect(node.size).to.equal(0)
-        expect(await cid(node)).to.equal('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n')
-      }
-
-      // named PB links to a raw nodes
-      const cat = new DAGLink('cat', 4, rnd1)
-      const dog = new DAGLink('dog', 4, rnd2)
-      const bear = new DAGLink('bear', 4, rnd3)
-
-      // pnd1
-      // links by constructor and addLink should yield the same node
-      const pnd1ByConstructor = new DAGNode(null, [cat])
-      expect(pnd1ByConstructor.size).to.equal(51)
-      expect(await cid(pnd1ByConstructor)).to.equal('QmdwjhxpxzcMsR3qUuj7vUL8pbA7MgR3GAxWi2GLHjsKCT')
-
-      pnd1.addLink(cat)
-      expect(pnd1.size).to.equal(51)
-      expect(await cid(pnd1)).to.equal('QmdwjhxpxzcMsR3qUuj7vUL8pbA7MgR3GAxWi2GLHjsKCT')
-
-      // pnd2
-      const pnd1Link = await pnd1.toDAGLink({ name: 'first', cidVersion: 0 })
-      const pnd2ByConstructor = new DAGNode(null, [pnd1Link, dog])
-      expect(pnd2ByConstructor.size).to.equal(149)
-      expect(await cid(pnd2ByConstructor)).to.equal('QmWXZxVQ9yZfhQxLD35eDR8LiMRsYtHxYqTFCBbJoiJVys')
-
-      pnd2.addLink(pnd1Link)
-      pnd2.addLink(dog)
-      expect(pnd2.size).to.equal(149)
-      expect(await cid(pnd2)).to.equal('QmWXZxVQ9yZfhQxLD35eDR8LiMRsYtHxYqTFCBbJoiJVys')
-
-      // pnd3
-      const pnd2Link = await pnd2.toDAGLink({ name: 'second', cidVersion: 0 })
-      const pnd3ByConstructor = new DAGNode(null, [pnd2Link, bear])
-      expect(pnd3ByConstructor.size).to.equal(250)
-      expect(await cid(pnd3ByConstructor)).to.equal('QmNX6Tffavsya4xgBi2VJQnSuqy9GsxongxZZ9uZBqp16d')
-
-      pnd3.addLink(pnd2Link)
-      pnd3.addLink(bear)
-      expect(pnd3.size).to.equal(250)
-      expect(await cid(pnd3)).to.equal('QmNX6Tffavsya4xgBi2VJQnSuqy9GsxongxZZ9uZBqp16d')
-    })
-
     it('marshal a node and store it with block-service', async () => {
       const node = new DAGNode(Buffer.from('some data'))
       const serialized = dagPB.util.serialize(node)
@@ -365,38 +285,31 @@ module.exports = (repo) => {
       const expectedLinks = [
         {
           name: '',
-          cid: 'QmSbCgdsX12C4KDw3PDmpBN9iCzS87a5DjgSCoW9esqzXk',
-          size: 45623854
+          cid: 'QmSbCgdsX12C4KDw3PDmpBN9iCzS87a5DjgSCoW9esqzXk'
         },
         {
           name: '',
-          cid: 'Qma4GxWNhywSvWFzPKtEswPGqeZ9mLs2Kt76JuBq9g3fi2',
-          size: 45623854
+          cid: 'Qma4GxWNhywSvWFzPKtEswPGqeZ9mLs2Kt76JuBq9g3fi2'
         },
         {
           name: '',
-          cid: 'QmQfyxyys7a1e3mpz9XsntSsTGc8VgpjPj5BF1a1CGdGNc',
-          size: 45623854
+          cid: 'QmQfyxyys7a1e3mpz9XsntSsTGc8VgpjPj5BF1a1CGdGNc'
         },
         {
           name: '',
-          cid: 'QmSh2wTTZT4N8fuSeCFw7wterzdqbE93j1XDhfN3vQHzDV',
-          size: 45623854
+          cid: 'QmSh2wTTZT4N8fuSeCFw7wterzdqbE93j1XDhfN3vQHzDV'
         },
         {
           name: '',
-          cid: 'QmVXsSVjwxMsCwKRCUxEkGb4f4B98gXVy3ih3v4otvcURK',
-          size: 45623854
+          cid: 'QmVXsSVjwxMsCwKRCUxEkGb4f4B98gXVy3ih3v4otvcURK'
         },
         {
           name: '',
-          cid: 'QmZjhH97MEYwQXzCqSQbdjGDhXWuwW4RyikR24pNqytWLj',
-          size: 45623854
+          cid: 'QmZjhH97MEYwQXzCqSQbdjGDhXWuwW4RyikR24pNqytWLj'
         },
         {
           name: '',
-          cid: 'QmRs6U5YirCqC7taTynz3x2GNaHJZ3jDvMVAzaiXppwmNJ',
-          size: 32538395
+          cid: 'QmRs6U5YirCqC7taTynz3x2GNaHJZ3jDvMVAzaiXppwmNJ'
         }
       ]
 
@@ -415,23 +328,19 @@ module.exports = (repo) => {
       const expectedLinks = [
         {
           name: 'audio_only.m4a',
-          cid: 'QmaUAwAQJNtvUdJB42qNbTTgDpzPYD1qdsKNtctM5i7DGB',
-          size: 23319629
+          cid: 'QmaUAwAQJNtvUdJB42qNbTTgDpzPYD1qdsKNtctM5i7DGB'
         },
         {
           name: 'chat.txt',
-          cid: 'QmNVrxbB25cKTRuKg2DuhUmBVEK9NmCwWEHtsHPV6YutHw',
-          size: 996
+          cid: 'QmNVrxbB25cKTRuKg2DuhUmBVEK9NmCwWEHtsHPV6YutHw'
         },
         {
           name: 'playback.m3u',
-          cid: 'QmUcjKzDLXBPmB6BKHeKSh6ZoFZjss4XDhMRdLYRVuvVfu',
-          size: 116
+          cid: 'QmUcjKzDLXBPmB6BKHeKSh6ZoFZjss4XDhMRdLYRVuvVfu'
         },
         {
           name: 'zoom_0.mp4',
-          cid: 'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX',
-          size: 306281879
+          cid: 'QmQqy2SiEkKgr2cw5UbQ93TtLKEMsD8TdcWggR8q9JabjX'
         }
       ]
 
@@ -448,7 +357,6 @@ module.exports = (repo) => {
       const node = new DAGNode(Buffer.alloc(0))
       expect(node.toJSON().data).to.eql(Buffer.alloc(0))
       expect(node.toJSON().links).to.eql([])
-      expect(node.toJSON().size).to.exist()
     })
 
     it('dagNode.toJSON with data no links', () => {
@@ -456,26 +364,21 @@ module.exports = (repo) => {
       const node = new DAGNode(data)
       expect(node.toJSON().data).to.eql(data)
       expect(node.toJSON().links).to.eql([])
-      expect(node.toJSON().size).to.exist()
     })
 
     it('add two nameless links to a node', () => {
       const l1 = {
         Name: '',
-        Hash: 'QmbAmuwox51c91FmC2jEX5Ng4zS4HyVgpA5GNPBF5QsWMA',
-        Size: 57806
+        Hash: 'QmbAmuwox51c91FmC2jEX5Ng4zS4HyVgpA5GNPBF5QsWMA'
       }
 
       const l2 = {
         Name: '',
-        Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy',
-        Size: 262158
+        Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy'
       }
 
-      const link1 = new DAGLink(l1.Name, l1.Tsize,
-        Buffer.from(bs58.decode(l1.Hash)))
-      const link2 = new DAGLink(l2.Name, l2.Tsize,
-        Buffer.from(bs58.decode(l2.Hash)))
+      const link1 = new DAGLink(l1.Name, Buffer.from(bs58.decode(l1.Hash)))
+      const link2 = new DAGLink(l2.Name, Buffer.from(bs58.decode(l2.Hash)))
 
       const node = new DAGNode(Buffer.from('hiya'), [link1, link2])
       expect(node.Links).to.have.lengthOf(2)
@@ -483,7 +386,7 @@ module.exports = (repo) => {
 
     it('toString', () => {
       const node = new DAGNode(Buffer.from('hello world'))
-      const expected = 'DAGNode <data: "aGVsbG8gd29ybGQ=", links: 0, size: 13>'
+      const expected = 'DAGNode <data: "aGVsbG8gd29ybGQ=", links: 0>'
       expect(node.toString()).to.equal(expected)
     })
 
@@ -492,30 +395,19 @@ module.exports = (repo) => {
         Data: Buffer.from('Hello World'),
         Links: [{
           Hash: new CID('QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7'),
-          Name: 'payload',
-          Tsize: 819
+          Name: 'payload'
         }]
       }
 
       const node = new DAGNode(obj.Data, obj.Links)
       expect(node.Data.length).to.be.above(0)
       expect(Buffer.isBuffer(node.Data)).to.be.true()
-      expect(node.size).to.be.above(0)
 
       const serialized = dagPB.util.serialize(node)
       const serializedObject = dagPB.util.serialize(obj)
       const deserialized = dagPB.util.deserialize(serialized)
       const deserializedObject = dagPB.util.deserialize(serializedObject)
       expect(deserialized.toJSON()).to.deep.equal(deserializedObject.toJSON())
-    })
-
-    it('creates links from objects with .Size properties', () => {
-      const node = new DAGNode(Buffer.from('some data'), [{
-        Hash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
-        Size: 9001
-      }])
-
-      expect(node.Links[0].Tsize).to.eql(9001)
     })
   })
 }

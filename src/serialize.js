@@ -21,8 +21,7 @@ const toProtoBuf = (node) => {
     pbn.Links = node.Links
       .map((link) => ({
         Hash: link.Hash.buffer,
-        Name: link.Name,
-        Tsize: link.Tsize
+        Name: link.Name
       }))
   } else {
     pbn.Links = null

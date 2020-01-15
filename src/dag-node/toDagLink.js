@@ -8,7 +8,7 @@ const genCid = require('../genCid')
  */
 const toDAGLink = async (node, options = {}) => {
   const nodeCid = await genCid.cid(node.serialize(), options)
-  return new DAGLink(options.name || '', node.size, nodeCid)
+  return new DAGLink(options.name || '', nodeCid)
 }
 
 module.exports = toDAGLink
