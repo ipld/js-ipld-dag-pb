@@ -66,15 +66,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "cids": "~0.7.1",
+    "cids": "~0.7.3",
     "class-is": "^1.1.0",
     "multicodec": "^1.0.0",
     "multihashing-async": "~0.8.0",
-    "protons": "^1.0.1",
+    "protons": "^1.1.0",
     "stable": "~0.1.8"
   },
   "devDependencies": {
-    "aegir": "^20.0.0",
+    "aegir": "^20.6.0",
     "bs58": "^4.0.1",
     "chai": "^4.2.0",
     "detect-node": "^2.0.4",
