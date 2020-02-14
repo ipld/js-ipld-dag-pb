@@ -74,7 +74,7 @@
     "stable": "~0.1.8"
   },
   "devDependencies": {
-    "aegir": "^20.6.0",
+    "aegir": "^21.0.1",
     "bs58": "^4.0.1",
     "chai": "^4.2.0",
     "detect-node": "^2.0.4",
