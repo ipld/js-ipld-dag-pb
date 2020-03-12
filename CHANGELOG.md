@@ -1,3 +1,13 @@
+<a name="0.18.3"></a>
+## [0.18.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.2...v0.18.3) (2020-03-12)
+
+
+### Bug Fixes
+
+* remove use of assert module ([497850d](https://github.com/ipld/js-ipld-dag-pb/commit/497850d))
+
+
+
 <a name="0.18.2"></a>
 ## [0.18.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.1...v0.18.2) (2020-01-13)
 
