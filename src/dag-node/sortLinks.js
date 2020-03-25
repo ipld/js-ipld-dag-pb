@@ -1,6 +1,7 @@
 'use strict'
 
 const sort = require('stable')
+const { Buffer } = require('buffer')
 
 const linkSort = (a, b) => {
   return Buffer.compare(a.nameAsBuffer, b.nameAsBuffer)

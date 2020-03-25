@@ -2,6 +2,7 @@
 
 const CID = require('cids')
 const withIs = require('class-is')
+const { Buffer } = require('buffer')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {

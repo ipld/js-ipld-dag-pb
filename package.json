@@ -67,6 +67,7 @@
   },
   "dependencies": {
     "cids": "~0.8.0",
+    "buffer": "^5.5.0",
     "class-is": "^1.1.0",
     "multicodec": "^1.0.0",
     "multihashing-async": "~0.8.0",
