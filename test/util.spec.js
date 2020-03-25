@@ -3,6 +3,7 @@
 'use strict'
 
 const CID = require('cids')
+const { Buffer } = require('buffer')
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect

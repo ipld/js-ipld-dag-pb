@@ -2,6 +2,7 @@
 'use strict'
 
 const chai = require('chai')
+const { Buffer } = require('buffer')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
