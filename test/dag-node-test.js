@@ -10,14 +10,15 @@ chai.use(dirtyChai)
 const dagPB = require('../src')
 const DAGLink = dagPB.DAGLink
 const DAGNode = dagPB.DAGNode
-const isNode = require('detect-node')
+const { isNode } = require('ipfs-utils/src/env')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
 const multihashing = require('multihashing-async')
 
 const BlockService = require('ipfs-block-service')
-const Block = require('ipfs-block')
+const Block = require('ipld-block')
 const CID = require('cids')
+const multibase = require('multibase')
 const bs58 = require('bs58')
 const loadFixture = require('aegir/fixtures')
 
@@ -472,11 +473,19 @@ module.exports = (repo) => {
         Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy',
         Size: 262158
       }
-
-      const link1 = new DAGLink(l1.Name, l1.Tsize,
-        Buffer.from(bs58.decode(l1.Hash)))
-      const link2 = new DAGLink(l2.Name, l2.Tsize,
-        Buffer.from(bs58.decode(l2.Hash)))
+      console.log(multibase.decode('z' + l1.Hash), bs58.decode(l1.Hash))
+      const link1 = new DAGLink(
+        l1.Name,
+        l1.Tsize,
+        multibase.decode('z' + l1.Hash)
+        // Buffer.from(bs58.decode(l1.Hash))
+      )
+      const link2 = new DAGLink(
+        l2.Name,
+        l2.Tsize,
+        multibase.decode('z' + l2.Hash)
+        // Buffer.from(bs58.decode(l2.Hash))
+      )
 
       const node = new DAGNode(Buffer.from('hiya'), [link1, link2])
       expect(node.Links).to.have.lengthOf(2)

@@ -7,11 +7,7 @@ const IPFSRepo = require('ipfs-repo')
 
 const basePath = 'ipfs' + Math.random()
 
-const idb = self.indexedDB ||
-  self.mozIndexedDB ||
-  self.webkitIndexedDB ||
-  self.msIndexedDB
-
+const idb = self.indexedDB
 idb.deleteDatabase(basePath)
 idb.deleteDatabase(basePath + '/blocks')
 
