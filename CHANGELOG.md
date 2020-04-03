@@ -496,7 +496,7 @@ to
 
 ### Features
 
-* upgrade to new ipfs-block and blockservice ([1dd4dd2](https://github.com/ipld/js-ipld-dag-pb/commit/1dd4dd2))
+* upgrade to new ipld-block and blockservice ([1dd4dd2](https://github.com/ipld/js-ipld-dag-pb/commit/1dd4dd2))
 
 
 
