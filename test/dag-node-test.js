@@ -19,7 +19,6 @@ const BlockService = require('ipfs-block-service')
 const Block = require('ipld-block')
 const CID = require('cids')
 const multibase = require('multibase')
-const bs58 = require('bs58')
 const loadFixture = require('aegir/fixtures')
 
 const testBlockNamedLinks = loadFixture('test/fixtures/test-block-named-links')
@@ -473,18 +472,15 @@ module.exports = (repo) => {
         Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy',
         Size: 262158
       }
-      console.log(multibase.decode('z' + l1.Hash), bs58.decode(l1.Hash))
       const link1 = new DAGLink(
         l1.Name,
         l1.Tsize,
         multibase.decode('z' + l1.Hash)
-        // Buffer.from(bs58.decode(l1.Hash))
       )
       const link2 = new DAGLink(
         l2.Name,
         l2.Tsize,
         multibase.decode('z' + l2.Hash)
-        // Buffer.from(bs58.decode(l2.Hash))
       )
 
       const node = new DAGNode(Buffer.from('hiya'), [link1, link2])
