@@ -9,7 +9,7 @@
     "test:browser": "aegir test --target browser",
     "test:node": "aegir test --target node",
     "lint": "aegir lint",
-    "lint-commits": "aegir lint-commits",
+    "lint-commits": "aegir commitlint",
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
