@@ -1,3 +1,17 @@
+<a name="0.18.4"></a>
+## [0.18.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.3...v0.18.4) (2020-04-21)
+
+
+### Bug Fixes
+
+* cleanup and remove deps ([886b06d](https://github.com/ipld/js-ipld-dag-pb/commit/886b06d))
+* encode with multibase ([f709ec9](https://github.com/ipld/js-ipld-dag-pb/commit/f709ec9))
+* native sort is stable now ([3048e3e](https://github.com/ipld/js-ipld-dag-pb/commit/3048e3e))
+* remove node globals ([98d9ac6](https://github.com/ipld/js-ipld-dag-pb/commit/98d9ac6))
+* **package:** update cids to version 0.8.0 ([aa2709b](https://github.com/ipld/js-ipld-dag-pb/commit/aa2709b))
+
+
+
 <a name="0.18.3"></a>
 ## [0.18.3](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.2...v0.18.3) (2020-03-12)
 
