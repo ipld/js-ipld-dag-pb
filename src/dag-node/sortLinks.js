@@ -1,6 +1,7 @@
 'use strict'
 
 const { Buffer } = require('buffer')
+const sort = require('stable')
 
 const linkSort = (a, b) => {
   return Buffer.compare(a.nameAsBuffer, b.nameAsBuffer)
@@ -12,7 +13,7 @@ const linkSort = (a, b) => {
  * @returns {Array}
  */
 const sortLinks = (links) => {
-  return links.sort(linkSort)
+  return sort(links, linkSort)
 }
 
 module.exports = sortLinks
