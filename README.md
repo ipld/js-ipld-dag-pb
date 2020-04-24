@@ -1,4 +1,4 @@
-# js-ipld-dag-pb
+# js-ipld-dag-pb <!-- omit in toc -->
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
@@ -14,11 +14,11 @@
 
 > JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf. In addition to the IPLD Format methods, this module also provides an API for creating the nodes and manipulating them (adding and removing links, etc).
 
-## Lead Maintainer
+## Lead Maintainer <!-- omit in toc -->
 
 [Volker Mische](https://github.com/vmx)
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
 - [Install](#install)
 - [Usage](#usage)
@@ -34,9 +34,10 @@
     - [`node.size`](#nodesize)
     - [`node.toJSON()`](#nodetojson)
     - [`node.toString()`](#nodetostring)
-    - [`node.toDAGLink(options)`](#nodetodaglinkoptions)
+    - [`node.toDAGLink()`](#nodetodaglink)
     - [`node.addLink(link)`](#nodeaddlinklink)
     - [`node.rmLink(nameOrCid)`](#nodermlinknameorcid)
+    - [`node.serialize()`](#nodeserialize)
   - [DAGLink functions](#daglink-functions)
     - [DAGLink constructor](#daglink-constructor)
   - [DAGLink instance methods and properties](#daglink-instance-methods-and-properties)
@@ -45,10 +46,10 @@
     - [`link.Hash`](#linkhash)
     - [`link.toJSON()`](#linktojson)
     - [`link.toString()`](#linktostring)
-  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - Local (node/block scope) resolver](#ipld-format-specifics---local-nodeblock-scope-resolver)
+  - [IPLD Format Specifics - Local (node/block scope) resolver](#ipld-format-specifics---local-nodeblock-scope-resolver)
     - [`dagPB.resolver.resolve`](#dagpbresolverresolve)
     - [`dagPB.resolver.tree`](#dagpbresolvertree)
-  - [[IPLD Format Specifics](https://github.com/ipld/interface-ipld-format) - util](#ipld-format-specifics---util)
+  - [IPLD Format Specifics - util](#ipld-format-specifics---util)
   - [`dagPB.util.cid`](#dagpbutilcid)
   - [`dagPB.util.serialize`](#dagpbutilserialize)
   - [`dagPB.util.deserialize`](#dagpbutildeserialize)
