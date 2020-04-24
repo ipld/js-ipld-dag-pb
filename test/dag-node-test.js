@@ -90,6 +90,61 @@ module.exports = (repo) => {
       ])
     })
 
+    it('create a node with sorted links', () => {
+      const links = [{
+        Name: '',
+        Hash: new CID('QmUGhP2X8xo9dsj45vqx1H6i5WqPqLqmLQsHTTxd3ke8mp'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmQg1v4o9xdT3Q14wh4S7dxZkDjyZ9ssFzFzyep1YrVJBY'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmdP6fartWRrydZCUjHgrJ4XpxSE4SAoRsWJZ1zJ4MWiuf'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmNNjUStxtMC1WaSZYiDW6CmAUrvd5Q2e17qnxPgVdwrwW'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmWJwqZBJWerHsN1b7g4pRDYmzGNnaMYuD3KSbnpaxsB2h'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmRXPSdysBS3dbUXe6w8oXevZWHdPQWaR2d3fggNsjvieL'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmTUZAXfws6zrhEksnMqLxsbhXZBQs4FNiarjXSYQqVrjC'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmNNk7dTdh8UofwgqLNauq6N78DPc6LKK2yBs1MFdx7Mbg'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmW5mrJfyqh7B4ywSvraZgnWjS3q9CLiYURiJpCX3aro5i'),
+        Tsize: 262158
+      }, {
+        Name: '',
+        Hash: new CID('QmTFHZL5CkgNz19MdPnSuyLAi6AVq9fFp81zmPpaL2amED'),
+        Tsize: 262158
+      }]
+
+      const node = new DAGNode(Buffer.from('some data'), links)
+      const serialized = node.serialize()
+      const deserialized = dagPB.util.deserialize(serialized)
+
+      // check sorting
+      expect(deserialized.Links.map((l) => l.Hash)).to.be.eql(links.map(l => l.Hash))
+    })
+
     it('create with empty link name', () => {
       const node = new DAGNode(Buffer.from('hello'), [
         new DAGLink('', 10, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
