@@ -1,3 +1,13 @@
+<a name="0.18.5"></a>
+## [0.18.5](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.4...v0.18.5) (2020-04-24)
+
+
+### Bug Fixes
+
+* revert stable module removal ([8640b22](https://github.com/ipld/js-ipld-dag-pb/commit/8640b22))
+
+
+
 <a name="0.18.4"></a>
 ## [0.18.4](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.3...v0.18.4) (2020-04-21)
 
