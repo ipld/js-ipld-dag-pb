@@ -73,7 +73,7 @@
     "stable": "^0.1.8"
   },
   "devDependencies": {
-    "aegir": "^21.9.0",
+    "aegir": "^22.0.0",
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
     "fs-extra": "^9.0.0",
