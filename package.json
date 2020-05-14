@@ -78,7 +78,7 @@
     "dirty-chai": "^2.0.1",
     "fs-extra": "^9.0.0",
     "ipfs-block-service": "~0.17.0",
-    "ipfs-repo": "^2.0.0",
+    "ipfs-repo": "^3.0.0",
     "ipfs-utils": "^2.2.0",
     "ipld-block": "~0.9.1",
     "multibase": "^0.7.0",
