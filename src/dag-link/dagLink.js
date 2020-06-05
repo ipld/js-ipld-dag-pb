@@ -15,14 +15,16 @@ class DAGLink {
     //  note - links should include size, but this assert is disabled
     //  for now to maintain consistency with go-ipfs pinset
 
-    this._name = name || ''
-    this._nameBuf = null
-    this._size = size
-    this._cid = new CID(cid)
+    Object.defineProperties(this, {
+      Name: { value: name || '', writable: false, enumerable: true },
+      Tsize: { value: size, writable: false, enumerable: true },
+      Hash: { value: new CID(cid), writable: false, enumerable: true },
+      _nameBuf: { value: null, writable: true, enumerable: false }
+    })
   }
 
   toString () {
-    return `DAGLink <${this._cid.toBaseEncodedString()} - name: "${this.Name}", size: ${this.Tsize}>`
+    return `DAGLink <${this.Hash.toBaseEncodedString()} - name: "${this.Name}", size: ${this.Tsize}>`
   }
 
   toJSON () {
@@ -37,10 +39,6 @@ class DAGLink {
     return Object.assign({}, this._json)
   }
 
-  get Name () {
-    return this._name
-  }
-
   // Memoize the Buffer representation of name
   // We need this to sort the links, otherwise
   // we will reallocate new buffers every time
@@ -49,28 +47,8 @@ class DAGLink {
       return this._nameBuf
     }
 
-    this._nameBuf = Buffer.from(this._name)
+    this._nameBuf = Buffer.from(this.Name)
     return this._nameBuf
-  }
-
-  set Name (name) {
-    throw new Error("Can't set property: 'name' is immutable")
-  }
-
-  get Tsize () {
-    return this._size
-  }
-
-  set Tsize (size) {
-    throw new Error("Can't set property: 'size' is immutable")
-  }
-
-  get Hash () {
-    return this._cid
-  }
-
-  set Hash (cid) {
-    throw new Error("Can't set property: 'cid' is immutable")
   }
 }
 
