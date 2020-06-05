@@ -63,7 +63,7 @@ module.exports = (repo) => {
 
     it('has an immutable CID', () => {
       const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
-      expect(() => { link.Hash = 'foo' }).to.throw(/property/)
+      expect(() => { link.Hash = 'foo' }).to.throw(/read.only/)
     })
   })
 }
