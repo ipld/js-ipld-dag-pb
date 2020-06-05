@@ -4,8 +4,10 @@
 const chai = require('chai')
 const { Buffer } = require('buffer')
 const dirtyChai = require('dirty-chai')
+const chaiSubset = require('chai-subset')
 const expect = chai.expect
 chai.use(dirtyChai)
+chai.use(chaiSubset)
 
 const dagPB = require('../src')
 const DAGLink = dagPB.DAGLink
@@ -80,7 +82,7 @@ module.exports = (repo) => {
       })
 
       const node2 = new DAGNode(someData, l2)
-      expect(node2.Links).to.eql([l1[1], l1[0]])
+      expect(node2.Links).to.containSubset([l1[1], l1[0]])
       expect(node1.toJSON()).to.eql(node2.toJSON())
 
       // check sorting

@@ -76,6 +76,7 @@
     "aegir": "^22.0.0",
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
+    "chai-subset": "1.6.0",
     "fs-extra": "^9.0.0",
     "ipfs-block-service": "~0.17.0",
     "ipfs-repo": "^3.0.0",

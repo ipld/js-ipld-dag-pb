@@ -9,8 +9,8 @@ exports = module.exports
 const toProtoBuf = (node) => {
   const pbn = {}
 
-  if (node.Data && node.Data.length > 0) {
-    pbn.Data = node.Data
+  if (node.Data && node.Data.byteLength > 0) {
+    pbn.Data = asBuffer(node.Data)
   } else {
     // NOTE: this has to be null in order to match go-ipfs serialization
     // `null !== new Buffer(0)`
@@ -20,7 +20,7 @@ const toProtoBuf = (node) => {
   if (node.Links && node.Links.length > 0) {
     pbn.Links = node.Links
       .map((link) => ({
-        Hash: link.Hash.buffer,
+        Hash: asBuffer(link.Hash.buffer),
         Name: link.Name,
         Tsize: link.Tsize
       }))
@@ -29,6 +29,24 @@ const toProtoBuf = (node) => {
   }
 
   return pbn
+}
+
+/**
+ * Takes bytes in various representations and returns `Buffer`
+ * view of the underyling data without copying.
+ * @param {Buffer|ArrayBuffer|ArrayBufferView} bytes
+ * @returns {Buffer}
+ */
+const asBuffer = (bytes) => {
+  if (Buffer.isBuffer(bytes)) {
+    return bytes
+  } else if (bytes instanceof ArrayBuffer) {
+    return Buffer.from(bytes, 0, bytes.byteLength)
+  } else if (ArrayBuffer.isView(bytes)) {
+    return Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+  } else {
+    return bytes
+  }
 }
 
 /**
