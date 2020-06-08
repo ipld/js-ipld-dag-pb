@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
+const chai = require('aegir/utils/chai')
 const expect = chai.expect
 const multicodec = require('multicodec')
 

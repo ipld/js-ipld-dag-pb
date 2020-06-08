@@ -2,13 +2,9 @@
 
 'use strict'
 
-const chai = require('chai')
+const chai = require('aegir/utils/chai')
 const { Buffer } = require('buffer')
-const dirtyChai = require('dirty-chai')
-const chaiSubset = require('chai-subset')
 const expect = chai.expect
-chai.use(dirtyChai)
-chai.use(chaiSubset)
 const CID = require('cids')
 
 const { DAGNode, resolver } = require('../src')
