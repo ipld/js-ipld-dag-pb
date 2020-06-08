@@ -1,11 +1,9 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
+const chai = require('aegir/utils/chai')
 const { Buffer } = require('buffer')
-const dirtyChai = require('dirty-chai')
 const expect = chai.expect
-chai.use(dirtyChai)
 const CID = require('cids')
 const DAGLink = require('../src').DAGLink
 

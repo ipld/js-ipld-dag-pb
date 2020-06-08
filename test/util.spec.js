@@ -4,12 +4,8 @@
 
 const CID = require('cids')
 const { Buffer } = require('buffer')
-const chai = require('chai')
-const chaiSubset = require('chai-subset')
-const dirtyChai = require('dirty-chai')
+const chai = require('aegir/utils/chai')
 const expect = chai.expect
-chai.use(dirtyChai)
-chai.use(chaiSubset)
 
 const {
   DAGLink
