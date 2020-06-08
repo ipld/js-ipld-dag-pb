@@ -31,15 +31,6 @@ describe('util', () => {
     expect(node.Data).to.deep.equal(data)
   })
 
-  it('should serialize a node with ArrayBuffer data', () => {
-    const data = Uint8Array.from([0, 1, 2, 3]).buffer
-    const result = serialize({ Data: data })
-    expect(result).to.be.an.instanceof(Uint8Array)
-
-    const node = deserialize(result)
-    expect(node.Data).to.deep.equal(Buffer.from([0, 1, 2, 3]))
-  })
-
   it('should serialize a node with Uint8Array data', () => {
     const data = Uint8Array.from([0, 1, 2, 3])
     const result = serialize({ Data: data })

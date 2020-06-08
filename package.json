@@ -69,7 +69,7 @@
     "class-is": "^1.1.0",
     "multicodec": "^1.0.1",
     "multihashing-async": "~0.8.1",
-    "protons": "^1.0.2",
+    "protons": "git://github.com/gozala/protons#uint8array",
     "stable": "^0.1.8"
   },
   "devDependencies": {

@@ -37,21 +37,18 @@ describe('IPLD Format resolver (local)', () => {
   const emptyNodeBlobs = [
     ['DAGNode', create(Buffer.alloc(0), [])],
     ['{Data:Buffer}', createPlain(Buffer.alloc(0), [])],
-    ['{data:ArrayBuffer}', createPlain(new ArrayBuffer(), [])],
     ['{data:Uint8Array}', createPlain(new Uint8Array(), [])]
   ]
 
   const linksNodeBlobs = [
     ['DAGNode', create(Buffer.alloc(0), links)],
     ['{Data:Buffer}', createPlain(Buffer.alloc(0), links)],
-    ['{data:ArrayBuffer}', createPlain(new ArrayBuffer(), links)],
     ['{data:Uint8Array}', createPlain(new Uint8Array(), links)]
   ]
 
   const dataLinksNodeBlobs = [
     ['DAGNode', create(Buffer.from('aaah the data'), links)],
     ['{Data:Buffer}', createPlain(Buffer.from('aaah the data'), links)],
-    ['{data:ArrayBuffer}', createPlain(Uint8Array.from(Buffer.from('aaah the data')).buffer, links)],
     ['{data:Uint8Array}', createPlain(Uint8Array.from(Buffer.from('aaah the data')), links)]
   ]
 
