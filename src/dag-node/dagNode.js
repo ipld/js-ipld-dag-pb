@@ -30,7 +30,7 @@ class DAGNode {
         ? link
         : DAGLink.util.createDagLinkFromB58EncodedHash(link)
     })
-    sortLinks.inplace(links)
+    sortLinks(links)
 
     Object.defineProperties(this, {
       Data: { value: data, writable: false, enumerable: true },

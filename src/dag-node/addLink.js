@@ -27,7 +27,7 @@ const asDAGLink = (link) => {
 const addLink = (node, link) => {
   const dagLink = asDAGLink(link)
   node.Links.push(dagLink)
-  sortLinks.inplace(node.Links)
+  sortLinks(node.Links)
 }
 
 module.exports = addLink
