@@ -8,9 +8,9 @@ const rmLink = (dagNode, nameOrCid) => {
 
   // It's a name
   if (typeof nameOrCid === 'string') {
-    predicate = link => link.Name === nameOrCid
+    predicate = (link) => link.Name === nameOrCid
   } else if (Buffer.isBuffer(nameOrCid) || CID.isCID(nameOrCid)) {
-    predicate = link => link.Hash.equals(nameOrCid)
+    predicate = (link) => link.Hash.equals(nameOrCid)
   }
 
   if (predicate) {
