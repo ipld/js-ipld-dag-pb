@@ -25,7 +25,7 @@ class DAGNode {
       throw new Error('Passed \'serializedSize\' must be a number!')
     }
 
-    links = links.map(link => {
+    links = links.map((link) => {
       return DAGLink.isDAGLink(link)
         ? link
         : DAGLink.util.createDagLinkFromB58EncodedHash(link)
