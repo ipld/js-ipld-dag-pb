@@ -65,21 +65,21 @@
   },
   "dependencies": {
     "buffer": "^5.6.0",
-    "cids": "~0.8.0",
+    "cids": "~0.8.3",
     "class-is": "^1.1.0",
-    "multicodec": "^1.0.1",
-    "multihashing-async": "~0.8.1",
+    "multicodec": "^1.0.3",
+    "multihashing-async": "^1.0.0",
     "protons": "^1.2.1",
     "stable": "^0.1.8"
   },
   "devDependencies": {
-    "aegir": "^22.0.0",
-    "fs-extra": "^9.0.0",
-    "ipfs-block-service": "~0.17.0",
-    "ipfs-repo": "^3.0.0",
-    "ipfs-utils": "^2.2.0",
-    "ipld-block": "~0.9.1",
-    "multibase": "^0.7.0",
-    "multihashes": "~0.4.19"
+    "aegir": "^23.0.0",
+    "fs-extra": "^9.0.1",
+    "ipfs-block-service": "~0.17.1",
+    "ipfs-repo": "^4.0.0",
+    "ipfs-utils": "^2.3.1",
+    "ipld-block": "~0.9.2",
+    "multibase": "^1.0.1",
+    "multihashes": "^1.0.1"
   }
 }
