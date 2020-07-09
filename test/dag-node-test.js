@@ -158,10 +158,9 @@ module.exports = (repo) => {
       const serialized = node.serialize()
       const deserialized = dagPB.util.deserialize(serialized)
       for (const key of Object.keys(node)) {
-        if (key === '_serializedSize') {
-          continue
+        if (key !== '_serializedSize') {
+          expect(node[key]).to.deep.equal(deserialized[key])
         }
-        expect(node[key]).to.deep.equal(deserialized[key])
       }
     })
 
