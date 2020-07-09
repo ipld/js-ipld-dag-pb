@@ -1,3 +1,19 @@
+<a name="0.19.0"></a>
+# [0.19.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.5...v0.19.0) (2020-07-09)
+
+
+### Bug Fixes
+
+* immutable CID test ([d82441c](https://github.com/ipld/js-ipld-dag-pb/commit/d82441c))
+* lack of TextEncoder in older nodejs ([afd52fe](https://github.com/ipld/js-ipld-dag-pb/commit/afd52fe))
+
+
+### Features
+
+* **package:** backwards compatible pure data model API ([0f11d5c](https://github.com/ipld/js-ipld-dag-pb/commit/0f11d5c))
+
+
+
 <a name="0.18.5"></a>
 ## [0.18.5](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.4...v0.18.5) (2020-04-24)
 
