@@ -1,13 +1,13 @@
 'use strict'
 
 const sort = require('stable')
-const uint8ArraySort = require('ipfs-utils/src/uint8arrays/sort')
+const uint8ArrayCompare = require('ipfs-utils/src/uint8arrays/compare')
 
 const linkSort = (a, b) => {
   const buf1 = a.nameAsBuffer
   const buf2 = b.nameAsBuffer
 
-  return uint8ArraySort(buf1, buf2)
+  return uint8ArrayCompare(buf1, buf2)
 }
 
 /**
