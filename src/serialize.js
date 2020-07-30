@@ -13,7 +13,7 @@ const toProtoBuf = (node) => {
     pbn.Data = node.Data
   } else {
     // NOTE: this has to be null in order to match go-ipfs serialization
-    // `null !== new Buffer(0)`
+    // `null !== new Uint8Array(0)`
     pbn.Data = null
   }
 
@@ -35,7 +35,7 @@ const toProtoBuf = (node) => {
  * Serialize internal representation into a binary PB block.
  *
  * @param {Object} node - Internal representation of a PB block
- * @returns {Buffer} - The encoded binary representation
+ * @returns {Uint8Array} - The encoded binary representation
  */
 const serializeDAGNode = (node) => {
   const data = node.Data

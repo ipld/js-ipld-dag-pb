@@ -1,7 +1,7 @@
 'use strict'
 
 const CID = require('cids')
-const { Buffer } = require('buffer')
+const uint8ArrayEquals = require('ipfs-utils/src/uint8arrays/equals')
 
 const rmLink = (dagNode, nameOrCid) => {
   let predicate = null
@@ -9,8 +9,8 @@ const rmLink = (dagNode, nameOrCid) => {
   // It's a name
   if (typeof nameOrCid === 'string') {
     predicate = (link) => link.Name === nameOrCid
-  } else if (Buffer.isBuffer(nameOrCid) || CID.isCID(nameOrCid)) {
-    predicate = (link) => link.Hash.equals(nameOrCid)
+  } else if (nameOrCid instanceof Uint8Array || CID.isCID(nameOrCid)) {
+    predicate = (link) => uint8ArrayEquals(link.Hash, nameOrCid)
   }
 
   if (predicate) {

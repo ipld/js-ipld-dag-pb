@@ -3,7 +3,6 @@
 'use strict'
 
 const CID = require('cids')
-const { Buffer } = require('buffer')
 const chai = require('aegir/utils/chai')
 const expect = chai.expect
 
@@ -23,7 +22,7 @@ describe('util', () => {
   })
 
   it('should serialize a node with data', () => {
-    const data = Buffer.from([0, 1, 2, 3])
+    const data = Uint8Array.from([0, 1, 2, 3])
     const result = serialize({ Data: data })
     expect(result).to.be.an.instanceof(Uint8Array)
 
@@ -37,7 +36,7 @@ describe('util', () => {
     expect(result).to.be.an.instanceof(Uint8Array)
 
     const node = deserialize(result)
-    expect(node.Data).to.deep.equal(Buffer.from([0, 1, 2, 3]))
+    expect(node.Data).to.deep.equal(Uint8Array.from([0, 1, 2, 3]))
   })
 
   it('should serialize a node with links', () => {

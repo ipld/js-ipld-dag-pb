@@ -1,24 +1,26 @@
 'use strict'
 
 const withIs = require('class-is')
-const { Buffer } = require('buffer')
 const sortLinks = require('./sortLinks')
 const DAGLink = require('../dag-link/dagLink')
 const { serializeDAGNode } = require('../serialize.js')
 const toDAGLink = require('./toDagLink')
 const addLink = require('./addLink')
 const rmLink = require('./rmLink')
+const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
+const uint8ArrayToString = require('ipfs-utils/src/uint8arrays/to-string')
 
 class DAGNode {
   constructor (data, links = [], serializedSize = null) {
     if (!data) {
-      data = Buffer.alloc(0)
+      data = new Uint8Array(0)
     }
     if (typeof data === 'string') {
-      data = Buffer.from(data)
+      data = uint8ArrayFromString(data)
     }
-    if (!Buffer.isBuffer(data)) {
-      throw new Error('Passed \'data\' is not a buffer or a string!')
+
+    if (!(data instanceof Uint8Array)) {
+      throw new Error('Passed \'data\' is not a Uint8Array or a String!')
     }
 
     if (serializedSize !== null && typeof serializedSize !== 'number') {
@@ -53,7 +55,7 @@ class DAGNode {
   }
 
   toString () {
-    return `DAGNode <data: "${this.Data.toString('base64')}", links: ${this.Links.length}, size: ${this.size}>`
+    return `DAGNode <data: "${uint8ArrayToString(this.Data, 'base64urlpad')}", links: ${this.Links.length}, size: ${this.size}>`
   }
 
   _invalidateCached () {
