@@ -2,7 +2,7 @@
 
 const CID = require('cids')
 const withIs = require('class-is')
-const { Buffer } = require('buffer')
+const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
@@ -39,15 +39,15 @@ class DAGLink {
     return Object.assign({}, this._json)
   }
 
-  // Memoize the Buffer representation of name
+  // Memoize the Uint8Array representation of name
   // We need this to sort the links, otherwise
-  // we will reallocate new buffers every time
+  // we will reallocate new Uint8Arrays every time
   get nameAsBuffer () {
     if (this._nameBuf !== null) {
       return this._nameBuf
     }
 
-    this._nameBuf = Buffer.from(this.Name)
+    this._nameBuf = uint8ArrayFromString(this.Name)
     return this._nameBuf
   }
 }

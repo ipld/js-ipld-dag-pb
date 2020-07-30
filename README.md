@@ -77,7 +77,7 @@ dagPB.util
 #### Create a DAGNode
 
 ```JavaScript
-const node1 = new DAGNode(Buffer.from('some data'))
+const node1 = new DAGNode(new TextEncoder('utf8').encode('some data'))
 
 // node2 will have the same data as node1
 const node2 = new DAGNode('some data')
@@ -114,7 +114,7 @@ const DAGNode = dagPB.DAGNode
 
 #### DAGNode constructor
 
-- `data` - type: Buffer
+- `data` - type: Uint8Array or String
 - `links`- (optional) type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)
 - `serializedSize`- (optional) type: Number of bytes the serialized node has. If none is given, it will automatically be calculated.
 
@@ -198,7 +198,7 @@ node.rmLink('Link1')
 
 #### `node.serialize()`
 
-Serialize the DAGNode instance to its portable binary format. Yields the same result as `dagPB.util.serialize(node)`. Returns a `Buffer`.
+Serialize the DAGNode instance to its portable binary format. Yields the same result as `dagPB.util.serialize(node)`. Returns a `Uint8Array`.
 
 ### DAGLink functions
 
@@ -238,7 +238,6 @@ const link = new DAGLink(
 
 > See: https://github.com/ipld/interface-ipld-format#local-resolver-methods
 
-
 #### `dagPB.resolver.resolve`
 
 #### `dagPB.resolver.tree`
@@ -251,7 +250,7 @@ const link = new DAGLink(
 
 ### `dagPB.util.serialize`
 
-Serialize the DAGNode instance to its portable binary format. Yields the same result as `node.serialize()`. Returns a `Buffer`.
+Serialize the DAGNode instance to its portable binary format. Yields the same result as `node.serialize()`. Returns a `Uint8Array`.
 
 ### `dagPB.util.deserialize`
 

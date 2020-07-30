@@ -3,12 +3,12 @@
 'use strict'
 
 const chai = require('aegir/utils/chai')
-const { Buffer } = require('buffer')
 const expect = chai.expect
 const CID = require('cids')
 
 const { DAGNode, resolver } = require('../src')
 const utils = require('../src/util')
+const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
 
 describe('IPLD Format resolver (local)', () => {
   const links = [{
@@ -35,21 +35,18 @@ describe('IPLD Format resolver (local)', () => {
   }
 
   const emptyNodeBlobs = [
-    ['DAGNode', create(Buffer.alloc(0), [])],
-    ['{Data:Buffer}', createPlain(Buffer.alloc(0), [])],
+    ['DAGNode', create(new Uint8Array(), [])],
     ['{data:Uint8Array}', createPlain(new Uint8Array(), [])]
   ]
 
   const linksNodeBlobs = [
-    ['DAGNode', create(Buffer.alloc(0), links)],
-    ['{Data:Buffer}', createPlain(Buffer.alloc(0), links)],
+    ['DAGNode', create(new Uint8Array(), links)],
     ['{data:Uint8Array}', createPlain(new Uint8Array(), links)]
   ]
 
   const dataLinksNodeBlobs = [
-    ['DAGNode', create(Buffer.from('aaah the data'), links)],
-    ['{Data:Buffer}', createPlain(Buffer.from('aaah the data'), links)],
-    ['{data:Uint8Array}', createPlain(Uint8Array.from(Buffer.from('aaah the data')), links)]
+    ['DAGNode', create(uint8ArrayFromString('aaah the data'), links)],
+    ['{data:Uint8Array}', createPlain(uint8ArrayFromString('aaah the data'), links)]
   ]
 
   for (const [kind, emptyNodeBlob] of emptyNodeBlobs) {
@@ -63,7 +60,7 @@ describe('IPLD Format resolver (local)', () => {
 
         it('data path', () => {
           const result = resolver.resolve(emptyNodeBlob, 'Data')
-          expect(result.value).to.eql(Buffer.alloc(0))
+          expect(result.value).that.is.an.instanceOf(Uint8Array).with.lengthOf(0)
           expect(result.remainderPath).to.eql('')
         })
 
@@ -77,7 +74,7 @@ describe('IPLD Format resolver (local)', () => {
 
         it('empty path', () => {
           const result = resolver.resolve(emptyNodeBlob, '')
-          expect(result.value.Data).to.eql(Buffer.alloc(0))
+          expect(result.value.Data).to.be.an.instanceOf(Uint8Array).with.lengthOf(0)
           expect(result.value.Links).to.eql([])
           expect(result.remainderPath).to.eql('')
         })
@@ -198,7 +195,7 @@ describe('IPLD Format resolver (local)', () => {
 
         it('data path', () => {
           const result = resolver.resolve(dataLinksNodeBlob, 'Data')
-          expect(result.value).to.eql(Buffer.from('aaah the data'))
+          expect(result.value).to.eql(uint8ArrayFromString('aaah the data'))
           expect(result.remainderPath).to.eql('')
         })
 
@@ -212,7 +209,7 @@ describe('IPLD Format resolver (local)', () => {
 
         it('empty path', () => {
           const result = resolver.resolve(dataLinksNodeBlob, '')
-          expect(result.value.Data).to.eql(Buffer.from('aaah the data'))
+          expect(result.value.Data).to.eql(uint8ArrayFromString('aaah the data'))
           expect(result.value.Links).to.containSubset(links)
           expect(result.remainderPath).to.eql('')
         })

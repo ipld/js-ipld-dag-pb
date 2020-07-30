@@ -10,7 +10,7 @@ const util = require('./util')
  * Returns the value or a link and the partial mising path. This way the
  * IPLD Resolver can fetch the link and continue to resolve.
  *
- * @param {Buffer} binaryBlob - Binary representation of a PB block
+ * @param {Uint8Array} binaryBlob - Binary representation of a PB block
  * @param {string} [path='/'] - Path that should be resolved
  * @returns {Object} result - Result of the path it it was resolved successfully
  * @returns {*} result.value - Value the path resolves to
@@ -58,7 +58,7 @@ exports.resolve = (binaryBlob, path) => {
  * Return all available paths of a block.
  *
  * @generator
- * @param {Buffer} binaryBlob - Binary representation of a PB block
+ * @param {Uint8Array} binaryBlob - Binary representation of a PB block
  * @yields {string} - A single path
  */
 exports.tree = function * (binaryBlob) {

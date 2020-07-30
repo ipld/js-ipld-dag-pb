@@ -1,6 +1,5 @@
 'use strict'
 
-const { Buffer } = require('buffer')
 const protons = require('protons')
 const proto = protons(require('./dag.proto'))
 const DAGLink = require('./dag-link/dagLink')
@@ -30,7 +29,7 @@ const cid = (binaryBlob, userOptions) => {
  * Serialize internal representation into a binary PB block.
  *
  * @param {Object} node - Internal representation of a CBOR block
- * @returns {Buffer} - The encoded binary representation
+ * @returns {Uint8Array} - The encoded binary representation
  */
 const serialize = (node) => {
   if (DAGNode.isDAGNode(node)) {
@@ -43,7 +42,7 @@ const serialize = (node) => {
 /**
  * Deserialize PB block into the internal representation.
  *
- * @param {Buffer} buffer - Binary representation of a PB block
+ * @param {Uint8Array} buffer - Binary representation of a PB block
  * @returns {Object} - An object that conforms to the IPLD Data Model
  */
 const deserialize = (buffer) => {
@@ -53,9 +52,9 @@ const deserialize = (buffer) => {
     return new DAGLink(link.Name, link.Tsize, link.Hash)
   })
 
-  const data = pbn.Data == null ? Buffer.alloc(0) : pbn.Data
+  const data = pbn.Data == null ? new Uint8Array(0) : pbn.Data
 
-  return new DAGNode(data, links, buffer.length)
+  return new DAGNode(data, links, buffer.byteLength)
 }
 
 exports.serialize = serialize
