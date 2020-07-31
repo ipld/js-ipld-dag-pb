@@ -8,7 +8,7 @@ const CID = require('cids')
 
 const { DAGNode, resolver } = require('../src')
 const utils = require('../src/util')
-const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 describe('IPLD Format resolver (local)', () => {
   const links = [{

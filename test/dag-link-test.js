@@ -5,8 +5,8 @@ const chai = require('aegir/utils/chai')
 const expect = chai.expect
 const CID = require('cids')
 const DAGLink = require('../src').DAGLink
-const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
-const uint8ArrayToString = require('ipfs-utils/src/uint8arrays/to-string')
+const uint8ArrayFromString = require('uint8arrays/from-string')
+const uint8ArrayToString = require('uint8arrays/to-string')
 
 module.exports = (repo) => {
   describe('DAGLink', () => {
@@ -14,7 +14,7 @@ module.exports = (repo) => {
       it('string', () => {
         const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
 
-        expect(uint8ArrayToString(link.Hash.buffer, 'base16'))
+        expect(uint8ArrayToString(link.Hash.bytes, 'base16'))
           .to.equal('12208ab7a6c5e74737878ac73863cb76739d15d4666de44e5756bf55a2f9e9ab5f43')
       })
 

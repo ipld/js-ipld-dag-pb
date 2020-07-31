@@ -17,7 +17,7 @@ const Block = require('ipld-block')
 const CID = require('cids')
 const multibase = require('multibase')
 const loadFixture = require('aegir/fixtures')
-const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 const testBlockNamedLinks = loadFixture('test/fixtures/test-block-named-links')
 const testBlockUnnamedLinks = loadFixture('test/fixtures/test-block-unnamed-links')

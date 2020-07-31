@@ -2,7 +2,7 @@
 
 const CID = require('cids')
 const withIs = require('class-is')
-const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 // Link represents an IPFS Merkle DAG Link between Nodes.
 class DAGLink {
