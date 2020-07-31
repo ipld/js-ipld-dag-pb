@@ -7,8 +7,8 @@ const { serializeDAGNode } = require('../serialize.js')
 const toDAGLink = require('./toDagLink')
 const addLink = require('./addLink')
 const rmLink = require('./rmLink')
-const uint8ArrayFromString = require('ipfs-utils/src/uint8arrays/from-string')
-const uint8ArrayToString = require('ipfs-utils/src/uint8arrays/to-string')
+const uint8ArrayFromString = require('uint8arrays/from-string')
+const uint8ArrayToString = require('uint8arrays/to-string')
 
 class DAGNode {
   constructor (data, links = [], serializedSize = null) {

@@ -1,7 +1,7 @@
 'use strict'
 
 const CID = require('cids')
-const uint8ArrayEquals = require('ipfs-utils/src/uint8arrays/equals')
+const uint8ArrayEquals = require('uint8arrays/equals')
 
 const rmLink = (dagNode, nameOrCid) => {
   let predicate = null

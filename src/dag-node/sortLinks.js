@@ -1,7 +1,7 @@
 'use strict'
 
 const sort = require('stable')
-const uint8ArrayCompare = require('ipfs-utils/src/uint8arrays/compare')
+const uint8ArrayCompare = require('uint8arrays/compare')
 
 const linkSort = (a, b) => {
   const buf1 = a.nameAsBuffer
