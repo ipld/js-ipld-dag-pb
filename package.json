@@ -67,8 +67,8 @@
   "dependencies": {
     "cids": "multiformats/js-cid#fix/support-uint8arrays",
     "class-is": "^1.1.0",
-    "multicodec": "multiformats/js-multicodec#fix/replace-node-buffers-with-uint8arrays",
-    "multihashing-async": "multiformats/js-multihashing-async#fix/replace-node-buffers-with-uint8arrays",
+    "multicodec": "^2.0.0",
+    "multihashing-async": "^2.0.0",
     "npm": "^6.14.7",
     "protons": "^1.2.1",
     "reset": "^0.1.0",
@@ -77,13 +77,13 @@
     "uint8arrays": "^1.0.0"
   },
   "devDependencies": {
-    "aegir": "^23.0.0",
+    "aegir": "^25.0.0",
     "fs-extra": "^9.0.1",
     "ipfs-block-service": "^0.17.1",
-    "ipfs-repo": "^4.0.0",
+    "ipfs-repo": "^5.0.0",
     "ipfs-utils": "^2.3.1",
     "ipld-block": "^0.9.2",
-    "multibase": "^2.0.0",
-    "multihashes": "^1.0.1"
+    "multibase": "^3.0.0",
+    "multihashes": "^3.0.0"
   }
 }
