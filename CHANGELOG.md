@@ -1,3 +1,18 @@
+<a name="0.20.0"></a>
+# [0.20.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.19.0...v0.20.0) (2020-08-04)
+
+
+### Bug Fixes
+
+* replace node Buffers with Uint8Arrays ([bef3f26](https://github.com/ipld/js-ipld-dag-pb/commit/bef3f26))
+
+
+### BREAKING CHANGES
+
+* - `dagNode.Data` can now be a `Uint8Array`
+
+
+
 <a name="0.19.0"></a>
 # [0.19.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.18.5...v0.19.0) (2020-07-09)
 
