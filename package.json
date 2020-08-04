@@ -1,6 +1,6 @@
 {
   "name": "ipld-dag-pb",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "JavaScript Implementation of the MerkleDAG Node in Protobuf.",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -30,8 +30,8 @@
     "David Dias <daviddias.p@gmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
     "Vijayee Kulkaa <vijayee.kulkaa@hushmail.com>",
-    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
     "achingbrain <alex@achingbrain.net>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
     "nginnever <ginneversource@gmail.com>",
     "Irakli Gozalishvili <contact@gozala.io>",
     "Hugo Dias <hugomrdias@gmail.com>",
