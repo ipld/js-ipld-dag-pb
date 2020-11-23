@@ -63,4 +63,13 @@ describe('DAGLink', () => {
     const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
     expect(() => { link.Hash = 'foo' }).to.throw(/read.only/)
   })
+
+  it('strips control codes', () => {
+    const goodChars = 'hello'
+    const badChars = '\b\b'
+
+    const link = new DAGLink(`${goodChars}${badChars}`, 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
+    expect(link.Name).to.equal(goodChars)
+    expect(link._name).to.equal(`${goodChars}${badChars}`)
+  })
 })

@@ -544,4 +544,33 @@ describe('DAGNode', () => {
 
     expect(node.Links[0].Tsize).to.eql(9001)
   })
+
+  it('respects invalid strings when creating a CID', async () => {
+    const goodChars = 'hello'
+    const badChars = '\b\b'
+
+    const linkProps = {
+      Hash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
+      Size: 9001
+    }
+
+    const node1 = new DAGNode(uint8ArrayFromString('some data'), [{
+      Name: goodChars,
+      ...linkProps
+    }])
+
+    const node2 = new DAGNode(uint8ArrayFromString('some data'), [{
+      Name: `${goodChars}${badChars}`,
+      ...linkProps
+    }])
+
+    // should ignore bad characters for name
+    expect(node1.Links[0].Name).to.equal(node2.Links[0].Name)
+
+    // should respect bad characters when serializing
+    const cid1 = await dagPB.util.cid(dagPB.util.serialize(node1))
+    const cid2 = await dagPB.util.cid(dagPB.util.serialize(node2))
+
+    expect(cid1.toString()).to.not.equal(cid2.toString())
+  })
 })

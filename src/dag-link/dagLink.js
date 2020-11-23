@@ -16,10 +16,11 @@ class DAGLink {
     //  for now to maintain consistency with go-ipfs pinset
 
     Object.defineProperties(this, {
-      Name: { value: name || '', writable: false, enumerable: true },
+      Name: { value: stripControlChars(name) || '', writable: false, enumerable: true },
       Tsize: { value: size, writable: false, enumerable: true },
       Hash: { value: new CID(cid), writable: false, enumerable: true },
-      _nameBuf: { value: null, writable: true, enumerable: false }
+      _nameBuf: { value: null, writable: true, enumerable: false },
+      _name: { value: name, writable: false, enumerable: false }
     })
   }
 
@@ -50,6 +51,13 @@ class DAGLink {
     this._nameBuf = uint8ArrayFromString(this.Name)
     return this._nameBuf
   }
+}
+
+const stripControlChars = (str) => {
+  return (str || '')
+    .split('')
+    .filter((c) => c.charCodeAt(0) > 31)
+    .join('')
 }
 
 exports = module.exports = withIs(DAGLink, { className: 'DAGLink', symbolName: '@ipld/js-ipld-dag-pb/daglink' })
