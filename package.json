@@ -78,5 +78,6 @@
     "aegir": "^30.3.0",
     "multibase": "^3.0.0",
     "multihashes": "^3.0.0"
-  }
+  },
+  "types": "dist/src/index.d.ts"
 }
