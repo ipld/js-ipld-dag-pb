@@ -1,0 +1,33 @@
+{
+  "nested": {
+    "PBLink": {
+      "fields": {
+        "Hash": {
+          "type": "bytes",
+          "id": 1
+        },
+        "Name": {
+          "type": "string",
+          "id": 2
+        },
+        "Tsize": {
+          "type": "uint64",
+          "id": 3
+        }
+      }
+    },
+    "PBNode": {
+      "fields": {
+        "Links": {
+          "rule": "repeated",
+          "type": "PBLink",
+          "id": 2
+        },
+        "Data": {
+          "type": "bytes",
+          "id": 1
+        }
+      }
+    }
+  }
+}
