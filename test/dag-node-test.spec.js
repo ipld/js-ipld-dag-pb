@@ -7,9 +7,10 @@ const expect = chai.expect
 const dagPB = require('../src')
 const DAGLink = require('../src/dag-link/dagLink')
 const DAGNode = require('../src/dag-node/dagNode')
-const multihash = require('multihashes')
-const multicodec = require('multicodec')
 const multihashing = require('multihashing-async')
+const {
+  multihash
+} = multihashing
 
 const CID = require('cids')
 const multibase = require('multibase')
@@ -311,7 +312,7 @@ describe('DAGNode', () => {
   it('get node CID with hashAlg', async () => {
     const node = new DAGNode(uint8ArrayFromString('some data'))
     const serialized = dagPB.util.serialize(node)
-    const cid = await dagPB.util.cid(serialized, { hashAlg: multicodec.SHA2_512 })
+    const cid = await dagPB.util.cid(serialized, { hashAlg: multihash.names['sha2-512'] })
     expect(cid.multihash).to.exist()
     expect(cid.codec).to.equal('dag-pb')
     expect(cid.version).to.equal(1)
