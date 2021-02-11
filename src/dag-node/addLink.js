@@ -1,10 +1,19 @@
 'use strict'
 
 const sortLinks = require('./sortLinks')
-const DAGLink = require('../dag-link')
+const DAGLink = require('../dag-link/dagLink')
 
+/**
+ * @typedef {import('../dag-link/dagLink').DAGLinkLike} DAGLinkLike
+ * @typedef {import('./dagNode')} DAGNode
+ */
+
+/**
+ * @param {*} link
+ * @returns {DAGLink}
+ */
 const asDAGLink = (link) => {
-  if (DAGLink.isDAGLink(link)) {
+  if (link instanceof DAGLink) {
     // It's a DAGLink instance
     // no need to do anything
     return link
@@ -21,9 +30,14 @@ const asDAGLink = (link) => {
   }
 
   // It's a Object with name, multihash/hash/cid and size
+  // @ts-ignore
   return new DAGLink(link.Name || link.name, link.Tsize || link.size, link.Hash || link.multihash || link.hash || link.cid)
 }
 
+/**
+ * @param {DAGNode} node
+ * @param {DAGLink | DAGLinkLike} link
+ */
 const addLink = (node, link) => {
   const dagLink = asDAGLink(link)
   node.Links.push(dagLink)

@@ -68,6 +68,7 @@ describe('util', () => {
   })
 
   it('should ignore invalid properties when serializing', () => {
+    // @ts-ignore invalid properties
     const result = serialize({ foo: 'bar' })
     expect(result).to.be.empty()
   })

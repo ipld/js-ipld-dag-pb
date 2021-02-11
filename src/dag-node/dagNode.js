@@ -1,16 +1,26 @@
 'use strict'
 
-const withIs = require('class-is')
 const sortLinks = require('./sortLinks')
 const DAGLink = require('../dag-link/dagLink')
-const { serializeDAGNode } = require('../serialize.js')
+const { createDagLinkFromB58EncodedHash } = require('../dag-link/util')
+const { serializeDAGNode } = require('../serialize')
 const toDAGLink = require('./toDagLink')
 const addLink = require('./addLink')
 const rmLink = require('./rmLink')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 const uint8ArrayToString = require('uint8arrays/to-string')
 
+/**
+ * @typedef {import('../dag-link/dagLink').DAGLinkLike} DAGLinkLike
+ * @typedef {import('cids')} CID
+ */
+
 class DAGNode {
+  /**
+   *@param {Uint8Array | string} [data]
+   * @param {(DAGLink | DAGLinkLike)[]} links
+   * @param {number | null} [serializedSize]
+   */
   constructor (data, links = [], serializedSize = null) {
     if (!data) {
       data = new Uint8Array(0)
@@ -27,19 +37,17 @@ class DAGNode {
       throw new Error('Passed \'serializedSize\' must be a number!')
     }
 
-    links = links.map((link) => {
-      return DAGLink.isDAGLink(link)
+    const sortedLinks = links.map((link) => {
+      return link instanceof DAGLink
         ? link
-        : DAGLink.util.createDagLinkFromB58EncodedHash(link)
+        : createDagLinkFromB58EncodedHash(link)
     })
-    sortLinks(links)
+    sortLinks(sortedLinks)
 
-    Object.defineProperties(this, {
-      Data: { value: data, writable: false, enumerable: true },
-      Links: { value: links, writable: false, enumerable: true },
-      _serializedSize: { value: serializedSize, writable: true, enumerable: false },
-      _size: { value: null, writable: true, enumerable: false }
-    })
+    this.Data = data
+    this.Links = sortedLinks
+    this._serializedSize = serializedSize
+    this._size = null
   }
 
   toJSON () {
@@ -63,23 +71,35 @@ class DAGNode {
     this._size = null
   }
 
+  /**
+   * @param {DAGLink | DAGLinkLike} link
+   */
   addLink (link) {
     this._invalidateCached()
     return addLink(this, link)
   }
 
+  /**
+   * @param {DAGLink | string | CID} link
+   */
   rmLink (link) {
     this._invalidateCached()
     return rmLink(this, link)
   }
 
-  // @returns {Promise.<DAGLink>}
+  /**
+   * @param {import('./toDagLink').ToDagLinkOptions} [options]
+   */
   toDAGLink (options) {
     return toDAGLink(this, options)
   }
 
   serialize () {
-    return serializeDAGNode(this)
+    const buf = serializeDAGNode(this)
+
+    this._serializedSize = buf.length
+
+    return buf
   }
 
   get size () {
@@ -98,4 +118,4 @@ class DAGNode {
   }
 }
 
-exports = module.exports = withIs(DAGNode, { className: 'DAGNode', symbolName: '@ipld/js-ipld-dag-pb/dagnode' })
+module.exports = DAGNode

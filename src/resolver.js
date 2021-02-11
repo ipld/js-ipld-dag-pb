@@ -7,24 +7,27 @@ const util = require('./util')
 /**
  * Resolves a path within a PB block.
  *
+ * If the path resolves half-way to a link, then the `remainderPath` is the part
+ * after the link that can be used for further resolving
+ *
  * Returns the value or a link and the partial mising path. This way the
  * IPLD Resolver can fetch the link and continue to resolve.
  *
  * @param {Uint8Array} binaryBlob - Binary representation of a PB block
  * @param {string} [path='/'] - Path that should be resolved
- * @returns {Object} result - Result of the path it it was resolved successfully
- * @returns {*} result.value - Value the path resolves to
- * @returns {string} result.remainderPath - If the path resolves half-way to a
- *   link, then the `remainderPath` is the part after the link that can be used
- *   for further resolving
  */
-exports.resolve = (binaryBlob, path) => {
+exports.resolve = (binaryBlob, path = '/') => {
   let node = util.deserialize(binaryBlob)
 
   const parts = path.split('/').filter(Boolean)
   while (parts.length) {
     const key = parts.shift()
-    if (node[key] === undefined) {
+
+    if (!key) {
+      continue
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(node, key)) {
       // There might be a matching named link
       for (const link of node.Links) {
         if (link.Name === key) {
@@ -37,9 +40,11 @@ exports.resolve = (binaryBlob, path) => {
 
       // There wasn't even a matching named link
       throw new Error(`Object has no property '${key}'`)
+    } else {
+      // @ts-ignore
+      node = node[key]
     }
 
-    node = node[key]
     if (CID.isCID(node)) {
       return {
         value: node,

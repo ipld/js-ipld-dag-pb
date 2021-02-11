@@ -10,6 +10,11 @@ const { DAGNode, resolver } = require('../src')
 const utils = require('../src/util')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
+/**
+ * @typedef {import('../src/dag-link/dagLink')} DAGLink
+ * @typedef {import('../src/dag-link/dagLink').DAGLinkLike} DAGLinkLike
+ */
+
 describe('IPLD Format resolver (local)', () => {
   const links = [{
     Name: '',
@@ -21,11 +26,19 @@ describe('IPLD Format resolver (local)', () => {
     Tsize: 8
   }]
 
+  /**
+   * @param {Uint8Array} data
+   * @param {(DAGLink | DAGLinkLike)[]} links
+   */
   const create = (data, links) => {
     const node = new DAGNode(data, links)
     return utils.serialize(node)
   }
 
+  /**
+   * @param {Uint8Array} data
+   * @param {(DAGLink | DAGLinkLike)[]} links
+   */
   const createPlain = (data, links) => {
     const node = {
       Data: data,
@@ -35,53 +48,53 @@ describe('IPLD Format resolver (local)', () => {
   }
 
   const emptyNodeBlobs = [
-    ['DAGNode', create(new Uint8Array(), [])],
-    ['{data:Uint8Array}', createPlain(new Uint8Array(), [])]
+    { kind: 'DAGNode', blob: create(new Uint8Array(), []) },
+    { kind: '{data:Uint8Array}', blob: createPlain(new Uint8Array(), []) }
   ]
 
   const linksNodeBlobs = [
-    ['DAGNode', create(new Uint8Array(), links)],
-    ['{data:Uint8Array}', createPlain(new Uint8Array(), links)]
+    { kind: 'DAGNode', blob: create(new Uint8Array(), links) },
+    { kind: '{data:Uint8Array}', blob: createPlain(new Uint8Array(), links) }
   ]
 
   const dataLinksNodeBlobs = [
-    ['DAGNode', create(uint8ArrayFromString('aaah the data'), links)],
-    ['{data:Uint8Array}', createPlain(uint8ArrayFromString('aaah the data'), links)]
+    { kind: 'DAGNode', blob: create(uint8ArrayFromString('aaah the data'), links) },
+    { kind: '{data:Uint8Array}', blob: createPlain(uint8ArrayFromString('aaah the data'), links) }
   ]
 
-  for (const [kind, emptyNodeBlob] of emptyNodeBlobs) {
+  for (const { kind, blob } of emptyNodeBlobs) {
     describe(`empty node (${kind})`, () => {
       describe('resolver.resolve', () => {
         it('links path', () => {
-          const result = resolver.resolve(emptyNodeBlob, 'Links')
-          expect(result.value).to.eql([])
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'Links')
+          expect(result).to.have.deep.property('value', [])
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('data path', () => {
-          const result = resolver.resolve(emptyNodeBlob, 'Data')
-          expect(result.value).that.is.an.instanceOf(Uint8Array).with.lengthOf(0)
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'Data')
+          expect(result).to.have.property('value').that.is.an.instanceOf(Uint8Array).with.lengthOf(0)
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('non existent path', () => {
           expect(() =>
-            resolver.resolve(emptyNodeBlob, 'pathThatDoesNotExist')
+            resolver.resolve(blob, 'pathThatDoesNotExist')
           ).to.throw(
             "Object has no property 'pathThatDoesNotExist'"
           )
         })
 
         it('empty path', () => {
-          const result = resolver.resolve(emptyNodeBlob, '')
-          expect(result.value.Data).to.be.an.instanceOf(Uint8Array).with.lengthOf(0)
-          expect(result.value.Links).to.eql([])
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, '')
+          expect(result).to.have.nested.property('value.Data').that.is.an.instanceOf(Uint8Array).with.lengthOf(0)
+          expect(result).to.have.deep.nested.property('value.Links', [])
+          expect(result).to.have.property('remainderPath', '')
         })
       })
 
       it('resolver.tree', () => {
-        const tree = resolver.tree(emptyNodeBlob)
+        const tree = resolver.tree(blob)
         const paths = [...tree]
         expect(paths).to.have.members([
           'Links',
@@ -91,82 +104,74 @@ describe('IPLD Format resolver (local)', () => {
     })
   }
 
-  for (const [kind, linksNodeBlob] of linksNodeBlobs) {
+  for (const { kind, blob } of linksNodeBlobs) {
     describe(`links node ${kind}`, () => {
       describe('resolver.resolve', () => {
         it('links path', () => {
-          const result = resolver.resolve(linksNodeBlob, 'Links')
-          expect(result.value).to.containSubset(links)
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'Links')
+          expect(result).to.have.property('value').that.containSubset(links)
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('links position path Hash', () => {
-          const result = resolver.resolve(linksNodeBlob, 'Links/1/Hash')
-          expect(result.value).to.eql(links[1].Hash)
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'Links/1/Hash')
+          expect(result).to.have.deep.property('value', links[1].Hash)
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('links position path Name', () => {
-          const result = resolver.resolve(linksNodeBlob, 'Links/1/Name')
-          expect(result.value).to.eql(links[1].Name)
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'Links/1/Name')
+          expect(result).to.have.property('value', links[1].Name)
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('links position path Tsize', () => {
-          const result = resolver.resolve(linksNodeBlob, 'Links/1/Tsize')
-          expect(result.value).to.eql(links[1].Tsize)
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'Links/1/Tsize')
+          expect(result).to.have.property('value', links[1].Tsize)
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('links by name', () => {
-          const result = resolver.resolve(linksNodeBlob, 'named link')
-          expect(result.value.equals(links[1].Hash)).to.be.true()
-          expect(result.remainderPath).to.eql('')
+          const result = resolver.resolve(blob, 'named link')
+          expect(result).to.have.deep.property('value', links[1].Hash)
+          expect(result).to.have.property('remainderPath', '')
         })
 
         it('missing link by name', () => {
           expect(() =>
-            resolver.resolve(linksNodeBlob, 'missing link')
+            resolver.resolve(blob, 'missing link')
           ).to.throw(
             "Object has no property 'missing link'"
           )
         })
 
         it('yield remainderPath if impossible to resolve through (a)', () => {
-          const result = resolver.resolve(linksNodeBlob, 'Links/1/Hash/Data')
-          expect(result.value.equals(
-            new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-          )).to.be.true()
-          expect(result.remainderPath).to.equal('Data')
+          const result = resolver.resolve(blob, 'Links/1/Hash/Data')
+          expect(result).to.have.deep.property('value', new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'))
+          expect(result).to.have.property('remainderPath', 'Data')
         })
 
         it('yield remainderPath if impossible to resolve through (b)', () => {
-          const result = resolver.resolve(linksNodeBlob, 'Links/1/Hash/Links/0/Hash/Data')
-          expect(result.value.equals(
-            new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-          )).to.be.true()
-          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
+          const result = resolver.resolve(blob, 'Links/1/Hash/Links/0/Hash/Data')
+          expect(result).to.have.deep.property('value', new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'))
+          expect(result).to.have.property('remainderPath', 'Links/0/Hash/Data')
         })
 
         it('yield remainderPath if impossible to resolve through named link (a)', () => {
-          const result = resolver.resolve(linksNodeBlob, 'named link/Data')
-          expect(result.value.equals(
-            new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-          )).to.be.true()
-          expect(result.remainderPath).to.equal('Data')
+          const result = resolver.resolve(blob, 'named link/Data')
+          expect(result).to.have.deep.property('value', new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'))
+          expect(result).to.have.property('remainderPath', 'Data')
         })
 
         it('yield remainderPath if impossible to resolve through named link (b)', () => {
-          const result = resolver.resolve(linksNodeBlob, 'named link/Links/0/Hash/Data')
-          expect(result.value.equals(
-            new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V')
-          )).to.be.true()
-          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
+          const result = resolver.resolve(blob, 'named link/Links/0/Hash/Data')
+          expect(result).to.have.deep.property('value', new CID('QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39V'))
+          expect(result).to.have.property('remainderPath', 'Links/0/Hash/Data')
         })
       })
 
       it('resolver.tree', () => {
-        const tree = resolver.tree(linksNodeBlob)
+        const tree = resolver.tree(blob)
         const paths = [...tree]
         expect(paths).to.have.members([
           'Links',
@@ -184,39 +189,39 @@ describe('IPLD Format resolver (local)', () => {
     })
   }
 
-  for (const [kind, dataLinksNodeBlob] of dataLinksNodeBlobs) {
+  for (const { kind, blob } of dataLinksNodeBlobs) {
     describe(`links and data node (${kind})`, () => {
       describe('resolver.resolve', () => {
         it('links path', () => {
-          const result = resolver.resolve(dataLinksNodeBlob, 'Links')
+          const result = resolver.resolve(blob, 'Links')
           expect(result.value).to.containSubset(links)
           expect(result.remainderPath).to.eql('')
         })
 
         it('data path', () => {
-          const result = resolver.resolve(dataLinksNodeBlob, 'Data')
+          const result = resolver.resolve(blob, 'Data')
           expect(result.value).to.eql(uint8ArrayFromString('aaah the data'))
           expect(result.remainderPath).to.eql('')
         })
 
         it('non existent path', () => {
           expect(() =>
-            resolver.resolve(dataLinksNodeBlob, 'pathThatDoesNotExist')
+            resolver.resolve(blob, 'pathThatDoesNotExist')
           ).to.throw(
             "Object has no property 'pathThatDoesNotExist'"
           )
         })
 
         it('empty path', () => {
-          const result = resolver.resolve(dataLinksNodeBlob, '')
-          expect(result.value.Data).to.eql(uint8ArrayFromString('aaah the data'))
-          expect(result.value.Links).to.containSubset(links)
+          const result = resolver.resolve(blob, '')
+          expect(result).to.have.deep.nested.property('value.Data', uint8ArrayFromString('aaah the data'))
+          expect(result).to.have.nested.property('value.Links').that.containSubset(links)
           expect(result.remainderPath).to.eql('')
         })
       })
 
       it('resolver.tree', () => {
-        const tree = resolver.tree(dataLinksNodeBlob)
+        const tree = resolver.tree(blob)
         const paths = [...tree]
         expect(paths).to.have.members([
           'Links',

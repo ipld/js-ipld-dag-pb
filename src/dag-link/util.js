@@ -1,7 +1,10 @@
 'use strict'
 
-const DAGLink = require('./dagLink')
+const DAGLink = require('./')
 
+/**
+ * @param {*} link
+ */
 function createDagLinkFromB58EncodedHash (link) {
   return new DAGLink(
     link.Name || link.name || '',
@@ -10,5 +13,6 @@ function createDagLinkFromB58EncodedHash (link) {
   )
 }
 
-exports = module.exports
-exports.createDagLinkFromB58EncodedHash = createDagLinkFromB58EncodedHash
+module.exports = {
+  createDagLinkFromB58EncodedHash
+}
