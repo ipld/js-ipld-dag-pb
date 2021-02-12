@@ -4,7 +4,8 @@ const protobuf = require('protobufjs/light')
 // @ts-ignore
 const json = require('./dag.json')
 const root = protobuf.Root.fromJSON(json)
-const PBNode = root.lookupType('PBNode')
+const PBLink = root.lookupType('PBLink')
+
 const {
   createDagLinkFromB58EncodedHash
 } = require('./dag-link/util')
@@ -13,6 +14,10 @@ const {
  * @typedef {import('./dag-link/dagLink')} DAGLink
  * @typedef {import('./dag-link/dagLink').DAGLinkLike} DAGLinkLike
  * @typedef {import('cids')} CID
+ *
+ * @typedef {object} SerializableDAGNode
+ * @property {Uint8Array | null} [Data]
+ * @property {DAGLinkLike[] | null} [Links]
  */
 
 /**
@@ -32,7 +37,7 @@ const toProtoBuf = (node) => {
   if (node.Links && node.Links.length > 0) {
     pbn.Links = node.Links
       .map((link) => ({
-        Hash: link.Hash.bytes,
+        Hash: Buffer.from(link.Hash.bytes),
         Name: link.Name,
         Tsize: link.Tsize
       }))
@@ -49,7 +54,7 @@ const toProtoBuf = (node) => {
  * @param {import('./dag-node/dagNode')} node - Internal representation of a PB block
  */
 const serializeDAGNode = (node) => {
-  return PBNode.encode(toProtoBuf(node)).finish()
+  return encode(toProtoBuf(node))
 }
 
 /**
@@ -66,10 +71,34 @@ const serializeDAGNodeLike = (data, links = []) => {
     })
   }
 
-  return PBNode.encode(toProtoBuf(node)).finish()
+  return encode(toProtoBuf(node))
 }
 
 module.exports = {
   serializeDAGNode,
   serializeDAGNodeLike
+}
+
+/**
+ * The fields in PBNode are the wrong way round - `id: 2` comes before
+ * `id: 1`. protobufjs writes them out in id order but go-IPFS does not so
+ * we have to use the protobuf.Writer interface directly to get the same
+ * serialized form as go-IPFS
+ *
+ * @param {SerializableDAGNode} pbf
+ */
+function encode (pbf) {
+  const writer = protobuf.Writer.create()
+
+  if (pbf.Links != null) {
+    for (let i = 0; i < pbf.Links.length; i++) {
+      PBLink.encode(pbf.Links[i], writer.uint32(18).fork()).ldelim()
+    }
+  }
+
+  if (pbf.Data != null) {
+    writer.uint32(10).bytes(pbf.Data)
+  }
+
+  return writer.finish()
 }
