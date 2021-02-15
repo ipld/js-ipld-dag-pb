@@ -4,8 +4,8 @@ const sortLinks = require('./sortLinks')
 const DAGLink = require('../dag-link/dagLink')
 
 /**
- * @typedef {import('../dag-link/dagLink').DAGLinkLike} DAGLinkLike
  * @typedef {import('./dagNode')} DAGNode
+ * @typedef {import('../types')} DAGLinkLike
  */
 
 /**

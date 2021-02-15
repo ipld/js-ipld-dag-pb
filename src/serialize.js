@@ -12,16 +12,14 @@ const {
 
 /**
  * @typedef {import('./dag-link/dagLink')} DAGLink
- * @typedef {import('./dag-link/dagLink').DAGLinkLike} DAGLinkLike
+ * @typedef {import('./types').DAGLinkLike} DAGLinkLike
+ * @typedef {import('./types').SerializableDAGNode} SerializableDAGNode
  * @typedef {import('cids')} CID
- *
- * @typedef {object} SerializableDAGNode
- * @property {Uint8Array | null} [Data]
- * @property {DAGLinkLike[] | null} [Links]
  */
 
 /**
- * @param { { Data?: Uint8Array, Links: Array<{ Hash: CID, Name: string, Tsize: number }> }} node
+ * @param { { Data?: Uint8Array, Links: (DAGLink | DAGLinkLike)[] }} node
+ * @returns {SerializableDAGNode}
  */
 const toProtoBuf = (node) => {
   const pbn = {}

@@ -5,7 +5,7 @@
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
   "scripts": {
-    "prepare": "pbjs ./src/dag.proto -t json -o ./src/dag.json && aegir build --no-bundle",
+    "prepare": "pbjs ./src/dag.proto -t json -o ./src/dag.json && aegir build --no-bundle && cp ./src/*.d.ts dist/src",
     "test": "aegir test",
     "test:browser": "aegir test --target browser",
     "test:node": "aegir test --target node",

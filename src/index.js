@@ -5,6 +5,10 @@ const util = require('./util')
 const DAGNode = require('./dag-node/dagNode')
 const DAGLink = require('./dag-link/dagLink')
 
+/**
+ * @typedef {import('./types').DAGLinkLike} DAGLinkLike
+ */
+
 module.exports = {
   DAGNode,
   DAGLink,

@@ -11,7 +11,7 @@ const { serializeDAGNode, serializeDAGNodeLike } = require('./serialize')
 const genCid = require('./genCid')
 
 /**
- * @typedef {import('./dag-link/dagLink').DAGLinkLike} DAGLinkLike
+ * @typedef {import('./types').DAGLinkLike} DAGLinkLike
  */
 
 /**

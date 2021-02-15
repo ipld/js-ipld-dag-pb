@@ -4,13 +4,6 @@ const CID = require('cids')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
 /**
- * @typedef {object} DAGLinkLike
- * @property {string} [Name]
- * @property {number} Tsize
- * @property {CID | string | Uint8Array} Hash
- */
-
-/**
  * Link represents an IPFS Merkle DAG Link between Nodes.
  */
 class DAGLink {

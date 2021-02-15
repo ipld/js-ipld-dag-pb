@@ -11,8 +11,8 @@ const uint8ArrayFromString = require('uint8arrays/from-string')
 const uint8ArrayToString = require('uint8arrays/to-string')
 
 /**
- * @typedef {import('../dag-link/dagLink').DAGLinkLike} DAGLinkLike
  * @typedef {import('cids')} CID
+ * @typedef {import('../types').DAGLinkLike} DAGLinkLike
  */
 
 class DAGNode {
@@ -72,7 +72,7 @@ class DAGNode {
   }
 
   /**
-   * @param {DAGLink | DAGLinkLike} link
+   * @param {DAGLink | import('../types').DAGLinkLike} link
    */
   addLink (link) {
     this._invalidateCached()

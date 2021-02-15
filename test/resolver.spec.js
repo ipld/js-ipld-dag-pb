@@ -12,7 +12,7 @@ const uint8ArrayFromString = require('uint8arrays/from-string')
 
 /**
  * @typedef {import('../src/dag-link/dagLink')} DAGLink
- * @typedef {import('../src/dag-link/dagLink').DAGLinkLike} DAGLinkLike
+ * @typedef {import('../src/types').DAGLinkLike} DAGLinkLike
  */
 
 describe('IPLD Format resolver (local)', () => {
