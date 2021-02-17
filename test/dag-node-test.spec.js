@@ -14,6 +14,7 @@ const {
 
 const CID = require('cids')
 const multibase = require('multibase')
+// @ts-ignore
 const loadFixture = require('aegir/fixtures')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
@@ -211,6 +212,7 @@ describe('DAGNode', () => {
     const node2 = new DAGNode(uint8ArrayFromString('2'))
     const link = await node2.toDAGLink()
     const linkObject = link.toJSON()
+    // @ts-ignore
     node1.addLink(linkObject)
     expect(node1.Links.length).to.equal(1)
     expect(node1.Links[0].Tsize).to.eql(node2.size)
@@ -386,7 +388,7 @@ describe('DAGNode', () => {
 
     // pnd3
     const pnd2Link = await pnd2.toDAGLink({ name: 'second', cidVersion: 0 })
-    const pnd3ByConstructor = new DAGNode(null, [pnd2Link, bear])
+    const pnd3ByConstructor = new DAGNode(undefined, [pnd2Link, bear])
     expect(pnd3ByConstructor.size).to.equal(250)
     expect(await cid(pnd3ByConstructor)).to.equal('QmNX6Tffavsya4xgBi2VJQnSuqy9GsxongxZZ9uZBqp16d')
 
@@ -549,5 +551,42 @@ describe('DAGNode', () => {
     const deserialized = dagPB.util.deserialize(serialized)
     const deserializedObject = dagPB.util.deserialize(serializedObject)
     expect(deserialized.toJSON()).to.deep.equal(deserializedObject.toJSON())
+  })
+
+  it('creates links from objects with .Size properties', () => {
+    const node = new DAGNode(uint8ArrayFromString('some data'), [{
+      // @ts-ignore
+      Hash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
+      Size: 9001
+    }])
+
+    expect(node.Links[0].Tsize).to.eql(9001)
+  })
+
+  it('serializing should set _serializedSize', () => {
+    const node = new DAGNode('hello')
+
+    expect(node._serializedSize).to.be.null()
+
+    node.serialize()
+
+    expect(node._serializedSize).to.be.greaterThan(0)
+  })
+
+  it('removes dag link by uint8array CID', () => {
+    const cid = new CID('QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7')
+
+    const node = new DAGNode('hello world', [{
+      Hash: cid,
+      Tsize: 5,
+      Name: ''
+    }])
+
+    expect(node).to.have.property('Links').that.has.lengthOf(1)
+
+    // @ts-ignore only supposed to support CIDs or strings or DAGLinks
+    node.rmLink(cid.bytes)
+
+    expect(node).to.have.property('Links').that.has.lengthOf(0)
   })
 })

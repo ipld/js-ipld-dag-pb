@@ -10,7 +10,7 @@ const util = require('./util')
  * If the path resolves half-way to a link, then the `remainderPath` is the part
  * after the link that can be used for further resolving
  *
- * Returns the value or a link and the partial mising path. This way the
+ * Returns the value or a link and the partial missing path. This way the
  * IPLD Resolver can fetch the link and continue to resolve.
  *
  * @param {Uint8Array} binaryBlob - Binary representation of a PB block
@@ -22,12 +22,8 @@ exports.resolve = (binaryBlob, path = '/') => {
   const parts = path.split('/').filter(Boolean)
   while (parts.length) {
     const key = parts.shift()
-
-    if (!key) {
-      continue
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(node, key)) {
+    // @ts-ignore
+    if (node[key] === undefined) {
       // There might be a matching named link
       for (const link of node.Links) {
         if (link.Name === key) {
@@ -40,11 +36,10 @@ exports.resolve = (binaryBlob, path = '/') => {
 
       // There wasn't even a matching named link
       throw new Error(`Object has no property '${key}'`)
-    } else {
-      // @ts-ignore
-      node = node[key]
     }
 
+    // @ts-ignore
+    node = node[key]
     if (CID.isCID(node)) {
       return {
         value: node,
