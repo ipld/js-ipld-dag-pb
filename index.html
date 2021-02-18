@@ -1,824 +1,518 @@
 <!doctype html>
-<html lang="en">
+<html class="default no-js">
 <head>
-  <meta charset='utf-8'>
-  <title>ipld-dag-pb 0.20.0 | Documentation</title>
-  <meta name='description' content='JavaScript Implementation of the MerkleDAG Node in Protobuf.'>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='assets/bass.css' rel='stylesheet'>
-  <link href='assets/style.css' rel='stylesheet'>
-  <link href='assets/github.css' rel='stylesheet'>
-  <link href='assets/split.css' rel='stylesheet'>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ipld-dag-pb - v0.21.0</title>
+	<meta name="description" content="Documentation for ipld-dag-pb - v0.21.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<link href="https://unpkg.com/nord-highlightjs@0.1.0/dist/nord.css" rel="stylesheet" type="text/css" />
+	<style>
+        .toolbar-icon {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .toolbar-icon-search {
+            box-sizing: border-box;
+            position: absolute;
+            overflow: hidden;
+            right: -40px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            @media (min-width: 901px){
+                display: none
+            }
+        }
+            @media (min-width: 901px){
+                .toolbar-icon-menu {
+                    display: none
+                }
+                .toolbar-icon-options {
+                    display: none
+                }
+            }
+
+        .gg-menu {
+            transform: scale(var(--ggs,1))
+        }
+        .gg-menu,
+        .gg-menu::after,
+        .gg-menu::before {
+            box-sizing: border-box;
+            position: relative;
+            display: block;
+            width: 20px;
+            height: 2px;
+            border-radius: 3px;
+            background: currentColor
+        }
+        .gg-menu::after,
+        .gg-menu::before {
+            content: "";
+            position: absolute;
+            top: -6px
+        }
+        .gg-menu::after {
+            top: 6px
+        }
+        .gg-options {
+            box-sizing: border-box;
+            position: relative;
+            display: block;
+            transform: scale(var(--ggs,1));
+            width: 10px;
+            height: 2px;
+            box-shadow:
+                -3px 4px 0 0,
+                3px -4px 0 0
+        }
+        .gg-options::after,
+        .gg-options::before {
+            content: "";
+            display: block;
+            box-sizing: border-box;
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border: 2px solid;
+            border-radius: 100%
+        }
+        .gg-options::before {
+            top: -7px;
+            left: -4px
+        }
+        .gg-options::after {
+            bottom: -7px;
+            right: -4px
+        }
+        .gg-search {
+            box-sizing: border-box;
+            position: relative;
+            display: block;
+            transform: scale(var(--ggs,1));
+            width: 16px;
+            height: 16px;
+            border: 2px solid;
+            border-radius: 100%;
+            margin-left: -4px;
+            margin-top: -4px
+        }
+        .gg-search::after {
+            content: "";
+            display: block;
+            box-sizing: border-box;
+            position: absolute;
+            border-radius: 3px;
+            width: 2px;
+            height: 8px;
+            background: currentColor;
+            transform: rotate(-45deg);
+            top: 10px;
+            left: 12px
+        }
+    </style>
 </head>
-<body class='documentation m0'>
-    <div class='flex'>
-      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
-        <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'>ipld-dag-pb</h3>
-          <div class='mb1'><code>0.20.0</code></div>
-          <input
-            placeholder='Filter'
-            id='filter-input'
-            class='col12 block input'
-            spellcheck='false'
-            autocapitalize='off'
-            autocorrect='off'
-            type='text' />
-          <div id='toc'>
-            <ul class='list-reset h5 py1-ul'>
-              
-                
-                <li><a
-                  href='#resolve'
-                  class="">
-                  resolve
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#tree'
-                  class="">
-                  tree
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#cid'
-                  class="">
-                  cid
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#cid'
-                  class="">
-                  cid
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#serialize'
-                  class="">
-                  serialize
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#deserialize'
-                  class="">
-                  deserialize
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#sortlinks'
-                  class="">
-                  sortLinks
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#serializedagnode'
-                  class="">
-                  serializeDAGNode
-                  
-                </a>
-                
-                </li>
-              
-            </ul>
-          </div>
-          <div class='mt1 h6 quiet'>
-            <a href='https://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
-          </div>
-        </div>
-      </div>
-      <div id='split-right' class='relative overflow-auto height-viewport-100'>
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='resolve'>
-      resolve
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/resolver.js#L21-L55'>
-      <span>src/resolver.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Resolves a path within a PB block.</p>
-<p>Returns the value or a link and the partial mising path. This way the
-IPLD Resolver can fetch the link and continue to resolve.</p>
-
-    <div class='pre p1 fill-light mt0'>resolve(binaryBlob: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a>, path: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>binaryBlob</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a>)</code>
-	    Binary representation of a PB block
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>path</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-            = <code>&#39;/&#39;</code>)</code>
-	    Path that should be resolved
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
-        result - Result of the path it it was resolved successfully
-
-      
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>any</code>:
-        result.value - Value the path resolves to
-
-      
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
-        result.remainderPath - If the path resolves half-way to a
-link, then the 
-<code>remainderPath</code>
- is the part after the link that can be used
-for further resolving
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='tree'>
-      tree
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/resolver.js#L64-L76'>
-      <span>src/resolver.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Return all available paths of a block.</p>
-
-    <div class='pre p1 fill-light mt0'>tree(binaryBlob: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a>)</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>binaryBlob</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a>)</code>
-	    Binary representation of a PB block
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='cid'>
-      cid
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/util.js#L24-L26'>
-      <span>src/util.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Calculate the CID of the binary blob.</p>
-
-    <div class='pre p1 fill-light mt0'>cid</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>binaryBlob</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    Encoded IPLD Node
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>userOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	    Options to create the CID
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.cidVersion</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>1</code>)
-  </td>
-  <td class='break-word'><span>CID version number
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='cid'>
-      cid
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/genCid.js#L21-L30'>
-      <span>src/genCid.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Calculate the CID of the binary blob.</p>
-
-    <div class='pre p1 fill-light mt0'>cid</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>binaryBlob</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    Encoded IPLD Node
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>userOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	    Options to create the CID
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.cidVersion</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>1</code>)
-  </td>
-  <td class='break-word'><span>CID version number
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='serialize'>
-      serialize
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/util.js#L34-L40'>
-      <span>src/util.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Serialize internal representation into a binary PB block.</p>
-
-    <div class='pre p1 fill-light mt0'>serialize</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>node</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    Internal representation of a CBOR block
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a></code>:
-        The encoded binary representation
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='deserialize'>
-      deserialize
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/util.js#L48-L58'>
-      <span>src/util.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Deserialize PB block into the internal representation.</p>
-
-    <div class='pre p1 fill-light mt0'>deserialize</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>buffer</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a>)</code>
-	    Binary representation of a PB block
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
-        An object that conforms to the IPLD Data Model
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='sortlinks'>
-      sortLinks
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/dag-node/sortLinks.js#L18-L20'>
-      <span>src/dag-node/sortLinks.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Sorts links in place (mutating given array)</p>
-
-    <div class='pre p1 fill-light mt0'>sortLinks</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>links</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>void</code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='serializedagnode'>
-      serializeDAGNode
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-dag-pb/blob/fa50119dac4c2004fe74ecb96b1cc4458264316e/src/serialize.js#L40-L50'>
-      <span>src/serialize.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Serialize internal representation into a binary PB block.</p>
-
-    <div class='pre p1 fill-light mt0'>serializeDAGNode</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>node</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    Internal representation of a PB block
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array">Uint8Array</a></code>:
-        The encoded binary representation
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-      </div>
-    </div>
-  <script src='assets/anchor.js'></script>
-  <script src='assets/split.js'></script>
-  <script src='assets/site.js'></script>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="toolbar-icon toolbar-icon-search"><i class="gg-search"></i></label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">ipld-dag-pb - v0.21.0</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<a href="#" class="toolbar-icon toolbar-icon-menu" data-toggle="menu"><i class="gg-menu"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+			</ul>
+			<h1>ipld-dag-pb - v0.21.0</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#js-ipld-dag-pb-" id="js-ipld-dag-pb-" style="color: inherit; text-decoration: none;">
+					<h1>js-ipld-dag-pb <!-- omit in toc --></h1>
+				</a>
+				<p><a href="http://ipn.io"><img src="https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square" alt=""></a>
+					<a href="http://github.com/ipld/ipld"><img src="https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square" alt=""></a>
+					<a href="http://webchat.freenode.net/?channels=%23ipfs"><img src="https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square" alt=""></a>
+					<a href="https://travis-ci.com/ipld/js-ipld-dag-pb"><img src="https://flat.badgen.net/travis/ipld/js-ipld-dag-pb" alt="Travis CI"></a>
+					<a href="https://coveralls.io/github/ipld/js-ipld-dag-pb?branch=master"><img src="https://coveralls.io/repos/github/ipld/js-ipld-dag-pb/badge.svg?branch=master" alt="Coverage Status"></a>
+					<a href="https://david-dm.org/ipld/js-ipld-dag-pb"><img src="https://david-dm.org/ipld/js-ipld-dag-pb.svg?style=flat-square" alt="Dependency Status"></a>
+					<a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square" alt="js-standard-style"></a>
+					<a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square" alt="standard-readme compliant"></a>
+					<a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/ipld/js-ipld-dag-pb.svg" alt="Greenkeeper badge"></a>
+					<img src="https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square" alt="">
+				<img src="https://img.shields.io/badge/Node.js-%3E%3D4.0.0-orange.svg?style=flat-square" alt=""></p>
+				<blockquote>
+					<p>JavaScript Implementation of the IPLD Format MerkleDAG Node in Protobuf. In addition to the IPLD Format methods, this module also provides an API for creating the nodes and manipulating them (adding and removing links, etc).</p>
+				</blockquote>
+				<a href="#lead-maintainer-" id="lead-maintainer-" style="color: inherit; text-decoration: none;">
+					<h2>Lead Maintainer <!-- omit in toc --></h2>
+				</a>
+				<p><a href="https://github.com/vmx">Volker Mische</a></p>
+				<a href="#table-of-contents-" id="table-of-contents-" style="color: inherit; text-decoration: none;">
+					<h2>Table of Contents <!-- omit in toc --></h2>
+				</a>
+				<ul>
+					<li><a href="#install">Install</a></li>
+					<li><a href="#usage">Usage</a><ul>
+							<li><a href="#examples">Examples</a><ul>
+									<li><a href="#create-a-dagnode">Create a DAGNode</a></li>
+									<li><a href="#add-and-remove-a-link">Add and remove a Link</a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><a href="#api">API</a><ul>
+							<li><a href="#dagnode-functions">DAGNode functions</a><ul>
+									<li><a href="#dagnode-constructor">DAGNode constructor</a></li>
+								</ul>
+							</li>
+							<li><a href="#dagnode-instance-methods-and-properties">DAGNode instance methods and properties</a><ul>
+									<li><a href="#nodedata"><code>node.Data</code></a></li>
+									<li><a href="#nodelinks"><code>node.Links</code></a></li>
+									<li><a href="#nodesize"><code>node.size</code></a></li>
+									<li><a href="#nodetojson"><code>node.toJSON()</code></a></li>
+									<li><a href="#nodetostring"><code>node.toString()</code></a></li>
+									<li><a href="#nodetodaglink"><code>node.toDAGLink()</code></a></li>
+									<li><a href="#nodeaddlinklink"><code>node.addLink(link)</code></a></li>
+									<li><a href="#nodermlinknameorcid"><code>node.rmLink(nameOrCid)</code></a></li>
+									<li><a href="#nodeserialize"><code>node.serialize()</code></a></li>
+								</ul>
+							</li>
+							<li><a href="#daglink-functions">DAGLink functions</a><ul>
+									<li><a href="#daglink-constructor">DAGLink constructor</a></li>
+								</ul>
+							</li>
+							<li><a href="#daglink-instance-methods-and-properties">DAGLink instance methods and properties</a><ul>
+									<li><a href="#linkname"><code>link.Name</code></a></li>
+									<li><a href="#linktsize"><code>link.Tsize</code></a></li>
+									<li><a href="#linkhash"><code>link.Hash</code></a></li>
+									<li><a href="#linktojson"><code>link.toJSON()</code></a></li>
+									<li><a href="#linktostring"><code>link.toString()</code></a></li>
+								</ul>
+							</li>
+							<li><a href="#ipld-format-specifics---local-nodeblock-scope-resolver">IPLD Format Specifics - Local (node/block scope) resolver</a><ul>
+									<li><a href="#dagpbresolverresolve"><code>dagPB.resolver.resolve</code></a></li>
+									<li><a href="#dagpbresolvertree"><code>dagPB.resolver.tree</code></a></li>
+								</ul>
+							</li>
+							<li><a href="#ipld-format-specifics---util">IPLD Format Specifics - util</a></li>
+							<li><a href="#dagpbutilcid"><code>dagPB.util.cid</code></a></li>
+							<li><a href="#dagpbutilserialize"><code>dagPB.util.serialize</code></a></li>
+							<li><a href="#dagpbutildeserialize"><code>dagPB.util.deserialize</code></a></li>
+						</ul>
+					</li>
+					<li><a href="#contribute">Contribute</a></li>
+					<li><a href="#license">License</a></li>
+				</ul>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
+				<pre><code class="language-bash">&gt; npm install ipld-dag-pb --save
+</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagPB = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ipld-dag-pb&#x27;</span>)
+
+<span class="hljs-comment">// IPLD Format specifics</span>
+dagPB.resolver
+dagPB.util
+</code></pre>
+				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+					<h3>Examples</h3>
+				</a>
+				<a href="#create-a-dagnode" id="create-a-dagnode" style="color: inherit; text-decoration: none;">
+					<h4>Create a DAGNode</h4>
+				</a>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> node1 = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-keyword">new</span> TextEncoder(<span class="hljs-string">&#x27;utf8&#x27;</span>).encode(<span class="hljs-string">&#x27;some data&#x27;</span>))
+
+<span class="hljs-comment">// node2 will have the same data as node1</span>
+<span class="hljs-keyword">const</span> node2 = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-string">&#x27;some data&#x27;</span>)
+</code></pre>
+				<a href="#add-and-remove-a-link" id="add-and-remove-a-link" style="color: inherit; text-decoration: none;">
+					<h4>Add and remove a Link</h4>
+				</a>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> link = {
+  <span class="hljs-attr">Name</span>: <span class="hljs-string">&#x27;I am a link&#x27;</span>,
+  <span class="hljs-attr">Hash</span>: <span class="hljs-string">&#x27;QmHash..&#x27;</span>,
+  <span class="hljs-attr">Tsize</span>: <span class="hljs-number">42</span>
+}
+
+node.addLink(link)
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;with link&#x27;</span>, node.toJSON())
+
+nodeA.rmLink(<span class="hljs-string">&#x27;I am a link&#x27;</span>)
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;now without link&#x27;</span>, node.toJSON())
+</code></pre>
+				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+					<h2>API</h2>
+				</a>
+				<a href="#dagnode-functions" id="dagnode-functions" style="color: inherit; text-decoration: none;">
+					<h3>DAGNode functions</h3>
+				</a>
+				<p>DAGNodes are immutable objects, in order to manipulate them you have to follow a function approach of applying function and getting new instances of the given DAGNode.</p>
+				<p>You can incude it in your project with:</p>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagPB = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ipld-dag-pb&#x27;</span>)
+<span class="hljs-keyword">const</span> DAGNode = dagPB.DAGNode
+</code></pre>
+				<a href="#dagnode-constructor" id="dagnode-constructor" style="color: inherit; text-decoration: none;">
+					<h4>DAGNode constructor</h4>
+				</a>
+				<ul>
+					<li><code>data</code> - type: Uint8Array or String</li>
+					<li><code>links</code>- (optional) type: Array of DAGLink instances or Array of DAGLink instances in its json format (link.toJSON)</li>
+					<li><code>serializedSize</code>- (optional) type: Number of bytes the serialized node has. If none is given, it will automatically be calculated.</li>
+				</ul>
+				<p>Create a DAGNode.</p>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagNode = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-string">&#x27;data&#x27;</span>, links)
+</code></pre>
+				<p>links can be a single or an array of DAGLinks instances or objects with the following pattern</p>
+				<pre><code class="language-JavaScript">{
+  <span class="hljs-attr">Name</span>: <span class="hljs-string">&#x27;&lt;some name&gt;&#x27;</span>,
+  <span class="hljs-attr">Hash</span>: <span class="hljs-string">&#x27;&lt;some cid&gt;&#x27;</span>,
+  <span class="hljs-attr">TSize</span>: &lt;sizeInBytes&gt;
+}
+</code></pre>
+				<a href="#dagnode-instance-methods-and-properties" id="dagnode-instance-methods-and-properties" style="color: inherit; text-decoration: none;">
+					<h3>DAGNode instance methods and properties</h3>
+				</a>
+				<p>You have the following methods and properties available in every DAGNode instance.</p>
+				<a href="#nodedata" id="nodedata" style="color: inherit; text-decoration: none;">
+					<h4><code>node.Data</code></h4>
+				</a>
+				<a href="#nodelinks" id="nodelinks" style="color: inherit; text-decoration: none;">
+					<h4><code>node.Links</code></h4>
+				</a>
+				<p>An array of JSON Objects with fields named <code>Hash</code>, <code>Name</code>, and <code>Tsize</code>.</p>
+				<a href="#nodesize" id="nodesize" style="color: inherit; text-decoration: none;">
+					<h4><code>node.size</code></h4>
+				</a>
+				<p>Size of the node, in bytes</p>
+				<a href="#nodetojson" id="nodetojson" style="color: inherit; text-decoration: none;">
+					<h4><code>node.toJSON()</code></h4>
+				</a>
+				<a href="#nodetostring" id="nodetostring" style="color: inherit; text-decoration: none;">
+					<h4><code>node.toString()</code></h4>
+				</a>
+				<a href="#nodetodaglink" id="nodetodaglink" style="color: inherit; text-decoration: none;">
+					<h4><code>node.toDAGLink()</code></h4>
+				</a>
+				<ul>
+					<li><code>options</code> - (optional) type: Object. Currently the only option is <code>name</code> to specify a named link.</li>
+				</ul>
+				<p>Converts a <code>DAGNode</code> into a <code>DAGLink</code>.</p>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-string">&#x27;some data&#x27;</span>)
+<span class="hljs-keyword">const</span> link = node.toDAGLink()
+<span class="hljs-comment">// Named link</span>
+<span class="hljs-keyword">const</span> link = node.toDAGLink({ <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;name-of-the-link&#x27;</span> })
+</code></pre>
+				<a href="#nodeaddlinklink" id="nodeaddlinklink" style="color: inherit; text-decoration: none;">
+					<h4><code>node.addLink(link)</code></h4>
+				</a>
+				<ul>
+					<li><code>link</code> - type: DAGLink or DAGLink in its json format</li>
+				</ul>
+				<p>Creates a link on node A. Modifies the node.</p>
+				<p><code>link</code> can be:</p>
+				<ul>
+					<li>DAGLink instance</li>
+					<li>DAGNode instance</li>
+					<li>Object with the following properties:</li>
+				</ul>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> link = {
+  <span class="hljs-attr">Name</span>: <span class="hljs-string">&#x27;&lt;some string&gt;&#x27;</span>, <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">Tsize</span>: &lt;size in bytes&gt;,
+  Hash: &lt;cid&gt; // can be a String CID, CID buffer or CID object
+}
+
+node.addLink(link)
+</code></pre>
+				<a href="#nodermlinknameorcid" id="nodermlinknameorcid" style="color: inherit; text-decoration: none;">
+					<h4><code>node.rmLink(nameOrCid)</code></h4>
+				</a>
+				<ul>
+					<li><code>nameOrCid</code> - type: String, CID object or CID buffer</li>
+				</ul>
+				<p>Removes a link from the node by name. Modifies the node.</p>
+				<pre><code class="language-JavaScript">node.rmLink(<span class="hljs-string">&#x27;Link1&#x27;</span>)
+</code></pre>
+				<a href="#nodeserialize" id="nodeserialize" style="color: inherit; text-decoration: none;">
+					<h4><code>node.serialize()</code></h4>
+				</a>
+				<p>Serialize the DAGNode instance to its portable binary format. Yields the same result as <code>dagPB.util.serialize(node)</code>. Returns a <code>Uint8Array</code>.</p>
+				<a href="#daglink-functions" id="daglink-functions" style="color: inherit; text-decoration: none;">
+					<h3>DAGLink functions</h3>
+				</a>
+				<p>Following the same pattern as <a href=""><code>DAGNode functions</code></a> above, DAGLink also offers a function for its creation.</p>
+				<p>You can incude it in your project with:</p>
+				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagPB = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ipld-dag-pb&#x27;</span>)
+<span class="hljs-keyword">const</span> DAGLink = dagPB.DAGLink
+</code></pre>
+				<a href="#daglink-constructor" id="daglink-constructor" style="color: inherit; text-decoration: none;">
+					<h4>DAGLink constructor</h4>
+				</a>
+				<pre><code class="language-JavaScript"><span class="hljs-comment">// link is a DAGLink instance</span>
+<span class="hljs-keyword">const</span> link = <span class="hljs-keyword">new</span> DAGLink(
+  <span class="hljs-string">&#x27;link-to-file&#x27;</span>,  <span class="hljs-comment">// name of the link (can be empty)</span>
+  <span class="hljs-number">10</span>,              <span class="hljs-comment">// size in bytes</span>
+  <span class="hljs-string">&#x27;QmSomeHash...&#x27;</span>, <span class="hljs-comment">// can be CID object, CID buffer or string</span>
+)
+</code></pre>
+				<a href="#daglink-instance-methods-and-properties" id="daglink-instance-methods-and-properties" style="color: inherit; text-decoration: none;">
+					<h3>DAGLink instance methods and properties</h3>
+				</a>
+				<a href="#linkname" id="linkname" style="color: inherit; text-decoration: none;">
+					<h4><code>link.Name</code></h4>
+				</a>
+				<a href="#linktsize" id="linktsize" style="color: inherit; text-decoration: none;">
+					<h4><code>link.Tsize</code></h4>
+				</a>
+				<a href="#linkhash" id="linkhash" style="color: inherit; text-decoration: none;">
+					<h4><code>link.Hash</code></h4>
+				</a>
+				<a href="#linktojson" id="linktojson" style="color: inherit; text-decoration: none;">
+					<h4><code>link.toJSON()</code></h4>
+				</a>
+				<a href="#linktostring" id="linktostring" style="color: inherit; text-decoration: none;">
+					<h4><code>link.toString()</code></h4>
+				</a>
+				<a href="#ipld-format-specifics---local-nodeblock-scope-resolver" id="ipld-format-specifics---local-nodeblock-scope-resolver" style="color: inherit; text-decoration: none;">
+					<h3><a href="https://github.com/ipld/interface-ipld-format">IPLD Format Specifics</a> - Local (node/block scope) resolver</h3>
+				</a>
+				<blockquote>
+					<p>See: <a href="https://github.com/ipld/interface-ipld-format#local-resolver-methods">https://github.com/ipld/interface-ipld-format#local-resolver-methods</a></p>
+				</blockquote>
+				<a href="#dagpbresolverresolve" id="dagpbresolverresolve" style="color: inherit; text-decoration: none;">
+					<h4><code>dagPB.resolver.resolve</code></h4>
+				</a>
+				<a href="#dagpbresolvertree" id="dagpbresolvertree" style="color: inherit; text-decoration: none;">
+					<h4><code>dagPB.resolver.tree</code></h4>
+				</a>
+				<a href="#ipld-format-specifics---util" id="ipld-format-specifics---util" style="color: inherit; text-decoration: none;">
+					<h3><a href="https://github.com/ipld/interface-ipld-format">IPLD Format Specifics</a> - util</h3>
+				</a>
+				<blockquote>
+					<p>See: <a href="https://github.com/ipld/interface-ipld-format#ipld-format-utils">https://github.com/ipld/interface-ipld-format#ipld-format-utils</a></p>
+				</blockquote>
+				<a href="#dagpbutilcid" id="dagpbutilcid" style="color: inherit; text-decoration: none;">
+					<h3><code>dagPB.util.cid</code></h3>
+				</a>
+				<a href="#dagpbutilserialize" id="dagpbutilserialize" style="color: inherit; text-decoration: none;">
+					<h3><code>dagPB.util.serialize</code></h3>
+				</a>
+				<p>Serialize the DAGNode instance to its portable binary format. Yields the same result as <code>node.serialize()</code>. Returns a <code>Uint8Array</code>.</p>
+				<a href="#dagpbutildeserialize" id="dagpbutildeserialize" style="color: inherit; text-decoration: none;">
+					<h3><code>dagPB.util.deserialize</code></h3>
+				</a>
+				<p>Deserialize a DAGNode instance from its portable binary format. Returns a DAGNode.</p>
+				<a href="#contribute" id="contribute" style="color: inherit; text-decoration: none;">
+					<h2>Contribute</h2>
+				</a>
+				<p>Please contribute! <a href="https://github.com/ipld/js-ipld-dag-pb/issues">Look at the issues</a>!</p>
+				<p>Check out our <a href="https://github.com/ipld/ipld/blob/master/contributing.md">contributing document</a> for more information on how we work, and about contributing in general. Please be aware that all interactions related to IPLD are subject to the IPFS <a href="https://github.com/ipfs/community/blob/master/code-of-conduct.md">Code of Conduct</a>.</p>
+				<p>Small note: If editing the README, please conform to the <a href="https://github.com/RichardLitt/standard-readme">standard-readme</a> specification.</p>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h2>License</h2>
+				</a>
+				<p><a href="LICENSE">ISC</a> © 2016 Protocol Labs Inc.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" tsd-kind-module">
+						<a href="modules/__ipld_dag_pb_.html"> ipld-dag-pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_link_daglink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-link/dagLink</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_link_index_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-link/index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_link_util_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-link/util</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_addlink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/addLink</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_dagnode_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/dagNode</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_index_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_rmlink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/rmLink</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_sortlinks_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/sortLinks</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_todaglink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/toDagLink</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_gencid_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/genCid</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_resolver_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/resolver</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_serialize_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/serialize</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_util_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/util</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
 </body>
 </html>
