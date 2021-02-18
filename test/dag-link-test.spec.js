@@ -31,6 +31,7 @@ describe('DAGLink', () => {
 
     it('fail to create without multihash', () => {
       expect(() => {
+        // @ts-expect-error cid is required
         const link = new DAGLink('hello', 3)
         expect(link).to.not.exist()
       }).to.throw()
@@ -57,10 +58,5 @@ describe('DAGLink', () => {
     const cid = 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U'
     const link = new DAGLink('hello', 3, cid)
     expect(link.Hash.toBaseEncodedString()).to.equal(cid)
-  })
-
-  it('has an immutable CID', () => {
-    const link = new DAGLink('hello', 3, 'QmXg9Pp2ytZ14xgmQjYEiHjVjMFXzCVVEcRTWJBmLgR39U')
-    expect(() => { link.Hash = 'foo' }).to.throw(/read.only/)
   })
 })

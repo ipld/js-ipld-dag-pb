@@ -1,11 +1,25 @@
 'use strict'
 
-const protons = require('protons')
-const proto = protons(require('./dag.proto.js'))
-const DAGLink = require('./dag-link/dagLink')
+const protobuf = require('protobufjs/minimal')
+const {
+  PBLink
+} = require('./dag')
 
-exports = module.exports
+const {
+  createDagLinkFromB58EncodedHash
+} = require('./dag-link/util')
 
+/**
+ * @typedef {import('./dag-link/dagLink')} DAGLink
+ * @typedef {import('./types').DAGLinkLike} DAGLinkLike
+ * @typedef {import('./types').SerializableDAGNode} SerializableDAGNode
+ * @typedef {import('cids')} CID
+ */
+
+/**
+ * @param { { Data?: Uint8Array, Links: (DAGLink | DAGLinkLike)[] }} node
+ * @returns {SerializableDAGNode}
+ */
 const toProtoBuf = (node) => {
   const pbn = {}
 
@@ -34,31 +48,54 @@ const toProtoBuf = (node) => {
 /**
  * Serialize internal representation into a binary PB block.
  *
- * @param {Object} node - Internal representation of a PB block
- * @returns {Uint8Array} - The encoded binary representation
+ * @param {import('./dag-node/dagNode')} node - Internal representation of a PB block
  */
 const serializeDAGNode = (node) => {
-  const data = node.Data
-  const links = node.Links || []
-
-  const serialized = proto.PBNode.encode(toProtoBuf({
-    Data: data,
-    Links: links
-  }))
-
-  return serialized
+  return encode(toProtoBuf(node))
 }
 
-// Serialize an object where the `Links` might not be a `DAGLink` instance yet
+/**
+ * Serialize an object where the `Links` might not be a `DAGLink` instance yet
+ *
+ * @param {Uint8Array} [data]
+ * @param {(DAGLink | string | DAGLinkLike)[]} [links]
+ */
 const serializeDAGNodeLike = (data, links = []) => {
-  const node = { Data: data }
-  node.Links = links.map((link) => {
-    return DAGLink.isDAGLink(link)
-      ? link
-      : DAGLink.util.createDagLinkFromB58EncodedHash(link)
-  })
-  return serializeDAGNode(node)
+  const node = {
+    Data: data,
+    Links: links.map((link) => {
+      return createDagLinkFromB58EncodedHash(link)
+    })
+  }
+
+  return encode(toProtoBuf(node))
 }
 
-exports.serializeDAGNode = serializeDAGNode
-exports.serializeDAGNodeLike = serializeDAGNodeLike
+module.exports = {
+  serializeDAGNode,
+  serializeDAGNodeLike
+}
+
+/**
+ * The fields in PBNode are the wrong way round - `id: 2` comes before
+ * `id: 1`. protobufjs writes them out in id order but go-IPFS does not so
+ * we have to use the protobuf.Writer interface directly to get the same
+ * serialized form as go-IPFS
+ *
+ * @param {SerializableDAGNode} pbf
+ */
+function encode (pbf) {
+  const writer = protobuf.Writer.create()
+
+  if (pbf.Links != null) {
+    for (let i = 0; i < pbf.Links.length; i++) {
+      PBLink.encode(pbf.Links[i], writer.uint32(18).fork()).ldelim()
+    }
+  }
+
+  if (pbf.Data != null) {
+    writer.uint32(10).bytes(pbf.Data)
+  }
+
+  return writer.finish()
+}

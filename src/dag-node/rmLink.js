@@ -3,14 +3,25 @@
 const CID = require('cids')
 const uint8ArrayEquals = require('uint8arrays/equals')
 
+/**
+ * @typedef {import('../dag-link/dagLink')} DAGLink
+ */
+
+/**
+ *
+ * @param {import('./dagNode')} dagNode
+ * @param {string | CID | Uint8Array | DAGLink} nameOrCid
+ */
 const rmLink = (dagNode, nameOrCid) => {
   let predicate = null
 
   // It's a name
   if (typeof nameOrCid === 'string') {
-    predicate = (link) => link.Name === nameOrCid
-  } else if (nameOrCid instanceof Uint8Array || CID.isCID(nameOrCid)) {
-    predicate = (link) => uint8ArrayEquals(link.Hash, nameOrCid)
+    predicate = (/** @type {DAGLink} */ link) => link.Name === nameOrCid
+  } else if (nameOrCid instanceof Uint8Array) {
+    predicate = (/** @type {DAGLink} */ link) => uint8ArrayEquals(link.Hash.bytes, nameOrCid)
+  } else if (CID.isCID(nameOrCid)) {
+    predicate = (/** @type {DAGLink} */ link) => uint8ArrayEquals(link.Hash.bytes, nameOrCid.bytes)
   }
 
   if (predicate) {

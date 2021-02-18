@@ -1,11 +1,17 @@
 'use strict'
 
 const CID = require('cids')
-const withIs = require('class-is')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
-// Link represents an IPFS Merkle DAG Link between Nodes.
+/**
+ * Link represents an IPFS Merkle DAG Link between Nodes.
+ */
 class DAGLink {
+  /**
+   * @param {string | undefined | null} name
+   * @param {number} size
+   * @param {CID | string | Uint8Array} cid
+   */
   constructor (name, size, cid) {
     if (!cid) {
       throw new Error('A link requires a cid to point to')
@@ -14,11 +20,11 @@ class DAGLink {
     // assert(size, 'A link requires a size')
     //  note - links should include size, but this assert is disabled
     //  for now to maintain consistency with go-ipfs pinset
+    this.Name = name || ''
+    this.Tsize = size
+    this.Hash = new CID(cid)
 
     Object.defineProperties(this, {
-      Name: { value: name || '', writable: false, enumerable: true },
-      Tsize: { value: size, writable: false, enumerable: true },
-      Hash: { value: new CID(cid), writable: false, enumerable: true },
       _nameBuf: { value: null, writable: true, enumerable: false }
     })
   }
@@ -43,7 +49,7 @@ class DAGLink {
   // We need this to sort the links, otherwise
   // we will reallocate new Uint8Arrays every time
   get nameAsBuffer () {
-    if (this._nameBuf !== null) {
+    if (this._nameBuf != null) {
       return this._nameBuf
     }
 
@@ -52,4 +58,4 @@ class DAGLink {
   }
 }
 
-exports = module.exports = withIs(DAGLink, { className: 'DAGLink', symbolName: '@ipld/js-ipld-dag-pb/daglink' })
+module.exports = DAGLink

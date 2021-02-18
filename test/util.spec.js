@@ -5,13 +5,17 @@
 const CID = require('cids')
 const chai = require('aegir/utils/chai')
 const expect = chai.expect
+const {
+  multihash
+} = require('multihashing-async')
 
 const {
   DAGLink
 } = require('../src')
 const {
   serialize,
-  deserialize
+  deserialize,
+  cid
 } = require('../src/util')
 
 describe('util', () => {
@@ -68,7 +72,21 @@ describe('util', () => {
   })
 
   it('should ignore invalid properties when serializing', () => {
+    // @ts-ignore invalid properties
     const result = serialize({ foo: 'bar' })
     expect(result).to.be.empty()
+  })
+
+  describe('cid', () => {
+    it('should allow the identity hash', async () => {
+      const buffer = serialize({ Data: new Uint8Array(0), Links: [] })
+      const id = await cid(buffer, {
+        hashAlg: multihash.names.identity
+      })
+
+      const result = multihash.decode(id.multihash)
+
+      expect(result).to.have.property('name', 'identity')
+    })
   })
 })

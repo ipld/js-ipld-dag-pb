@@ -5,6 +5,11 @@
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
   "scripts": {
+    "prepare": "run-s prepare:*",
+    "prepare:proto": "pbjs -t static-module -w commonjs --force-number --no-verify --no-delimited --no-create --no-beautify --no-defaults --lint eslint-disable -o src/dag.js ./src/dag.proto",
+    "prepare:proto:types": "pbts -o src/dag.d.ts src/dag.js",
+    "prepare:types": "aegir build --no-bundle",
+    "prepare:copy": "cp ./src/*.d.ts ./dist/src",
     "test": "aegir test",
     "test:browser": "aegir test --target browser",
     "test:node": "aegir test --target node",
@@ -13,7 +18,6 @@
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
-    "build": "aegir build",
     "coverage": "aegir coverage",
     "coverage-publish": "aegir coverage publish"
   },
@@ -66,18 +70,29 @@
   },
   "dependencies": {
     "cids": "^1.0.0",
-    "class-is": "^1.1.0",
     "multicodec": "^2.0.0",
     "multihashing-async": "^2.0.0",
-    "protons": "^2.0.0",
+    "protobufjs": "^6.10.2",
     "reset": "^0.1.0",
     "run": "^1.4.0",
     "stable": "^0.1.8",
-    "uint8arrays": "^1.0.0"
+    "uint8arrays": "^2.0.5"
   },
   "devDependencies": {
-    "aegir": "^25.0.0",
+    "aegir": "^30.3.0",
     "multibase": "^3.0.0",
-    "multihashes": "^3.0.0"
+    "npm-run-all": "^4.1.5"
+  },
+  "types": "dist/src/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "src/*": [
+        "dist/src/*",
+        "dist/src/*/index"
+      ],
+      "src/": [
+        "dist/src/index"
+      ]
+    }
   }
 }

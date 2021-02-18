@@ -1,13 +1,24 @@
 'use strict'
 
-exports.DAGNode = require('./dag-node')
-exports.DAGLink = require('./dag-link')
+const resolver = require('./resolver')
+const util = require('./util')
+const DAGNode = require('./dag-node/dagNode')
+const DAGLink = require('./dag-link/dagLink')
 
-/*
- * Functions to fulfil IPLD Format interface
- * https://github.com/ipld/interface-ipld-format
+/**
+ * @typedef {import('./types').DAGLinkLike} DAGLinkLike
  */
-exports.resolver = require('./resolver')
-exports.util = require('./util')
-exports.codec = exports.util.codec
-exports.defaultHashAlg = exports.util.defaultHashAlg
+
+module.exports = {
+  DAGNode,
+  DAGLink,
+
+  /**
+   * Functions to fulfil IPLD Format interface
+   * https://github.com/ipld/interface-ipld-format
+   */
+  resolver,
+  util,
+  codec: util.codec,
+  defaultHashAlg: util.defaultHashAlg
+}

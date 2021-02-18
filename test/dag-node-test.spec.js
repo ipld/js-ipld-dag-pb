@@ -5,14 +5,16 @@ const chai = require('aegir/utils/chai')
 const expect = chai.expect
 
 const dagPB = require('../src')
-const DAGLink = dagPB.DAGLink
-const DAGNode = dagPB.DAGNode
-const multihash = require('multihashes')
-const multicodec = require('multicodec')
+const DAGLink = require('../src/dag-link/dagLink')
+const DAGNode = require('../src/dag-node/dagNode')
 const multihashing = require('multihashing-async')
+const {
+  multihash
+} = multihashing
 
 const CID = require('cids')
 const multibase = require('multibase')
+// @ts-ignore
 const loadFixture = require('aegir/fixtures')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
@@ -153,6 +155,7 @@ describe('DAGNode', () => {
     const deserialized = dagPB.util.deserialize(serialized)
     for (const key of Object.keys(node)) {
       if (key !== '_serializedSize') {
+        // @ts-ignore
         expect(node[key]).to.deep.equal(deserialized[key])
       }
     }
@@ -171,10 +174,16 @@ describe('DAGNode', () => {
   })
 
   it('fail to create a node with other data types', () => {
-    expect(() => new DAGNode({})).to.throw(
+    expect(() => {
+      // @ts-ignore invalid constructor args
+      return new DAGNode({})
+    }).to.throw(
       'Passed \'data\' is not a Uint8Array or a String!'
     )
-    expect(() => new DAGNode([])).to.throw(
+    expect(() => {
+      // @ts-ignore invalid constructor args
+      return new DAGNode([])
+    }).to.throw(
       'Passed \'data\' is not a Uint8Array or a String!'
     )
   })
@@ -203,6 +212,7 @@ describe('DAGNode', () => {
     const node2 = new DAGNode(uint8ArrayFromString('2'))
     const link = await node2.toDAGLink()
     const linkObject = link.toJSON()
+    // @ts-ignore
     node1.addLink(linkObject)
     expect(node1.Links.length).to.equal(1)
     expect(node1.Links[0].Tsize).to.eql(node2.size)
@@ -241,7 +251,7 @@ describe('DAGNode', () => {
 
     expect(source.Links.length).to.equal(1)
 
-    const target = new DAGNode(null, [], 0)
+    const target = new DAGNode('', [], 0)
     target.addLink(source.Links[0])
 
     expect(target.Links.length).to.equal(1)
@@ -304,7 +314,7 @@ describe('DAGNode', () => {
   it('get node CID with hashAlg', async () => {
     const node = new DAGNode(uint8ArrayFromString('some data'))
     const serialized = dagPB.util.serialize(node)
-    const cid = await dagPB.util.cid(serialized, { hashAlg: multicodec.SHA2_512 })
+    const cid = await dagPB.util.cid(serialized, { hashAlg: multihash.names['sha2-512'] })
     expect(cid.multihash).to.exist()
     expect(cid.codec).to.equal('dag-pb')
     expect(cid.version).to.equal(1)
@@ -315,12 +325,19 @@ describe('DAGNode', () => {
   it('node size updates with mutation', async () => {
     // see pbcross.go for the source of the sizes and CIDs here
 
+    /**
+     * @param {DAGNode} node
+     */
     async function cid (node) {
       const serialized = dagPB.util.serialize(node)
       const cid = await dagPB.util.cid(serialized, { cidVersion: 0 })
       return cid.toBaseEncodedString()
     }
 
+    /**
+     *
+     * @param {string} str
+     */
     async function rawBlockCid (str) {
       const raw = uint8ArrayFromString(str)
       const rawHash = await multihashing(raw, 'sha2-256')
@@ -350,7 +367,7 @@ describe('DAGNode', () => {
 
     // pnd1
     // links by constructor and addLink should yield the same node
-    const pnd1ByConstructor = new DAGNode(null, [cat])
+    const pnd1ByConstructor = new DAGNode(undefined, [cat])
     expect(pnd1ByConstructor.size).to.equal(51)
     expect(await cid(pnd1ByConstructor)).to.equal('QmdwjhxpxzcMsR3qUuj7vUL8pbA7MgR3GAxWi2GLHjsKCT')
 
@@ -360,7 +377,7 @@ describe('DAGNode', () => {
 
     // pnd2
     const pnd1Link = await pnd1.toDAGLink({ name: 'first', cidVersion: 0 })
-    const pnd2ByConstructor = new DAGNode(null, [pnd1Link, dog])
+    const pnd2ByConstructor = new DAGNode(undefined, [pnd1Link, dog])
     expect(pnd2ByConstructor.size).to.equal(149)
     expect(await cid(pnd2ByConstructor)).to.equal('QmWXZxVQ9yZfhQxLD35eDR8LiMRsYtHxYqTFCBbJoiJVys')
 
@@ -371,7 +388,7 @@ describe('DAGNode', () => {
 
     // pnd3
     const pnd2Link = await pnd2.toDAGLink({ name: 'second', cidVersion: 0 })
-    const pnd3ByConstructor = new DAGNode(null, [pnd2Link, bear])
+    const pnd3ByConstructor = new DAGNode(undefined, [pnd2Link, bear])
     expect(pnd3ByConstructor.size).to.equal(250)
     expect(await cid(pnd3ByConstructor)).to.equal('QmNX6Tffavsya4xgBi2VJQnSuqy9GsxongxZZ9uZBqp16d')
 
@@ -485,13 +502,13 @@ describe('DAGNode', () => {
     const l1 = {
       Name: '',
       Hash: 'QmbAmuwox51c91FmC2jEX5Ng4zS4HyVgpA5GNPBF5QsWMA',
-      Size: 57806
+      Tsize: 57806
     }
 
     const l2 = {
       Name: '',
       Hash: 'QmP7SrR76KHK9A916RbHG1ufy2TzNABZgiE23PjZDMzZXy',
-      Size: 262158
+      Tsize: 262158
     }
     const link1 = new DAGLink(
       l1.Name,
@@ -538,10 +555,38 @@ describe('DAGNode', () => {
 
   it('creates links from objects with .Size properties', () => {
     const node = new DAGNode(uint8ArrayFromString('some data'), [{
+      // @ts-ignore
       Hash: 'QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7',
       Size: 9001
     }])
 
     expect(node.Links[0].Tsize).to.eql(9001)
+  })
+
+  it('serializing should set _serializedSize', () => {
+    const node = new DAGNode('hello')
+
+    expect(node._serializedSize).to.be.null()
+
+    node.serialize()
+
+    expect(node._serializedSize).to.be.greaterThan(0)
+  })
+
+  it('removes dag link by uint8array CID', () => {
+    const cid = new CID('QmUxD5gZfKzm8UN4WaguAMAZjw2TzZ2ZUmcqm2qXPtais7')
+
+    const node = new DAGNode('hello world', [{
+      Hash: cid,
+      Tsize: 5,
+      Name: ''
+    }])
+
+    expect(node).to.have.property('Links').that.has.lengthOf(1)
+
+    // @ts-ignore only supposed to support CIDs or strings or DAGLinks
+    node.rmLink(cid.bytes)
+
+    expect(node).to.have.property('Links').that.has.lengthOf(0)
   })
 })

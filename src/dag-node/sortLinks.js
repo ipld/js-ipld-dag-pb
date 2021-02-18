@@ -3,6 +3,15 @@
 const sort = require('stable')
 const uint8ArrayCompare = require('uint8arrays/compare')
 
+/**
+ * @typedef {import('../dag-link/dagLink')} DAGLink
+ */
+
+/**
+ *
+ * @param {DAGLink} a
+ * @param {DAGLink} b
+ */
 const linkSort = (a, b) => {
   const buf1 = a.nameAsBuffer
   const buf2 = b.nameAsBuffer
@@ -12,7 +21,8 @@ const linkSort = (a, b) => {
 
 /**
  * Sorts links in place (mutating given array)
- * @param {Array} links
+ *
+ * @param {DAGLink[]} links
  * @returns {void}
  */
 const sortLinks = (links) => {
