@@ -8,6 +8,6 @@
     "src"
   ],
   "exclude": [
-    "src/dag.js"
+    "src/dag.js" // exclude generated file
   ]
 }

@@ -24,7 +24,9 @@ class DAGLink {
     this.Tsize = size
     this.Hash = new CID(cid)
 
-    this._nameBuf = null
+    Object.defineProperties(this, {
+      _nameBuf: { value: null, writable: true, enumerable: false }
+    })
   }
 
   toString () {
@@ -47,7 +49,7 @@ class DAGLink {
   // We need this to sort the links, otherwise
   // we will reallocate new Uint8Arrays every time
   get nameAsBuffer () {
-    if (this._nameBuf !== null) {
+    if (this._nameBuf != null) {
       return this._nameBuf
     }
 

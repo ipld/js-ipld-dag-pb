@@ -46,8 +46,11 @@ class DAGNode {
 
     this.Data = data
     this.Links = sortedLinks
-    this._serializedSize = serializedSize
-    this._size = null
+
+    Object.defineProperties(this, {
+      _serializedSize: { value: serializedSize, writable: true, enumerable: false },
+      _size: { value: null, writable: true, enumerable: false }
+    })
   }
 
   toJSON () {
@@ -103,11 +106,15 @@ class DAGNode {
   }
 
   get size () {
-    if (this._size === null) {
-      if (this._serializedSize === null) {
+    if (this._size == null) {
+      let serializedSize
+
+      if (serializedSize == null) {
         this._serializedSize = this.serialize().length
+        serializedSize = this._serializedSize
       }
-      this._size = this.Links.reduce((sum, l) => sum + l.Tsize, this._serializedSize)
+
+      this._size = this.Links.reduce((sum, l) => sum + l.Tsize, serializedSize)
     }
 
     return this._size
