@@ -1,10 +1,9 @@
 'use strict'
 
-const protobuf = require('protobufjs/light')
-// @ts-ignore
-const json = require('./dag.json')
-const root = protobuf.Root.fromJSON(json)
-const PBLink = root.lookupType('PBLink')
+const protobuf = require('protobufjs/minimal')
+const {
+  PBLink
+} = require('./dag')
 
 const {
   createDagLinkFromB58EncodedHash

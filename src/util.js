@@ -1,10 +1,8 @@
 'use strict'
 
-const protobuf = require('protobufjs/light')
-// @ts-ignore
-const json = require('./dag.json')
-const root = protobuf.Root.fromJSON(json)
-const PBNode = root.lookupType('PBNode')
+const {
+  PBNode
+} = require('./dag')
 const DAGLink = require('./dag-link/dagLink')
 const DAGNode = require('./dag-node/dagNode')
 const { serializeDAGNode, serializeDAGNodeLike } = require('./serialize')
