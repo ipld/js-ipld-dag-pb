@@ -1,3 +1,23 @@
+# [0.21.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.20.0...v0.21.0) (2021-02-18)
+
+
+### Features
+
+* add TypeScript types ([#189](https://github.com/ipld/js-ipld-dag-pb/issues/189)) ([76cfef8](https://github.com/ipld/js-ipld-dag-pb/commit/76cfef856aab2ce82c1e855f152523460e9b6bcb))
+
+
+### BREAKING CHANGES
+
+* `is-class` is not longer used, use `instanceof` instead
+
+The `DAGNode.isDAGNode()` and `DAGLink.isDAGLink()` methods no longer exist,
+use `instanceof DAGNode` and `instanceof DAGLink` instead.
+
+Please note that the newly added TypeScript types might lead to warnings/errors
+if you use it in a TypeScript types checking environment.
+
+
+
 <a name="0.20.0"></a>
 # [0.20.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.19.0...v0.20.0) (2020-08-04)
 
