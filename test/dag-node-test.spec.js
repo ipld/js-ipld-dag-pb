@@ -15,7 +15,7 @@ const {
 const CID = require('cids')
 const multibase = require('multibase')
 // @ts-ignore
-const loadFixture = require('aegir/fixtures')
+const loadFixture = require('aegir/utils/fixtures')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
 const testBlockNamedLinks = loadFixture('test/fixtures/test-block-named-links')
