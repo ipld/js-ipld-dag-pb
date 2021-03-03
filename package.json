@@ -14,7 +14,6 @@
     "test:browser": "aegir test --target browser",
     "test:node": "aegir test --target node",
     "lint": "aegir lint",
-    "lint-commits": "aegir commitlint",
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
@@ -26,7 +25,6 @@
     "dist"
   ],
   "pre-push": [
-    "lint-commits",
     "lint",
     "test"
   ],
@@ -70,7 +68,7 @@
   },
   "dependencies": {
     "cids": "^1.0.0",
-    "multicodec": "^2.0.0",
+    "multicodec": "^3.0.1",
     "multihashing-async": "^2.0.0",
     "protobufjs": "^6.10.2",
     "reset": "^0.1.0",
@@ -79,8 +77,8 @@
     "uint8arrays": "^2.0.5"
   },
   "devDependencies": {
-    "aegir": "^30.3.0",
-    "multibase": "^3.0.0",
+    "aegir": "^31.0.1",
+    "multibase": "^4.0.1",
     "npm-run-all": "^4.1.5"
   },
   "types": "dist/src/index.d.ts",
