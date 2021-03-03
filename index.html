@@ -3,120 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ipld-dag-pb - v0.21.0</title>
-	<meta name="description" content="Documentation for ipld-dag-pb - v0.21.0">
+	<title>ipld-dag-pb - v0.21.1</title>
+	<meta name="description" content="Documentation for ipld-dag-pb - v0.21.1">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
-	<link href="https://unpkg.com/nord-highlightjs@0.1.0/dist/nord.css" rel="stylesheet" type="text/css" />
-	<style>
-        .toolbar-icon {
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-        .toolbar-icon-search {
-            box-sizing: border-box;
-            position: absolute;
-            overflow: hidden;
-            right: -40px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            @media (min-width: 901px){
-                display: none
-            }
-        }
-            @media (min-width: 901px){
-                .toolbar-icon-menu {
-                    display: none
-                }
-                .toolbar-icon-options {
-                    display: none
-                }
-            }
-
-        .gg-menu {
-            transform: scale(var(--ggs,1))
-        }
-        .gg-menu,
-        .gg-menu::after,
-        .gg-menu::before {
-            box-sizing: border-box;
-            position: relative;
-            display: block;
-            width: 20px;
-            height: 2px;
-            border-radius: 3px;
-            background: currentColor
-        }
-        .gg-menu::after,
-        .gg-menu::before {
-            content: "";
-            position: absolute;
-            top: -6px
-        }
-        .gg-menu::after {
-            top: 6px
-        }
-        .gg-options {
-            box-sizing: border-box;
-            position: relative;
-            display: block;
-            transform: scale(var(--ggs,1));
-            width: 10px;
-            height: 2px;
-            box-shadow:
-                -3px 4px 0 0,
-                3px -4px 0 0
-        }
-        .gg-options::after,
-        .gg-options::before {
-            content: "";
-            display: block;
-            box-sizing: border-box;
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border: 2px solid;
-            border-radius: 100%
-        }
-        .gg-options::before {
-            top: -7px;
-            left: -4px
-        }
-        .gg-options::after {
-            bottom: -7px;
-            right: -4px
-        }
-        .gg-search {
-            box-sizing: border-box;
-            position: relative;
-            display: block;
-            transform: scale(var(--ggs,1));
-            width: 16px;
-            height: 16px;
-            border: 2px solid;
-            border-radius: 100%;
-            margin-left: -4px;
-            margin-top: -4px
-        }
-        .gg-search::after {
-            content: "";
-            display: block;
-            box-sizing: border-box;
-            position: absolute;
-            border-radius: 3px;
-            width: 2px;
-            height: 8px;
-            background: currentColor;
-            transform: rotate(-45deg);
-            top: 10px;
-            left: 12px
-        }
-    </style>
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -125,26 +16,41 @@
 			<div class="table-wrap">
 				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
 					<div class="field">
-						<label for="tsd-search-field" class="toolbar-icon toolbar-icon-search"><i class="gg-search"></i></label>
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
 					</div>
 					<ul class="results">
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">ipld-dag-pb - v0.21.0</a>
+					<a href="index.html" class="title">ipld-dag-pb - v0.21.1</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
-					<a href="#" class="toolbar-icon toolbar-icon-menu" data-toggle="menu"><i class="gg-menu"></i></a>
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-			</ul>
-			<h1>ipld-dag-pb - v0.21.0</h1>
+			<h1>ipld-dag-pb - v0.21.1</h1>
 		</div>
 	</div>
 </header>
@@ -232,16 +138,16 @@
 				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
 					<h2>Install</h2>
 				</a>
-				<pre><code class="language-bash">&gt; npm install ipld-dag-pb --save
+				<pre><code class="language-bash"><span style="color: #000000">&gt; npm install ipld-dag-pb --save</span>
 </code></pre>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagPB = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ipld-dag-pb&#x27;</span>)
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dagPB</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipld-dag-pb&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-comment">// IPLD Format specifics</span>
-dagPB.resolver
-dagPB.util
+<span style="color: #008000">// IPLD Format specifics</span>
+<span style="color: #001080">dagPB</span><span style="color: #000000">.</span><span style="color: #001080">resolver</span>
+<span style="color: #001080">dagPB</span><span style="color: #000000">.</span><span style="color: #001080">util</span>
 </code></pre>
 				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
 					<h3>Examples</h3>
@@ -249,25 +155,25 @@ dagPB.util
 				<a href="#create-a-dagnode" id="create-a-dagnode" style="color: inherit; text-decoration: none;">
 					<h4>Create a DAGNode</h4>
 				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> node1 = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-keyword">new</span> TextEncoder(<span class="hljs-string">&#x27;utf8&#x27;</span>).encode(<span class="hljs-string">&#x27;some data&#x27;</span>))
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">node1</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">DAGNode</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">TextEncoder</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;utf8&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">encode</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;some data&#039;</span><span style="color: #000000">))</span>
 
-<span class="hljs-comment">// node2 will have the same data as node1</span>
-<span class="hljs-keyword">const</span> node2 = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-string">&#x27;some data&#x27;</span>)
+<span style="color: #008000">// node2 will have the same data as node1</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">node2</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">DAGNode</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;some data&#039;</span><span style="color: #000000">)</span>
 </code></pre>
 				<a href="#add-and-remove-a-link" id="add-and-remove-a-link" style="color: inherit; text-decoration: none;">
 					<h4>Add and remove a Link</h4>
 				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> link = {
-  <span class="hljs-attr">Name</span>: <span class="hljs-string">&#x27;I am a link&#x27;</span>,
-  <span class="hljs-attr">Hash</span>: <span class="hljs-string">&#x27;QmHash..&#x27;</span>,
-  <span class="hljs-attr">Tsize</span>: <span class="hljs-number">42</span>
-}
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">link</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">  </span><span style="color: #001080">Name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;I am a link&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">Hash:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;QmHash..&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">Tsize:</span><span style="color: #000000"> </span><span style="color: #098658">42</span>
+<span style="color: #000000">}</span>
 
-node.addLink(link)
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;with link&#x27;</span>, node.toJSON())
+<span style="color: #001080">node</span><span style="color: #000000">.</span><span style="color: #795E26">addLink</span><span style="color: #000000">(</span><span style="color: #001080">link</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;with link&#039;</span><span style="color: #000000">, </span><span style="color: #001080">node</span><span style="color: #000000">.</span><span style="color: #795E26">toJSON</span><span style="color: #000000">())</span>
 
-nodeA.rmLink(<span class="hljs-string">&#x27;I am a link&#x27;</span>)
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;now without link&#x27;</span>, node.toJSON())
+<span style="color: #001080">nodeA</span><span style="color: #000000">.</span><span style="color: #795E26">rmLink</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;I am a link&#039;</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;now without link&#039;</span><span style="color: #000000">, </span><span style="color: #001080">node</span><span style="color: #000000">.</span><span style="color: #795E26">toJSON</span><span style="color: #000000">())</span>
 </code></pre>
 				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
 					<h2>API</h2>
@@ -277,8 +183,8 @@ nodeA.rmLink(<span class="hljs-string">&#x27;I am a link&#x27;</span>)
 				</a>
 				<p>DAGNodes are immutable objects, in order to manipulate them you have to follow a function approach of applying function and getting new instances of the given DAGNode.</p>
 				<p>You can incude it in your project with:</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagPB = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ipld-dag-pb&#x27;</span>)
-<span class="hljs-keyword">const</span> DAGNode = dagPB.DAGNode
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dagPB</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipld-dag-pb&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">DAGNode</span><span style="color: #000000"> = </span><span style="color: #001080">dagPB</span><span style="color: #000000">.</span><span style="color: #001080">DAGNode</span>
 </code></pre>
 				<a href="#dagnode-constructor" id="dagnode-constructor" style="color: inherit; text-decoration: none;">
 					<h4>DAGNode constructor</h4>
@@ -289,14 +195,14 @@ nodeA.rmLink(<span class="hljs-string">&#x27;I am a link&#x27;</span>)
 					<li><code>serializedSize</code>- (optional) type: Number of bytes the serialized node has. If none is given, it will automatically be calculated.</li>
 				</ul>
 				<p>Create a DAGNode.</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagNode = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-string">&#x27;data&#x27;</span>, links)
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dagNode</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">DAGNode</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;data&#039;</span><span style="color: #000000">, </span><span style="color: #001080">links</span><span style="color: #000000">)</span>
 </code></pre>
 				<p>links can be a single or an array of DAGLinks instances or objects with the following pattern</p>
-				<pre><code class="language-JavaScript">{
-  <span class="hljs-attr">Name</span>: <span class="hljs-string">&#x27;&lt;some name&gt;&#x27;</span>,
-  <span class="hljs-attr">Hash</span>: <span class="hljs-string">&#x27;&lt;some cid&gt;&#x27;</span>,
-  <span class="hljs-attr">TSize</span>: &lt;sizeInBytes&gt;
-}
+				<pre><code class="language-JavaScript"><span style="color: #000000">{</span>
+<span style="color: #000000">  Name: </span><span style="color: #A31515">&#039;&lt;some name&gt;&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  Hash: </span><span style="color: #A31515">&#039;&lt;some cid&gt;&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  TSize: </span><span style="color: #800000">&lt;</span><span style="color: #267F99">sizeInBytes</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">}</span>
 </code></pre>
 				<a href="#dagnode-instance-methods-and-properties" id="dagnode-instance-methods-and-properties" style="color: inherit; text-decoration: none;">
 					<h3>DAGNode instance methods and properties</h3>
@@ -326,10 +232,10 @@ nodeA.rmLink(<span class="hljs-string">&#x27;I am a link&#x27;</span>)
 					<li><code>options</code> - (optional) type: Object. Currently the only option is <code>name</code> to specify a named link.</li>
 				</ul>
 				<p>Converts a <code>DAGNode</code> into a <code>DAGLink</code>.</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> DAGNode(<span class="hljs-string">&#x27;some data&#x27;</span>)
-<span class="hljs-keyword">const</span> link = node.toDAGLink()
-<span class="hljs-comment">// Named link</span>
-<span class="hljs-keyword">const</span> link = node.toDAGLink({ <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;name-of-the-link&#x27;</span> })
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">node</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">DAGNode</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;some data&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">link</span><span style="color: #000000"> = </span><span style="color: #001080">node</span><span style="color: #000000">.</span><span style="color: #795E26">toDAGLink</span><span style="color: #000000">()</span>
+<span style="color: #008000">// Named link</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">link</span><span style="color: #000000"> = </span><span style="color: #001080">node</span><span style="color: #000000">.</span><span style="color: #795E26">toDAGLink</span><span style="color: #000000">({ </span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;name-of-the-link&#039;</span><span style="color: #000000"> })</span>
 </code></pre>
 				<a href="#nodeaddlinklink" id="nodeaddlinklink" style="color: inherit; text-decoration: none;">
 					<h4><code>node.addLink(link)</code></h4>
@@ -344,13 +250,13 @@ nodeA.rmLink(<span class="hljs-string">&#x27;I am a link&#x27;</span>)
 					<li>DAGNode instance</li>
 					<li>Object with the following properties:</li>
 				</ul>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> link = {
-  <span class="hljs-attr">Name</span>: <span class="hljs-string">&#x27;&lt;some string&gt;&#x27;</span>, <span class="hljs-comment">// optional</span>
-  <span class="hljs-attr">Tsize</span>: &lt;size in bytes&gt;,
-  Hash: &lt;cid&gt; // can be a String CID, CID buffer or CID object
-}
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">link</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">  </span><span style="color: #001080">Name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;&lt;some string&gt;&#039;</span><span style="color: #000000">, </span><span style="color: #008000">// optional</span>
+<span style="color: #000000">  </span><span style="color: #001080">Tsize:</span><span style="color: #000000"> </span><span style="color: #800000">&lt;size</span><span style="color: #000000"> </span><span style="color: #FF0000">in</span><span style="color: #000000"> </span><span style="color: #FF0000">bytes</span><span style="color: #800000">&gt;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  Hash: </span><span style="color: #800000">&lt;cid&gt;</span><span style="color: #000000"> // can be a String CID, CID buffer or CID object</span>
+<span style="color: #000000">}</span>
 
-node.addLink(link)
+<span style="color: #000000">node.addLink(link)</span>
 </code></pre>
 				<a href="#nodermlinknameorcid" id="nodermlinknameorcid" style="color: inherit; text-decoration: none;">
 					<h4><code>node.rmLink(nameOrCid)</code></h4>
@@ -359,7 +265,7 @@ node.addLink(link)
 					<li><code>nameOrCid</code> - type: String, CID object or CID buffer</li>
 				</ul>
 				<p>Removes a link from the node by name. Modifies the node.</p>
-				<pre><code class="language-JavaScript">node.rmLink(<span class="hljs-string">&#x27;Link1&#x27;</span>)
+				<pre><code class="language-JavaScript"><span style="color: #001080">node</span><span style="color: #000000">.</span><span style="color: #795E26">rmLink</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Link1&#039;</span><span style="color: #000000">)</span>
 </code></pre>
 				<a href="#nodeserialize" id="nodeserialize" style="color: inherit; text-decoration: none;">
 					<h4><code>node.serialize()</code></h4>
@@ -370,18 +276,18 @@ node.addLink(link)
 				</a>
 				<p>Following the same pattern as <a href=""><code>DAGNode functions</code></a> above, DAGLink also offers a function for its creation.</p>
 				<p>You can incude it in your project with:</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> dagPB = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ipld-dag-pb&#x27;</span>)
-<span class="hljs-keyword">const</span> DAGLink = dagPB.DAGLink
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dagPB</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipld-dag-pb&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">DAGLink</span><span style="color: #000000"> = </span><span style="color: #001080">dagPB</span><span style="color: #000000">.</span><span style="color: #001080">DAGLink</span>
 </code></pre>
 				<a href="#daglink-constructor" id="daglink-constructor" style="color: inherit; text-decoration: none;">
 					<h4>DAGLink constructor</h4>
 				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-comment">// link is a DAGLink instance</span>
-<span class="hljs-keyword">const</span> link = <span class="hljs-keyword">new</span> DAGLink(
-  <span class="hljs-string">&#x27;link-to-file&#x27;</span>,  <span class="hljs-comment">// name of the link (can be empty)</span>
-  <span class="hljs-number">10</span>,              <span class="hljs-comment">// size in bytes</span>
-  <span class="hljs-string">&#x27;QmSomeHash...&#x27;</span>, <span class="hljs-comment">// can be CID object, CID buffer or string</span>
-)
+				<pre><code class="language-JavaScript"><span style="color: #008000">// link is a DAGLink instance</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">link</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">DAGLink</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&#039;link-to-file&#039;</span><span style="color: #000000">,  </span><span style="color: #008000">// name of the link (can be empty)</span>
+<span style="color: #000000">  </span><span style="color: #098658">10</span><span style="color: #000000">,              </span><span style="color: #008000">// size in bytes</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&#039;QmSomeHash...&#039;</span><span style="color: #000000">, </span><span style="color: #008000">// can be CID object, CID buffer or string</span>
+<span style="color: #000000">)</span>
 </code></pre>
 				<a href="#daglink-instance-methods-and-properties" id="daglink-instance-methods-and-properties" style="color: inherit; text-decoration: none;">
 					<h3>DAGLink instance methods and properties</h3>
@@ -445,52 +351,19 @@ node.addLink(link)
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class=" tsd-kind-module">
-						<a href="modules/__ipld_dag_pb_.html"> ipld-dag-pb</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_link_daglink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-link/dagLink</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_link_index_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-link/index</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_link_util_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-link/util</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_addlink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/addLink</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_dagnode_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/dagNode</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_index_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/index</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_rmlink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/rmLink</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_sortlinks_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/sortLinks</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_dag_node_todaglink_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/dag-node/toDagLink</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_gencid_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/genCid</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_resolver_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/resolver</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_serialize_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/serialize</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/__home_vmx_src_pl_js_ipld_dag_pb_src_util_.html">/home/vmx/src/pl/js-ipld-dag-pb/src/util</a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#daglinklike" class="tsd-kind-icon">DAGLink<wbr>Like</a>
+					</li>
+					<li class=" tsd-kind-property">
+						<a href="modules.html#default" class="tsd-kind-icon">default</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -500,15 +373,6 @@ node.addLink(link)
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-			</ul>
 		</div>
 	</div>
 </footer>
