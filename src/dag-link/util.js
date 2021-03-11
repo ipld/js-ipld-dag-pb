@@ -1,6 +1,6 @@
 'use strict'
 
-const DAGLink = require('./')
+const DAGLink = require('./dagLink')
 
 /**
  * @param {*} link

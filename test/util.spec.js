@@ -9,9 +9,7 @@ const {
   multihash
 } = require('multihashing-async')
 
-const {
-  DAGLink
-} = require('../src')
+const DAGLink = require('../src/dag-link/dagLink')
 const {
   serialize,
   deserialize,

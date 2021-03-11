@@ -6,7 +6,8 @@ const chai = require('aegir/utils/chai')
 const expect = chai.expect
 const CID = require('cids')
 
-const { DAGNode, resolver } = require('../src')
+const { resolver } = require('../src')
+const DAGNode = require('../src/dag-node/dagNode')
 const utils = require('../src/util')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
