@@ -6,6 +6,11 @@ export interface DAGLinkLike {
   Tsize: number
 }
 
+export interface DAGNodeLike {
+  Data?: Uint8Array
+  Links?: DAGLinkLike[]
+}
+
 export interface SerializableDAGLink {
   Hash: Uint8Array
   Name: string

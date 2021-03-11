@@ -7,6 +7,7 @@ const DAGLink = require('./dag-link/dagLink')
 
 /**
  * @typedef {import('./types').DAGLinkLike} DAGLinkLike
+ * @typedef {import('./types').DAGNodeLike} DAGNodeLike
  * @typedef {import('interface-ipld-format').Format<DAGNode>} DAGNodeFormat
  */
 
