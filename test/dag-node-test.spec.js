@@ -547,6 +547,7 @@ describe('DAGNode', () => {
     expect(node.size).to.be.above(0)
 
     const serialized = dagPB.util.serialize(node)
+    // @ts-ignore this is not part of interface-ipld-format
     const serializedObject = dagPB.util.serialize(obj)
     const deserialized = dagPB.util.deserialize(serialized)
     const deserializedObject = dagPB.util.deserialize(serializedObject)

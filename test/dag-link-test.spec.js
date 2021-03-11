@@ -4,7 +4,7 @@
 const chai = require('aegir/utils/chai')
 const expect = chai.expect
 const CID = require('cids')
-const DAGLink = require('../src').DAGLink
+const DAGLink = require('../src/dag-link/dagLink')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 const uint8ArrayToString = require('uint8arrays/to-string')
 
