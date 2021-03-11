@@ -67,7 +67,7 @@
   },
   "dependencies": {
     "cids": "^1.0.0",
-    "interface-ipld-format": "0.0.2",
+    "interface-ipld-format": "^1.0.0",
     "multicodec": "^3.0.1",
     "multihashing-async": "^2.0.0",
     "protobufjs": "^6.10.2",
