@@ -1,3 +1,12 @@
+## [0.22.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.22.0...v0.22.1) (2021-03-12)
+
+
+### Bug Fixes
+
+* types again ([e103337](https://github.com/ipld/js-ipld-dag-pb/commit/e1033374cbccb00970220b189ea7c000a8ea3254))
+
+
+
 # [0.22.0](https://github.com/ipld/js-ipld-dag-pb/compare/v0.21.1...v0.22.0) (2021-03-11)
 
 
