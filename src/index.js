@@ -2,21 +2,22 @@
 
 const resolver = require('./resolver')
 const util = require('./util')
-const DAGNode = require('./dag-node/dagNode')
-const DAGLink = require('./dag-link/dagLink')
+const DAGNodeClass = require('./dag-node/dagNode')
+const DAGLinkClass = require('./dag-link/dagLink')
 
 /**
  * @typedef {import('./types').DAGLinkLike} DAGLinkLike
  * @typedef {import('./types').DAGNodeLike} DAGNodeLike
- * @typedef {import('interface-ipld-format').Format<DAGNode>} DAGNodeFormat
+ * @typedef {import('./dag-node/dagNode')} DAGNode
+ * @typedef {import('./dag-link/dagLink')} DAGLink
  */
 
 /**
- * @type {DAGNodeFormat & { DAGNode: DAGNode, DAGLink: DAGLink }}
+ * @type {import('./types').DAGNodeFormat}
  */
-module.exports = {
-  DAGNode,
-  DAGLink,
+const format = {
+  DAGNode: DAGNodeClass,
+  DAGLink: DAGLinkClass,
 
   /**
    * Functions to fulfil IPLD Format interface
@@ -27,3 +28,5 @@ module.exports = {
   codec: util.codec,
   defaultHashAlg: util.defaultHashAlg
 }
+
+module.exports = format
