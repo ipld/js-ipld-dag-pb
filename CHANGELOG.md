@@ -1,3 +1,7 @@
+## [0.22.2](https://github.com/ipld/js-ipld-dag-pb/compare/v0.22.1...v0.22.2) (2021-04-07)
+
+
+
 ## [0.22.1](https://github.com/ipld/js-ipld-dag-pb/compare/v0.22.0...v0.22.1) (2021-03-12)
 
 
