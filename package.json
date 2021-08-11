@@ -1,6 +1,6 @@
 {
   "name": "ipld-dag-pb",
-  "version": "0.22.2",
+  "version": "0.22.3",
   "description": "JavaScript Implementation of the MerkleDAG Node in Protobuf.",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -42,10 +42,11 @@
     "Diogo Silva <fsdiogo@gmail.com>",
     "Stephen Whitmore <stephen.whitmore@gmail.com>",
     "Richard Littauer <richard.littauer@gmail.com>",
-    "James Halliday <mail@substack.net>",
     "Matteo Collina <hello@matteocollina.com>",
     "Mitar <mitar.github@tnode.com>",
+    "James Halliday <mail@substack.net>",
     "Chris Joel <cdata@google.com>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
     "Alan Shaw <alan@tableflip.io>",
     "Oli Evans <oli@tableflip.io>",
     "Rod Vagg <rod@vagg.org>",
@@ -55,8 +56,7 @@
     "dmitriy ryajov <dryajov@dmitriys-MacBook-Pro.local>",
     "dryajov <dryajov@gmail.com>",
     "haad <haad@headbanggames.com>",
-    "popmanhe <neo_temp@hotmail.com>",
-    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>"
+    "popmanhe <neo_temp@hotmail.com>"
   ],
   "license": "MIT",
   "repository": {
