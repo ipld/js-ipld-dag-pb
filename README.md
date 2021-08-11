@@ -1,3 +1,6 @@
+⛔️ DEPRECATED: This module has been superseded by [@ipld/dag-pb](https://github.com/ipld/js-dag-pb) and [multiformats](https://github.com/multiformats/js-multiformats) <!-- omit in toc -->
+======
+
 # js-ipld-dag-pb <!-- omit in toc -->
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
